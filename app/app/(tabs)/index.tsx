@@ -1,34 +1,115 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
-import { Colors, Spacing, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius } from '@/lib/constants';
+import { useTheme, Theme } from '@/lib/theme-context';
+import { supabase } from '@/lib/supabase';
 
 const { width } = Dimensions.get('window');
 
-// Mock data for demonstration
-const mockTotalDebt = 285000;
-const mockMonthlyPayment = 4750;
-const mockPotentialSavings = 12400;
+interface UserLoan {
+  id: string;
+  bank_name: string | null;
+  loan_type: string;
+  original_amount: number;
+  remaining_amount: number;
+  interest_rate: number;
+  monthly_emi: number;
+  status: string;
+}
 
 export default function DashboardScreen() {
   const { user } = useAuth();
-  const firstName = user?.email?.split('@')[0] || 'User';
+  const { theme } = useTheme();
+
+  const [loans, setLoans] = useState<UserLoan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [firstName, setFirstName] = useState('User');
+
+  const fetchLoans = useCallback(async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('user_loans')
+        .select('id, bank_name, loan_type, original_amount, remaining_amount, interest_rate, monthly_emi, status')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      setLoans(data || []);
+    } catch (e) {
+      console.error('Failed to fetch loans:', e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [user]);
+
+  const fetchFirstName = useCallback(async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('first_name, full_name')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (data?.first_name) {
+        setFirstName(data.first_name);
+      } else if (data?.full_name) {
+        setFirstName(data.full_name.split(' ')[0]);
+      } else {
+        setFirstName(user.email?.split('@')[0] || 'User');
+      }
+    } catch (e) {
+      console.error('Failed to fetch profile name:', e);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchLoans();
+    fetchFirstName();
+  }, [fetchLoans, fetchFirstName]);
+
+  // Re-fetch when screen comes into focus (e.g. after adding a loan)
+  useFocusEffect(
+    useCallback(() => {
+      fetchLoans();
+    }, [fetchLoans])
+  );
+
+  const activeLoans = loans.filter((l) => l.status === 'active');
+  const totalDebt = activeLoans.reduce((sum, l) => sum + l.remaining_amount, 0);
+  const totalEmi = activeLoans.reduce((sum, l) => sum + l.monthly_emi, 0);
+  // Simple savings estimate: 1% rate improvement across all active loans
+  const potentialSavings = Math.round(totalDebt * 0.01);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.primary }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 32 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              fetchLoans();
+            }}
+            tintColor={Colors.brand.emerald}
+          />
+        }
       >
         {/* Header */}
         <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 20 }}>
@@ -43,7 +124,7 @@ export default function DashboardScreen() {
               <Text
                 style={{
                   fontSize: 13,
-                  color: Colors.text.dark.secondary,
+                  color: theme.colors.textSecondary,
                   fontWeight: '500',
                 }}
               >
@@ -53,7 +134,7 @@ export default function DashboardScreen() {
                 style={{
                   fontSize: 24,
                   fontWeight: '700',
-                  color: Colors.text.dark.primary,
+                  color: theme.colors.textPrimary,
                   marginTop: 2,
                 }}
               >
@@ -65,17 +146,17 @@ export default function DashboardScreen() {
                 width: 44,
                 height: 44,
                 borderRadius: 22,
-                backgroundColor: Colors.dark.secondary,
+                backgroundColor: theme.colors.card,
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderWidth: 1,
-                borderColor: Colors.dark.tertiary,
+                borderColor: theme.colors.border,
               }}
             >
               <Ionicons
                 name="notifications-outline"
                 size={20}
-                color={Colors.text.dark.primary}
+                color={theme.colors.textPrimary}
               />
             </TouchableOpacity>
           </View>
@@ -84,91 +165,95 @@ export default function DashboardScreen() {
         {/* Total Debt Summary Card */}
         <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
           <LinearGradient
-            colors={['#1E293B', '#0F172A']}
+            colors={theme.gradients.card}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
               borderRadius: BorderRadius.xl,
               padding: 24,
               borderWidth: 1,
-              borderColor: Colors.dark.tertiary,
+              borderColor: theme.colors.border,
             }}
           >
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: '500',
-                color: Colors.text.dark.secondary,
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-              }}
-            >
-              Total Outstanding
-            </Text>
-            <Text
-              style={{
-                fontSize: 36,
-                fontWeight: '700',
-                color: Colors.text.dark.primary,
-                marginTop: 8,
-                letterSpacing: -1,
-              }}
-            >
-              AED {mockTotalDebt.toLocaleString()}
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 20,
-                gap: 24,
-              }}
-            >
-              <View>
+            {loading ? (
+              <View style={{ alignItems: 'center', paddingVertical: 24 }}>
+                <ActivityIndicator color={Colors.brand.emerald} />
+              </View>
+            ) : (
+              <>
                 <Text
                   style={{
-                    fontSize: 11,
-                    color: Colors.text.dark.tertiary,
+                    fontSize: 13,
+                    fontWeight: '500',
+                    color: theme.colors.textSecondary,
                     textTransform: 'uppercase',
                     letterSpacing: 0.5,
-                    marginBottom: 4,
                   }}
                 >
-                  Monthly EMI
+                  Total Outstanding
                 </Text>
                 <Text
                   style={{
-                    fontSize: 20,
-                    fontWeight: '600',
-                    color: Colors.text.dark.primary,
+                    fontSize: 36,
+                    fontWeight: '700',
+                    color: theme.colors.textPrimary,
+                    marginTop: 8,
+                    letterSpacing: -1,
                   }}
                 >
-                  AED {mockMonthlyPayment.toLocaleString()}
+                  {totalDebt > 0 ? `AED ${totalDebt.toLocaleString()}` : 'No debts yet'}
                 </Text>
-              </View>
-              <View style={{ width: 1, backgroundColor: Colors.dark.tertiary }} />
-              <View>
-                <Text
-                  style={{
-                    fontSize: 11,
-                    color: Colors.text.dark.tertiary,
-                    textTransform: 'uppercase',
-                    letterSpacing: 0.5,
-                    marginBottom: 4,
-                  }}
-                >
-                  Potential Savings
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: '600',
-                    color: Colors.brand.emerald,
-                  }}
-                >
-                  AED {mockPotentialSavings.toLocaleString()}
-                </Text>
-              </View>
-            </View>
+                {totalDebt > 0 && (
+                  <View style={{ flexDirection: 'row', marginTop: 20, gap: 24 }}>
+                    <View>
+                      <Text
+                        style={{
+                          fontSize: 11,
+                          color: theme.colors.textTertiary,
+                          textTransform: 'uppercase',
+                          letterSpacing: 0.5,
+                          marginBottom: 4,
+                        }}
+                      >
+                        Monthly EMI
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: '600',
+                          color: theme.colors.textPrimary,
+                        }}
+                      >
+                        AED {totalEmi.toLocaleString()}
+                      </Text>
+                    </View>
+                    <View style={{ width: 1, backgroundColor: theme.colors.border }} />
+                    <View>
+                      <Text
+                        style={{
+                          fontSize: 11,
+                          color: theme.colors.textTertiary,
+                          textTransform: 'uppercase',
+                          letterSpacing: 0.5,
+                          marginBottom: 4,
+                        }}
+                      >
+                        Potential Savings
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: '600',
+                          color: Colors.brand.emerald,
+                        }}
+                      >
+                        AED {potentialSavings.toLocaleString()}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+              </>
+            )}
           </LinearGradient>
         </View>
 
@@ -178,7 +263,7 @@ export default function DashboardScreen() {
             style={{
               fontSize: 17,
               fontWeight: '600',
-              color: Colors.text.dark.primary,
+              color: theme.colors.textPrimary,
               marginBottom: 16,
             }}
           >
@@ -189,24 +274,28 @@ export default function DashboardScreen() {
               icon="add-circle"
               label="Add Loan"
               color={Colors.brand.emerald}
-              onPress={() => { }}
+              theme={theme}
+              onPress={() => router.push('/add-loan' as any)}
             />
             <QuickActionCard
               icon="calculator"
               label="Calculator"
               color={Colors.brand.teal}
+              theme={theme}
               onPress={() => { }}
             />
             <QuickActionCard
               icon="swap-horizontal"
               label="Compare"
               color={Colors.info}
+              theme={theme}
               onPress={() => router.push('/(tabs)/offers')}
             />
             <QuickActionCard
               icon="document-text"
               label="Documents"
               color={Colors.warning}
+              theme={theme}
               onPress={() => { }}
             />
           </View>
@@ -226,89 +315,138 @@ export default function DashboardScreen() {
               style={{
                 fontSize: 17,
                 fontWeight: '600',
-                color: Colors.text.dark.primary,
+                color: theme.colors.textPrimary,
               }}
             >
               Active Loans
             </Text>
-            <TouchableOpacity onPress={() => router.push('/(tabs)/loans')}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '600',
-                  color: Colors.brand.emerald,
-                }}
-              >
-                See All →
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <LoanPreviewCard
-            bankName="Emirates NBD"
-            type="Personal Loan"
-            amount={150000}
-            rate={5.49}
-            remaining={120000}
-            emi={2800}
-            progress={0.2}
-          />
-          <View style={{ height: 12 }} />
-          <LoanPreviewCard
-            bankName="ADCB"
-            type="Auto Loan"
-            amount={85000}
-            rate={3.99}
-            remaining={65000}
-            emi={1950}
-            progress={0.24}
-          />
-        </View>
-
-        {/* Refinance CTA */}
-        <View style={{ paddingHorizontal: 20 }}>
-          <TouchableOpacity activeOpacity={0.9}>
-            <LinearGradient
-              colors={Colors.gradients.premium as unknown as [string, string]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{
-                borderRadius: BorderRadius.xl,
-                padding: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    fontSize: 17,
-                    fontWeight: '700',
-                    color: '#fff',
-                    marginBottom: 4,
-                  }}
-                >
-                  Save AED {mockPotentialSavings.toLocaleString()}
-                </Text>
+            {activeLoans.length > 0 && (
+              <TouchableOpacity onPress={() => router.push('/(tabs)/loans')}>
                 <Text
                   style={{
                     fontSize: 13,
-                    color: 'rgba(255,255,255,0.8)',
+                    fontWeight: '600',
+                    color: Colors.brand.emerald,
                   }}
                 >
-                  Check refinance options from 8 UAE banks
+                  See All →
                 </Text>
-              </View>
-              <Ionicons name="arrow-forward-circle" size={32} color="#fff" />
-            </LinearGradient>
-          </TouchableOpacity>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {loading ? (
+            <ActivityIndicator color={Colors.brand.emerald} style={{ paddingVertical: 20 }} />
+          ) : activeLoans.length === 0 ? (
+            <TouchableOpacity
+              onPress={() => router.push('/add-loan' as any)}
+              style={{
+                backgroundColor: theme.colors.card,
+                borderRadius: BorderRadius.lg,
+                padding: 24,
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                borderStyle: 'dashed',
+              }}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="add-circle-outline" size={36} color={Colors.brand.emerald} />
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: '600',
+                  color: theme.colors.textPrimary,
+                  marginTop: 12,
+                }}
+              >
+                Add your first loan
+              </Text>
+              <Text
+                style={{
+                  fontSize: 13,
+                  color: theme.colors.textSecondary,
+                  marginTop: 4,
+                  textAlign: 'center',
+                }}
+              >
+                Start tracking your debts and find better rates
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            activeLoans.slice(0, 3).map((loan, i) => {
+              const progress =
+                loan.original_amount > 0
+                  ? 1 - loan.remaining_amount / loan.original_amount
+                  : 0;
+              return (
+                <View key={loan.id}>
+                  {i > 0 && <View style={{ height: 12 }} />}
+                  <LoanPreviewCard
+                    bankName={loan.bank_name || 'Unknown Bank'}
+                    type={formatLoanType(loan.loan_type)}
+                    amount={loan.original_amount}
+                    rate={loan.interest_rate}
+                    remaining={loan.remaining_amount}
+                    emi={loan.monthly_emi}
+                    progress={progress}
+                    theme={theme}
+                  />
+                </View>
+              );
+            })
+          )}
         </View>
+
+        {/* Refinance CTA */}
+        {totalDebt > 0 && (
+          <View style={{ paddingHorizontal: 20 }}>
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => router.push('/(tabs)/offers')}
+            >
+              <LinearGradient
+                colors={theme.gradients.premium}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{
+                  borderRadius: BorderRadius.xl,
+                  padding: 20,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 17,
+                      fontWeight: '700',
+                      color: '#fff',
+                      marginBottom: 4,
+                    }}
+                  >
+                    Save AED {potentialSavings.toLocaleString()}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      color: 'rgba(255,255,255,0.8)',
+                    }}
+                  >
+                    Check refinance options from UAE banks
+                  </Text>
+                </View>
+                <Ionicons name="arrow-forward-circle" size={32} color="#fff" />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-// Helper functions & sub-components
+// ─── Helpers & Sub-components ────────────────────────────────────────
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -317,27 +455,33 @@ function getGreeting() {
   return 'evening';
 }
 
+function formatLoanType(type: string) {
+  return type.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) + ' Loan';
+}
+
 function QuickActionCard({
   icon,
   label,
   color,
+  theme,
   onPress,
 }: {
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
   color: string;
+  theme: Theme;
   onPress: () => void;
 }) {
   return (
     <TouchableOpacity
       style={{
         flex: 1,
-        backgroundColor: Colors.dark.secondary,
+        backgroundColor: theme.colors.card,
         borderRadius: BorderRadius.lg,
         padding: 16,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: Colors.dark.tertiary,
+        borderColor: theme.colors.border,
       }}
       activeOpacity={0.7}
       onPress={onPress}
@@ -359,7 +503,7 @@ function QuickActionCard({
         style={{
           fontSize: 11,
           fontWeight: '600',
-          color: Colors.text.dark.secondary,
+          color: theme.colors.textSecondary,
           textAlign: 'center',
         }}
       >
@@ -377,6 +521,7 @@ function LoanPreviewCard({
   remaining,
   emi,
   progress,
+  theme,
 }: {
   bankName: string;
   type: string;
@@ -385,15 +530,16 @@ function LoanPreviewCard({
   remaining: number;
   emi: number;
   progress: number;
+  theme: Theme;
 }) {
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: Colors.dark.secondary,
+        backgroundColor: theme.colors.card,
         borderRadius: BorderRadius.lg,
         padding: 20,
         borderWidth: 1,
-        borderColor: Colors.dark.tertiary,
+        borderColor: theme.colors.border,
       }}
       activeOpacity={0.8}
     >
@@ -410,7 +556,7 @@ function LoanPreviewCard({
             style={{
               fontSize: 17,
               fontWeight: '600',
-              color: Colors.text.dark.primary,
+              color: theme.colors.textPrimary,
             }}
           >
             {bankName}
@@ -418,7 +564,7 @@ function LoanPreviewCard({
           <Text
             style={{
               fontSize: 13,
-              color: Colors.text.dark.tertiary,
+              color: theme.colors.textTertiary,
               marginTop: 2,
             }}
           >
@@ -450,7 +596,7 @@ function LoanPreviewCard({
           <Text
             style={{
               fontSize: 11,
-              color: Colors.text.dark.tertiary,
+              color: theme.colors.textTertiary,
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}
@@ -461,7 +607,7 @@ function LoanPreviewCard({
             style={{
               fontSize: 17,
               fontWeight: '600',
-              color: Colors.text.dark.primary,
+              color: theme.colors.textPrimary,
               marginTop: 2,
             }}
           >
@@ -472,7 +618,7 @@ function LoanPreviewCard({
           <Text
             style={{
               fontSize: 11,
-              color: Colors.text.dark.tertiary,
+              color: theme.colors.textTertiary,
               textTransform: 'uppercase',
               letterSpacing: 0.5,
             }}
@@ -483,7 +629,7 @@ function LoanPreviewCard({
             style={{
               fontSize: 17,
               fontWeight: '600',
-              color: Colors.text.dark.primary,
+              color: theme.colors.textPrimary,
               marginTop: 2,
             }}
           >
@@ -496,14 +642,14 @@ function LoanPreviewCard({
       <View
         style={{
           height: 4,
-          backgroundColor: Colors.dark.tertiary,
+          backgroundColor: theme.colors.border,
           borderRadius: 2,
           overflow: 'hidden',
         }}
       >
         <View
           style={{
-            width: `${progress * 100}%`,
+            width: `${Math.min(progress * 100, 100)}%`,
             height: '100%',
             backgroundColor: Colors.brand.emerald,
             borderRadius: 2,
@@ -513,7 +659,7 @@ function LoanPreviewCard({
       <Text
         style={{
           fontSize: 11,
-          color: Colors.text.dark.tertiary,
+          color: theme.colors.textTertiary,
           marginTop: 6,
           textAlign: 'right',
         }}

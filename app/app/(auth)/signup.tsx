@@ -4,319 +4,235 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
+    Alert,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
     ActivityIndicator,
-    Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
-import { Colors } from '@/lib/constants';
+import { Colors, BorderRadius } from '@/lib/constants';
+import { useTheme } from '@/lib/theme-context';
+import { supabase } from '@/lib/supabase';
 
-export default function SignUpScreen() {
-    const { signUp } = useAuth();
-    const [fullName, setFullName] = useState('');
+export default function SignupScreen() {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const { signUp } = useAuth();
+    const { theme } = useTheme();
 
-    const handleSignUp = async () => {
-        if (!fullName || !email || !password || !confirmPassword) {
-            Alert.alert('Missing Fields', 'Please fill in all fields.');
+    const handleSignup = async () => {
+        if (!firstName.trim() || !lastName.trim() || !email || !password || !confirmPassword) {
+            Alert.alert('Error', 'Please fill in all fields');
             return;
         }
         if (password !== confirmPassword) {
-            Alert.alert('Password Mismatch', 'Passwords do not match.');
+            Alert.alert('Error', 'Passwords do not match');
             return;
         }
         if (password.length < 6) {
-            Alert.alert('Weak Password', 'Password must be at least 6 characters.');
+            Alert.alert('Error', 'Password must be at least 6 characters');
             return;
         }
-
         setLoading(true);
-        const { error } = await signUp(email, password);
-        setLoading(false);
-
-        if (error) {
-            Alert.alert('Sign Up Failed', error.message);
-        } else {
-            Alert.alert(
-                'Check Your Email',
-                'We sent you a verification link. Please verify your email and then sign in.',
-                [{ text: 'OK', onPress: () => router.replace('/(auth)/login') }]
-            );
+        try {
+            const { error } = await signUp(email, password);
+            if (error) {
+                Alert.alert('Signup Error', error.message);
+            } else {
+                // Save profile with first/last name
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    await supabase.from('profiles').upsert({
+                        id: user.id,
+                        first_name: firstName.trim(),
+                        last_name: lastName.trim(),
+                        full_name: `${firstName.trim()} ${lastName.trim()}`,
+                        email: email,
+                    });
+                }
+                // Navigate to tabs (auth gate will handle redirect)
+                router.replace('/(tabs)');
+            }
+        } catch (e: any) {
+            Alert.alert('Error', e.message);
+        } finally {
+            setLoading(false);
         }
-    };
-
-    const handleSocialSignUp = (provider: string) => {
-        Alert.alert(
-            'Coming Soon',
-            `${provider} sign-up will be available in a future update.`,
-            [{ text: 'OK' }]
-        );
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: Colors.dark.primary }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
                 <ScrollView
-                    contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
+                    contentContainerStyle={{
+                        flexGrow: 1,
+                        paddingHorizontal: 24,
+                        paddingBottom: 32,
+                    }}
                     keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
+                    {/* Back Button */}
+                    <TouchableOpacity
+                        onPress={() => router.back()}
+                        style={{ marginTop: 8, marginBottom: 16 }}
+                    >
+                        <Ionicons
+                            name="arrow-back"
+                            size={24}
+                            color={theme.colors.textPrimary}
+                        />
+                    </TouchableOpacity>
+
                     {/* Header */}
-                    <View style={{ marginBottom: 40 }}>
-                        <TouchableOpacity
-                            onPress={() => router.back()}
-                            style={{ marginBottom: 24 }}
-                        >
-                            <Ionicons
-                                name="arrow-back"
-                                size={24}
-                                color={Colors.text.dark.primary}
-                            />
-                        </TouchableOpacity>
+                    <View style={{ marginBottom: 32 }}>
                         <Text
                             style={{
-                                fontSize: 32,
+                                fontSize: 28,
                                 fontWeight: '700',
-                                color: Colors.text.dark.primary,
-                                letterSpacing: -0.5,
+                                color: theme.colors.textPrimary,
+                                marginBottom: 8,
                             }}
                         >
-                            Create Account
+                            Create account
                         </Text>
                         <Text
                             style={{
                                 fontSize: 15,
-                                color: Colors.text.dark.secondary,
-                                marginTop: 8,
+                                color: theme.colors.textSecondary,
                             }}
                         >
-                            Start managing your loans intelligently
+                            Start managing your debts smarter
                         </Text>
                     </View>
 
-                    {/* Full Name */}
-                    <View style={{ marginBottom: 16 }}>
-                        <Text
-                            style={{
-                                fontSize: 13,
-                                fontWeight: '600',
-                                color: Colors.text.dark.secondary,
-                                marginBottom: 8,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5,
-                            }}
-                        >
-                            Full Name
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                paddingHorizontal: 16,
-                            }}
-                        >
-                            <Ionicons
-                                name="person-outline"
-                                size={20}
-                                color={Colors.text.dark.tertiary}
+                    {/* First + Last Name Row */}
+                    <View style={{ flexDirection: 'row', gap: 12 }}>
+                        <View style={{ flex: 1 }}>
+                            <InputField
+                                label="First Name"
+                                icon="person-outline"
+                                placeholder="Mahmoud"
+                                value={firstName}
+                                onChangeText={setFirstName}
+                                theme={theme}
                             />
-                            <TextInput
-                                value={fullName}
-                                onChangeText={setFullName}
-                                placeholder="Mahmoud Ahmed"
-                                placeholderTextColor={Colors.text.dark.disabled}
-                                autoComplete="name"
-                                style={{
-                                    flex: 1,
-                                    paddingVertical: 16,
-                                    paddingLeft: 12,
-                                    fontSize: 15,
-                                    color: Colors.text.dark.primary,
-                                }}
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <InputField
+                                label="Last Name"
+                                icon="person-outline"
+                                placeholder="Ahmed"
+                                value={lastName}
+                                onChangeText={setLastName}
+                                theme={theme}
                             />
                         </View>
                     </View>
 
                     {/* Email */}
-                    <View style={{ marginBottom: 16 }}>
-                        <Text
-                            style={{
-                                fontSize: 13,
-                                fontWeight: '600',
-                                color: Colors.text.dark.secondary,
-                                marginBottom: 8,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5,
-                            }}
-                        >
-                            Email
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                paddingHorizontal: 16,
-                            }}
-                        >
-                            <Ionicons
-                                name="mail-outline"
-                                size={20}
-                                color={Colors.text.dark.tertiary}
-                            />
-                            <TextInput
-                                value={email}
-                                onChangeText={setEmail}
-                                placeholder="your@email.com"
-                                placeholderTextColor={Colors.text.dark.disabled}
-                                keyboardType="email-address"
-                                autoCapitalize="none"
-                                autoComplete="email"
-                                style={{
-                                    flex: 1,
-                                    paddingVertical: 16,
-                                    paddingLeft: 12,
-                                    fontSize: 15,
-                                    color: Colors.text.dark.primary,
-                                }}
-                            />
-                        </View>
-                    </View>
+                    <InputField
+                        label="Email"
+                        icon="mail-outline"
+                        placeholder="your@email.com"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        theme={theme}
+                    />
 
                     {/* Password */}
-                    <View style={{ marginBottom: 16 }}>
-                        <Text
+                    <Text
+                        style={{
+                            fontSize: 13,
+                            fontWeight: '600',
+                            color: theme.colors.textSecondary,
+                            marginBottom: 8,
+                        }}
+                    >
+                        Password
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            backgroundColor: theme.colors.card,
+                            borderRadius: BorderRadius.md,
+                            paddingHorizontal: 16,
+                            marginBottom: 16,
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                            height: 52,
+                        }}
+                    >
+                        <Ionicons
+                            name="lock-closed-outline"
+                            size={20}
+                            color={theme.colors.textTertiary}
+                            style={{ marginRight: 12 }}
+                        />
+                        <TextInput
                             style={{
-                                fontSize: 13,
-                                fontWeight: '600',
-                                color: Colors.text.dark.secondary,
-                                marginBottom: 8,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5,
+                                flex: 1,
+                                fontSize: 15,
+                                color: theme.colors.textPrimary,
                             }}
-                        >
-                            Password
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                paddingHorizontal: 16,
-                            }}
-                        >
+                            placeholder="Min. 6 characters"
+                            placeholderTextColor={theme.colors.textDisabled}
+                            value={password}
+                            onChangeText={setPassword}
+                            secureTextEntry={!showPassword}
+                        />
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                             <Ionicons
-                                name="lock-closed-outline"
+                                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                                 size={20}
-                                color={Colors.text.dark.tertiary}
+                                color={theme.colors.textTertiary}
                             />
-                            <TextInput
-                                value={password}
-                                onChangeText={setPassword}
-                                placeholder="Min 6 characters"
-                                placeholderTextColor={Colors.text.dark.disabled}
-                                secureTextEntry={!showPassword}
-                                style={{
-                                    flex: 1,
-                                    paddingVertical: 16,
-                                    paddingLeft: 12,
-                                    fontSize: 15,
-                                    color: Colors.text.dark.primary,
-                                }}
-                            />
-                            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                                <Ionicons
-                                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                                    size={20}
-                                    color={Colors.text.dark.tertiary}
-                                />
-                            </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
                     </View>
 
                     {/* Confirm Password */}
-                    <View style={{ marginBottom: 24 }}>
-                        <Text
-                            style={{
-                                fontSize: 13,
-                                fontWeight: '600',
-                                color: Colors.text.dark.secondary,
-                                marginBottom: 8,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5,
-                            }}
-                        >
-                            Confirm Password
-                        </Text>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                paddingHorizontal: 16,
-                            }}
-                        >
-                            <Ionicons
-                                name="shield-checkmark-outline"
-                                size={20}
-                                color={Colors.text.dark.tertiary}
-                            />
-                            <TextInput
-                                value={confirmPassword}
-                                onChangeText={setConfirmPassword}
-                                placeholder="Re-enter password"
-                                placeholderTextColor={Colors.text.dark.disabled}
-                                secureTextEntry={!showPassword}
-                                style={{
-                                    flex: 1,
-                                    paddingVertical: 16,
-                                    paddingLeft: 12,
-                                    fontSize: 15,
-                                    color: Colors.text.dark.primary,
-                                }}
-                            />
-                        </View>
-                    </View>
+                    <InputField
+                        label="Confirm Password"
+                        icon="lock-closed-outline"
+                        placeholder="Re-enter your password"
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                        secureTextEntry
+                        theme={theme}
+                    />
 
                     {/* Sign Up Button */}
                     <TouchableOpacity
-                        activeOpacity={0.8}
-                        onPress={handleSignUp}
+                        onPress={handleSignup}
                         disabled={loading}
+                        activeOpacity={0.8}
+                        style={{ marginTop: 8 }}
                     >
                         <LinearGradient
-                            colors={Colors.gradients.brand as unknown as [string, string]}
+                            colors={theme.gradients.brand}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{
-                                paddingVertical: 16,
-                                borderRadius: 14,
+                                borderRadius: BorderRadius.md,
+                                height: 52,
                                 alignItems: 'center',
-                                opacity: loading ? 0.7 : 1,
+                                justifyContent: 'center',
                             }}
                         >
                             {loading ? (
@@ -335,112 +251,38 @@ export default function SignUpScreen() {
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    {/* Divider */}
-                    <View
+                    {/* Terms */}
+                    <Text
                         style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginVertical: 24,
+                            fontSize: 12,
+                            color: theme.colors.textTertiary,
+                            textAlign: 'center',
+                            marginTop: 16,
+                            lineHeight: 18,
                         }}
                     >
-                        <View
-                            style={{
-                                flex: 1,
-                                height: 1,
-                                backgroundColor: Colors.dark.tertiary,
-                            }}
-                        />
-                        <Text
-                            style={{
-                                marginHorizontal: 16,
-                                fontSize: 13,
-                                color: Colors.text.dark.tertiary,
-                            }}
-                        >
-                            or sign up with
-                        </Text>
-                        <View
-                            style={{
-                                flex: 1,
-                                height: 1,
-                                backgroundColor: Colors.dark.tertiary,
-                            }}
-                        />
-                    </View>
-
-                    {/* Social Sign Up Buttons */}
-                    <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32 }}>
-                        <TouchableOpacity
-                            style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                paddingVertical: 14,
-                                gap: 8,
-                            }}
-                            activeOpacity={0.7}
-                            onPress={() => handleSocialSignUp('Google')}
-                        >
-                            <Ionicons name="logo-google" size={20} color="#DB4437" />
-                            <Text
-                                style={{
-                                    fontSize: 15,
-                                    fontWeight: '500',
-                                    color: Colors.text.dark.primary,
-                                }}
-                            >
-                                Google
-                            </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: 14,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                paddingVertical: 14,
-                                gap: 8,
-                            }}
-                            activeOpacity={0.7}
-                            onPress={() => handleSocialSignUp('Apple')}
-                        >
-                            <Ionicons name="logo-apple" size={20} color="#fff" />
-                            <Text
-                                style={{
-                                    fontSize: 15,
-                                    fontWeight: '500',
-                                    color: Colors.text.dark.primary,
-                                }}
-                            >
-                                Apple
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                        By signing up, you agree to our{' '}
+                        <Text style={{ color: Colors.brand.emerald }}>Terms of Service</Text>
+                        {' '}and{' '}
+                        <Text style={{ color: Colors.brand.emerald }}>Privacy Policy</Text>
+                    </Text>
 
                     {/* Sign In Link */}
                     <View
                         style={{
                             flexDirection: 'row',
                             justifyContent: 'center',
-                            alignItems: 'center',
+                            marginTop: 32,
+                            gap: 4,
                         }}
                     >
-                        <Text style={{ fontSize: 15, color: Colors.text.dark.secondary }}>
-                            Already have an account?{' '}
+                        <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+                            Already have an account?
                         </Text>
-                        <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
+                        <TouchableOpacity onPress={() => router.back()}>
                             <Text
                                 style={{
-                                    fontSize: 15,
+                                    fontSize: 14,
                                     fontWeight: '600',
                                     color: Colors.brand.emerald,
                                 }}
@@ -451,6 +293,77 @@ export default function SignUpScreen() {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </View>
+        </SafeAreaView>
+    );
+}
+
+function InputField({
+    label,
+    icon,
+    placeholder,
+    value,
+    onChangeText,
+    keyboardType,
+    autoCapitalize,
+    secureTextEntry,
+    theme,
+}: {
+    label: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    placeholder: string;
+    value: string;
+    onChangeText: (text: string) => void;
+    keyboardType?: 'email-address' | 'default';
+    autoCapitalize?: 'none' | 'sentences';
+    secureTextEntry?: boolean;
+    theme: ReturnType<typeof useTheme>['theme'];
+}) {
+    return (
+        <>
+            <Text
+                style={{
+                    fontSize: 13,
+                    fontWeight: '600',
+                    color: theme.colors.textSecondary,
+                    marginBottom: 8,
+                }}
+            >
+                {label}
+            </Text>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    backgroundColor: theme.colors.card,
+                    borderRadius: BorderRadius.md,
+                    paddingHorizontal: 16,
+                    marginBottom: 16,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    height: 52,
+                }}
+            >
+                <Ionicons
+                    name={icon}
+                    size={20}
+                    color={theme.colors.textTertiary}
+                    style={{ marginRight: 12 }}
+                />
+                <TextInput
+                    style={{
+                        flex: 1,
+                        fontSize: 15,
+                        color: theme.colors.textPrimary,
+                    }}
+                    placeholder={placeholder}
+                    placeholderTextColor={theme.colors.textDisabled}
+                    value={value}
+                    onChangeText={onChangeText}
+                    keyboardType={keyboardType || 'default'}
+                    autoCapitalize={autoCapitalize || 'sentences'}
+                    secureTextEntry={secureTextEntry}
+                />
+            </View>
+        </>
     );
 }
