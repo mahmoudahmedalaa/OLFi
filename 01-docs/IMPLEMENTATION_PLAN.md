@@ -1,258 +1,101 @@
-# Implementation Plan & Build Sequence
+# Implementation Plan — BuyOut MVP
 
-> The exact order to build things. Each step is testable. No guessing what comes next.
-
-## Overview
-
-| Field | Value |
-|:------|:------|
-| **Project** | [App Name] |
-| **MVP Target** | [Date] |
-| **Approach** | Documentation-first, iterative, test-after-every-step |
-
-### Build Rules
-1. Code follows documentation (not the reverse)
-2. Test after every step — don't batch
-3. Deploy to staging after each milestone
-4. Each step produces a verifiable result
-5. **One task per conversation** — fresh AI context = maximum quality
+> Build sequence: what to build, in what order, and why.
 
 ---
 
-## Task Decomposition (Fresh Context Strategy)
+## 1. Build Phases
 
-After all documentation is generated (Phases 1-6 below), the AI breaks this plan into a **numbered task list**. Each task is designed to be executed in a **fresh conversation** for maximum AI quality.
+### Phase 1: Foundation (Week 1-2)
+> Set up the project, auth, and basic navigation. Nothing custom yet — all library setup.
 
-### Task Format
-Each task must include:
+| Task | Deliverable | Dependencies |
+|:-----|:------------|:-------------|
+| Init Expo project with TypeScript | Working `npx expo start` | None |
+| Configure NativeWind + React Native Paper | Theme system, dark/light mode | Expo project |
+| Set up Expo Router (file-based navigation) | Tab bar + stack navigation | Expo project |
+| Supabase project creation | Database, auth, API keys | Supabase account |
+| Apply database migrations | All 5 tables + RLS policies | Supabase project |
+| Seed mock offer data | 15-20 realistic UAE bank offers | Database schema |
+| Wire Supabase Auth (email, Google, Apple, OTP) | Working sign up / login / verify | Supabase Auth config |
+| Welcome + Auth screens | Functional auth flow | Navigation + Auth |
+| Biometric auth (Face ID / Touch ID) | Returning user fast-login | Auth working |
 
-```
-## Task [N]: [Name]
+### Phase 2: Core Features (Week 3-4)
+> The main product loop: add debt → see dashboard → browse offers.
 
-### Context (read these files first)
-- 01-docs/PRD.md — Feature [X]
-- 01-docs/APP_FLOW.md — Screen [Y]
-- 01-docs/TECH_STACK.md — Section [Z]
+| Task | Deliverable | Dependencies |
+|:-----|:------------|:-------------|
+| Onboarding flow (3 steps) | Animated welcome screens | Navigation |
+| Add Debt form | Working form with all 7 fields + validation | Database + Auth |
+| Edit / Delete Debt | Full CRUD on debts | Add Debt |
+| Dashboard screen | Total debt + savings hero, debt card list | Debts table |
+| Credit Health Indicator | Health calculation from entered data | Debts + Profile |
+| Debt Detail screen | Full debt view with "See Offers" link | Dashboard |
+| Offers list with filters | Browse offers, Sharia toggle, sort by rate | Offers table |
 
-### What to Build
-- [ ] Create [file/component]
-- [ ] Implement [specific functionality]
-- [ ] Connect to [dependency]
+### Phase 3: Offer Flow + Polish (Week 5-6)
+> The monetization loop: compare → accept → lead capture.
 
-### Success Criteria
-- [ ] tsc --noEmit passes
-- [ ] Feature works on device/browser
-- [ ] All states handled (loading, empty, error)
+| Task | Deliverable | Dependencies |
+|:-----|:------------|:-------------|
+| Offer Detail + Comparison view | Side-by-side current vs. offer | Debts + Offers |
+| Savings calculator (Edge Function) | Monthly & total savings calculation | Debts + Offers |
+| Offer Acceptance flow | Success screen + lead capture form | Offer Detail |
+| Profile screen + Personal Details | View/edit user info, salary optional | Auth + Profiles table |
+| Notification Settings screen | Toggle preferences | Profile |
+| Push Notifications setup | expo-notifications + triggers | Edge Functions |
 
-### Kickoff Prompt
-> Read AGENTS.md, then execute this task. Reference the files listed
-> in Context above. Iterate until all Success Criteria pass.
-```
+### Phase 4: Premium Polish (Week 7-8)
+> "Coming Soon" features, animations, investor-readiness.
 
-### Why Fresh Contexts?
-- Full AI context window per task → better output quality
-- No accumulated confusion from earlier mistakes
-- Each task has all context it needs → no dependencies on chat history
-- If one task goes wrong, it doesn't pollute the next
+| Task | Deliverable | Dependencies |
+|:-----|:------------|:-------------|
+| UAE Pass "Coming Soon" modal | 3-screen animated preview | Auth screens |
+| AECB Bank Sync "Coming Soon" modal | 3-screen animated preview | Debt screens |
+| AECB Credit Score "Coming Soon" modal | Preview of real score | Credit Health |
+| Micro-animations | Card press, number count-up, skeleton loading | All screens |
+| Haptic feedback | On key actions (accept offer, add debt) | Core flows |
+| Dark mode dashboard polish | Premium dark theme for data screens | Theme system |
+| Error states + empty states | Illustrations, retry buttons | All screens |
+| App icon + splash screen | Branded assets | Design |
 
-### How It Works
-1. AI generates the full task list from this Implementation Plan
-2. User opens a **new conversation** for each task
-3. Pastes the task's kickoff prompt
-4. AI reads the relevant docs and executes
-5. AI iterates until all verification checks pass
-6. User moves to next task in a new conversation
+### Phase 5: Ship (Week 9-10)
+> TestFlight, bug fixes, investor demo prep.
 
----
-
-## Phase 1: Foundation
-
-### Step 1.1 — Project Setup
-**Duration**: 1 hour  
-**Goal**: Running project with linting configured
-
-- [ ] Initialize git repository
-- [ ] Initialize project (framework-specific)
-- [ ] Install all dependencies from `TECH_STACK.md` (exact versions)
-- [ ] Configure linter + formatter
-- [ ] Verify: project runs locally, no lint errors
-
-### Step 1.2 — Environment Setup
-**Duration**: 30 min  
-**Goal**: All secrets and configs in place
-
-- [ ] Create `.env` with all vars from `TECH_STACK.md`
-- [ ] Create `.env.example` (no secrets)
-- [ ] Add `.env` to `.gitignore`
-- [ ] Verify: app reads env vars correctly
-
-### Step 1.3 — Database / Backend Setup
-**Duration**: 1 hour  
-**Goal**: Database connected, schema applied
-
-- [ ] Set up database (local or cloud)
-- [ ] Configure connection
-- [ ] Apply initial schema from `BACKEND_STRUCTURE.md`
-- [ ] Verify: tables created, can query
+| Task | Deliverable | Dependencies |
+|:-----|:------------|:-------------|
+| Xcode build + TestFlight upload | Working IPA on TestFlight | All features |
+| Beta testing (20-50 users) | Bug reports, UX feedback | TestFlight |
+| Bug fix sprint | Resolution of beta issues | Beta feedback |
+| App Store metadata prep | Screenshots, description, privacy policy | Working app |
+| Investor demo script | Guided walkthrough of the app | All features |
 
 ---
 
-## Phase 2: Design System
+## 2. Risk Mitigation
 
-### Step 2.1 — Design Tokens
-**Duration**: 1-2 hours  
-**Goal**: Colors, fonts, spacing configured
-
-- [ ] Apply all tokens from `FRONTEND_GUIDELINES.md`
-- [ ] Test in a sample component
-- [ ] Verify: custom styles work, no console errors
-
-### Step 2.2 — Core Components
-**Duration**: 3-4 hours  
-**Goal**: Reusable component library
-
-For each component from `FRONTEND_GUIDELINES.md`:
-- [ ] Create component file
-- [ ] Implement all variants and states
-- [ ] Add TypeScript types
-- [ ] Verify: all variants render correctly
+| Risk | Likelihood | Mitigation |
+|:-----|:-----------|:-----------|
+| Supabase free tier limits hit | Low (MVP) | Monitor usage, upgrade path documented |
+| Complex form validation edge cases | Medium | Zod schemas for strict validation |
+| Offer calculation bugs (money) | Medium | BIGINT fils everywhere, unit tests for calculations |
+| TestFlight build failures | Medium | Build script documented, Xcode config pinned |
+| UAE bank data accuracy | Low | Disclaimer: "Illustrative offers," rates verified against public data |
 
 ---
 
-## Phase 3: Authentication
+## 3. Definition of Done (MVP)
 
-### Step 3.1 — Auth Backend
-**Duration**: 2-3 hours  
-**Goal**: Register + Login endpoints working
-
-- [ ] Implement registration (per `BACKEND_STRUCTURE.md`)
-- [ ] Implement login with token generation
-- [ ] Implement password hashing
-- [ ] Test with API client (Postman/curl)
-- [ ] Verify: can register, login, receive tokens
-
-### Step 3.2 — Auth Frontend
-**Duration**: 2-3 hours  
-**Goal**: Registration and login UI connected
-
-- [ ] Build registration screen (per `APP_FLOW.md`)
-- [ ] Build login screen
-- [ ] Connect to auth endpoints
-- [ ] Handle validation, loading, error states
-- [ ] Verify: end-to-end auth flow works
-
----
-
-## Phase 4: Core Features
-
-### Step 4.X — [Feature Name]
-**Duration**: [estimate]  
-**Goal**: [one-line description]
-
-- [ ] Backend: Create endpoint(s) per `BACKEND_STRUCTURE.md`
-- [ ] Frontend: Build UI per `APP_FLOW.md` + `FRONTEND_GUIDELINES.md`
-- [ ] Connect frontend to backend
-- [ ] Handle all states (loading, empty, error)
-- [ ] Verify: feature works end-to-end
-
-**Ref**: `PRD.md` Feature [N], `APP_FLOW.md` Screen [X]
-
-<!-- Repeat Step 4.X for each P0 feature -->
-
----
-
-## Phase 5: Testing
-
-### Step 5.1 — Unit Tests
-**Duration**: 2-3 hours  
-**Goal**: Critical paths covered
-
-| Area | Target Coverage |
-|:-----|:---------------|
-| Auth logic | 90% |
-| Validation | 95% |
-| Core features | 80% |
-
-- [ ] Set up test framework
-- [ ] Write auth tests
-- [ ] Write validation tests
-- [ ] Write core feature tests
-- [ ] Verify: all tests pass
-
-### Step 5.2 — Integration / E2E Tests
-**Duration**: 3-4 hours  
-**Goal**: Full user flows verified
-
-- [ ] Registration → Login → Use Feature → Logout
-- [ ] Error paths (wrong password, network failure)
-- [ ] Verify: all flows pass on device/browser
-
----
-
-## Phase 6: Deployment
-
-### Step 6.1 — Staging Deploy
-**Duration**: 1-2 hours
-
-- [ ] Configure hosting (per `TECH_STACK.md`)
-- [ ] Set production environment variables
-- [ ] Deploy
-- [ ] Smoke test all features
-- [ ] Verify: fully functional on staging URL/device
-
-### Step 6.2 — Production Launch
-**Duration**: 1-2 hours
-
-- [ ] Complete `05-checklists/MVP_LAUNCH.md`
-- [ ] Complete `05-checklists/APP_STORE.md` (if applicable)
-- [ ] Deploy to production
-- [ ] Monitor error logs for 24 hours
-- [ ] Verify: zero critical errors
-
----
-
-## Milestones
-
-| Milestone | Target | Deliverables |
-|:----------|:-------|:-------------|
-| **Foundation** | Week 1 | Project running, DB connected, design tokens |
-| **Auth** | Week 2 | Register, login, session management |
-| **Core Features** | Week 3 | All P0 features working |
-| **MVP Launch** | Week 4 | Tested, deployed, monitoring |
-
----
-
-## Risk Mitigation
-
-| Risk | Impact | Mitigation |
-|:-----|:-------|:-----------|
-| Scope creep | High | Stick to PRD P0 only |
-| Schema changes | High | Follow migration process |
-| Auth bugs | Critical | Test extensively, use proven libraries |
-| Performance | Medium | Implement caching early |
-| Timeline slip | Medium | Build buffer, track daily |
-
----
-
-## AI Generation Prompt
-
-```
-Create an Implementation Plan for [YOUR APP].
-
-Context:
-- MVP Timeline: [WEEKS]
-- Team: [SOLO / TEAM SIZE]
-- Tech Stack: [FROM TECH_STACK.md]
-- Features: [P0 LIST FROM PRD.md]
-
-Generate a phased build plan with:
-1. PHASE 1 (Foundation): Project setup, env config, database
-2. PHASE 2 (Design): Design tokens, core components
-3. PHASE 3 (Auth): Backend endpoints, frontend screens
-4. PHASE 4 (Features): One step per P0 feature with backend + frontend tasks
-5. PHASE 5 (Testing): Unit tests + integration tests
-6. PHASE 6 (Deploy): Staging → Production
-
-For EACH step provide: duration estimate, task checklist, success criteria, doc references.
-Include milestone timeline and risk mitigation table.
-```
+- [ ] User can sign up, verify email, and login
+- [ ] User can add, edit, delete debts (all 4 types)
+- [ ] Dashboard shows total debt + potential savings
+- [ ] Credit Health Indicator works based on entered data
+- [ ] User can browse offers filtered by Sharia compliance
+- [ ] Offer comparison view shows current vs. best offer with savings
+- [ ] Offer acceptance captures lead (name, phone, preferred time)
+- [ ] Push notifications work for all 3 trigger types
+- [ ] "Coming Soon" modals work for UAE Pass, AECB Sync, AECB Score
+- [ ] Dark mode works across all screens
+- [ ] App builds and runs on TestFlight successfully
+- [ ] No crashes on iPhone 13+ running iOS 16+

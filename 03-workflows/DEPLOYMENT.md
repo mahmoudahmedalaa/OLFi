@@ -12,31 +12,45 @@
 
 ---
 
-## Mobile App Deployment (EAS / Expo)
+## Mobile App Deployment (Local Xcode)
 
-### Development Build
+> **Always use local Xcode builds.** Never use EAS Build or other paid cloud build services. See `XCODE_GUIDE.md` for full details.
+
+### Quick Test on Your Phone (Debug)
 ```bash
-# Build for testing on physical device
-eas build --profile development --platform ios
-eas build --profile development --platform android
+# Plug iPhone in via USB
+open ios/YourApp.xcworkspace
+# In Xcode: Select your iPhone → Press Cmd+R
 ```
 
-### Staging / Preview Build
+### Production Build (TestFlight / App Store)
 ```bash
-eas build --profile preview --platform ios
+# One command — builds, signs, exports IPA
+./build-ios.sh
 ```
 
-### Production Build
-```bash
-# Build for App Store submission
-eas build --profile production --platform ios
-eas build --profile production --platform android
+### Upload to TestFlight
 ```
+Xcode → Window → Organizer → Select archive → Distribute App
+→ App Store Connect → Upload
+```
+
+### ⚠️ App Store Connect Configuration (BEFORE Submitting)
+> See `../05-checklists/APP_STORE.md` for the full detailed checklist.
+
+Before submitting any build for App Store Review, you MUST complete these in App Store Connect:
+
+1. **Create Subscription Group**: MONETIZATION → Subscriptions → "+" → Create group
+2. **Create Subscriptions**: Inside group → "+" → Add each subscription with pricing, localization, review screenshot + notes
+3. **Create Group Localization**: Bottom of group page → Localization → Create (display name + app name)
+4. **Set Legal URLs**: General → App Information → Privacy Policy URL + License Agreement (switch to Custom EULA)
+5. **Add Subscription Info to Description**: Include pricing, renewal terms, and legal URLs at bottom of description
+6. **Attach Subscriptions to Version**: In your version page, scroll to "In-App Purchases and Subscriptions" → attach all products
+7. **Sign Paid Applications Agreement**: Agreements, Tax, and Banking → complete all forms
 
 ### Submit to App Store
-```bash
-eas submit --platform ios
-eas submit --platform android
+```
+App Store Connect → Your App → Add Build → Attach IAPs → Submit for Review
 ```
 
 ### Over-the-Air Updates (JS only)
@@ -45,7 +59,7 @@ eas submit --platform android
 eas update --branch production --message "Bug fix: [description]"
 ```
 
-> ⚠️ OTA updates only work for JavaScript changes. Native module additions require a full build.
+> ⚠️ OTA updates only work for JavaScript changes. Native module additions require a full build via `./build-ios.sh`.
 
 ---
 
@@ -72,13 +86,23 @@ npm run start  # Verify locally before deploying
 
 Before ANY production deployment:
 
+### Code & Build
 - [ ] All tests pass
 - [ ] `tsc --noEmit` has no errors
 - [ ] No `console.log` statements (use `__DEV__` guards)
 - [ ] Production environment variables set
 - [ ] Debug tools stripped (see `PRODUCTION_HARDENING.md`)
 - [ ] Staging tested end-to-end
+- [ ] Build number incremented in `Info.plist`
 - [ ] Git tag created for the version
+
+### App Store Connect (if submitting to App Store)
+- [ ] IAP products created with screenshots + review notes (status: "Ready to Submit")
+- [ ] IAP products attached to the app version
+- [ ] Privacy Policy URL set in App Information
+- [ ] EULA / Terms of Use URL set in App Information OR in description
+- [ ] App Description includes subscription disclosure (pricing, renewal, management)
+- [ ] Paid Applications Agreement signed (if first submission with IAP)
 
 ---
 

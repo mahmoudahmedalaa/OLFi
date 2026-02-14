@@ -1,0 +1,46 @@
+# ========================================
+# BuyOut App — .gitignore
+# ========================================
+
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native (regenerated via `npx expo prebuild`)
+ios/
+android/
+.kotlin/
+
+# Metro
+.metro-health-check*
+
+# Debug logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+
+# Env
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Expo template leftovers
+app-example/
+
+# Build artifacts
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem

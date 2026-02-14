@@ -1,168 +1,273 @@
-# Backend Architecture & Database Structure
+# Backend Structure — BuyOut MVP
 
-> Database schema, API contracts, auth logic. Every table, relationship, and endpoint documented before writing code.
+> Supabase-powered backend with PostgreSQL, Edge Functions, Auth, and Realtime.
+
+---
 
 ## 1. Architecture Overview
 
-| Dimension | Decision |
-|:----------|:---------|
-| **Pattern** | [REST API / GraphQL / BaaS (Firebase)] |
-| **Auth Strategy** | [JWT / Session / Firebase Auth / OAuth] |
-| **Data Flow** | Client → API → Business Logic → Database |
-| **Caching** | [Redis / In-memory / CDN / None for MVP] |
+```
+┌─────────────────────────────────────────────────┐
+│                 React Native App                 │
+│          (Expo + Supabase JS Client)            │
+└──────────────────────┬──────────────────────────┘
+                       │ HTTPS
+┌──────────────────────▼──────────────────────────┐
+│              Supabase Platform                   │
+│                                                  │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │
+│  │   Auth    │  │ Storage  │  │ Edge Functions│  │
+│  │ (GoTrue) │  │  (S3)    │  │   (Deno)     │  │
+│  └────┬─────┘  └──────────┘  └──────┬───────┘  │
+│       │                              │          │
+│  ┌────▼──────────────────────────────▼───────┐  │
+│  │           PostgreSQL Database              │  │
+│  │  + Row Level Security (RLS)                │  │
+│  │  + Realtime (WAL subscriptions)            │  │
+│  └───────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────┘
+```
 
 ---
 
 ## 2. Database Schema
 
-### Database: [PostgreSQL X.X / Firestore / MongoDB]
-- **ORM**: [Prisma / TypeORM / None (BaaS)]
-- **Naming**: snake_case for tables/columns
-- **Timestamps**: All tables include `created_at`, `updated_at`
+### Core Tables
 
-### Entity Relationship Diagram
-```
-[Users] ──1:N──→ [Posts]
-[Users] ──1:N──→ [Comments]
-[Posts]  ──1:N──→ [Comments]
-[Users] ──N:M──→ [Posts] via [Likes]
-```
-
-### Table: `users`
-
-| Column | Type | Constraints | Description |
-|:-------|:-----|:------------|:------------|
-| id | UUID | PK, DEFAULT uuid_v4() | Unique identifier |
-| email | VARCHAR(255) | UNIQUE, NOT NULL | Login email |
-| password_hash | VARCHAR(255) | NOT NULL | Bcrypt (12 rounds) |
-| display_name | VARCHAR(255) | NOT NULL | Public name |
-| avatar_url | TEXT | NULL | Profile image URL |
-| role | ENUM('user','admin') | DEFAULT 'user' | Auth level |
-| created_at | TIMESTAMP | DEFAULT NOW() | |
-| updated_at | TIMESTAMP | DEFAULT NOW() | |
-
-**Indexes**: `idx_users_email` ON (email)
-
-### Table: [your_entity]
-
-<!-- Copy the table format above for each entity -->
-
----
-
-## 3. API Endpoints
-
-### Authentication
-
-#### POST `/api/auth/register`
-- **Access**: Public
-- **Body**: `{ email, password, display_name }`
-- **Validation**: email (valid format, unique), password (min 8 chars), name (2-255 chars)
-- **Response 201**: `{ user: { id, email, display_name } }`
-- **Errors**: 400 (validation), 409 (email exists)
-- **Side Effects**: Create user, send verification email
-
-#### POST `/api/auth/login`
-- **Access**: Public
-- **Body**: `{ email, password }`
-- **Response 200**: `{ access_token, refresh_token, user }`
-- **Errors**: 401 (invalid credentials), 403 (unverified email), 429 (rate limited)
-- **Side Effects**: Update `last_login_at`, create session
-
-#### POST `/api/auth/refresh`
-- **Access**: Authenticated (refresh token)
-- **Response 200**: `{ access_token }`
-- **Errors**: 401 (expired/invalid token)
-
-### Core Resources
-
-#### GET `/api/[resources]`
-- **Access**: [Public / Authenticated]
-- **Query Params**: `page`, `limit`, `sort`
-- **Response 200**: `{ data: [...], pagination: { page, limit, total, pages } }`
-- **Caching**: key `resources:list:page:{page}`, TTL 5 min
-
-#### POST `/api/[resources]`
-- **Access**: Authenticated
-- **Body**: `{ ... }`
-- **Validation**: [field rules]
-- **Response 201**: `{ data: { ... } }`
-- **Errors**: 400 (validation), 401 (unauthorized)
-
-#### GET `/api/[resources]/:id`
-#### PUT `/api/[resources]/:id`
-#### DELETE `/api/[resources]/:id`
-
----
-
-## 4. Authentication & Authorization
-
-### Token Structure (JWT)
-- **Access Token**: 15 min expiry — `{ sub, email, role, iat, exp }`
-- **Refresh Token**: 7 day expiry — `{ sub, session_id, iat, exp }`
-
-### Authorization Levels
-| Level | Routes | Required |
-|:------|:-------|:---------|
-| **Public** | GET /resources, auth endpoints | Nothing |
-| **Authenticated** | POST/PUT/DELETE resources | Valid access token |
-| **Admin** | User management, bulk operations | role: admin |
-
----
-
-## 5. Error Handling
-
-### Standard Error Response
-```json
-{
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Validation failed",
-    "details": [{ "field": "email", "message": "Already exists" }]
-  }
-}
+#### `profiles` — Extended user info
+```sql
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT NOT NULL,
+  phone TEXT,
+  nationality TEXT,
+  employment_type TEXT CHECK (employment_type IN ('public', 'private', 'self_employed')),
+  monthly_salary_fils BIGINT,  -- Optional, stored in fils (1 AED = 100 fils)
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
 ```
 
-### Error Codes
-| Code | HTTP | When |
-|:-----|:-----|:-----|
-| VALIDATION_ERROR | 400 | Invalid input |
-| UNAUTHORIZED | 401 | Missing/expired token |
-| FORBIDDEN | 403 | Insufficient permissions |
-| NOT_FOUND | 404 | Resource doesn't exist |
-| CONFLICT | 409 | Duplicate / state conflict |
-| RATE_LIMITED | 429 | Too many requests |
-| SERVER_ERROR | 500 | Unexpected failure |
+#### `debts` — User's liabilities
+```sql
+CREATE TABLE debts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  bank_name TEXT NOT NULL,
+  debt_type TEXT NOT NULL CHECK (debt_type IN ('personal_loan', 'auto_loan', 'credit_card', 'bnpl')),
+  outstanding_amount_fils BIGINT NOT NULL,  -- Stored in fils
+  monthly_payment_fils BIGINT NOT NULL,
+  interest_rate DECIMAL(5,2) NOT NULL,  -- e.g., 14.50
+  remaining_tenure_months INTEGER NOT NULL,
+  compliance_type TEXT NOT NULL CHECK (compliance_type IN ('sharia', 'conventional', 'not_sure')),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+#### `offers` — Simulated bank offers
+```sql
+CREATE TABLE offers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  bank_name TEXT NOT NULL,
+  bank_logo_url TEXT,
+  offer_type TEXT NOT NULL CHECK (offer_type IN ('personal_loan', 'auto_loan', 'credit_card', 'bnpl')),
+  compliance_type TEXT NOT NULL CHECK (compliance_type IN ('sharia', 'conventional')),
+  interest_rate DECIMAL(5,2) NOT NULL,
+  min_amount_fils BIGINT,
+  max_amount_fils BIGINT,
+  min_tenure_months INTEGER,
+  max_tenure_months INTEGER,
+  processing_fee_percent DECIMAL(4,2),
+  early_settlement_fee_percent DECIMAL(4,2),
+  salary_transfer_required BOOLEAN DEFAULT false,
+  special_terms TEXT,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+#### `offer_applications` — When user accepts an offer (lead capture)
+```sql
+CREATE TABLE offer_applications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES profiles(id),
+  debt_id UUID NOT NULL REFERENCES debts(id),
+  offer_id UUID NOT NULL REFERENCES offers(id),
+  status TEXT NOT NULL DEFAULT 'submitted' CHECK (status IN ('submitted', 'under_review', 'documents_requested', 'conditional_approval', 'approved', 'rejected', 'completed')),
+  rejection_reason TEXT,
+  approval_conditions TEXT,
+  contact_name TEXT NOT NULL,
+  contact_phone TEXT NOT NULL,
+  preferred_contact_time TEXT,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+#### `application_status_history` — Timeline of status changes
+```sql
+CREATE TABLE application_status_history (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  application_id UUID NOT NULL REFERENCES offer_applications(id) ON DELETE CASCADE,
+  old_status TEXT,
+  new_status TEXT NOT NULL,
+  changed_by TEXT NOT NULL DEFAULT 'system',  -- 'system', 'ops_team', 'bank_api' (future)
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+#### `application_documents` — Documents uploaded by user
+```sql
+CREATE TABLE application_documents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  application_id UUID NOT NULL REFERENCES offer_applications(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES profiles(id),
+  document_type TEXT NOT NULL CHECK (document_type IN ('salary_certificate', 'bank_statement', 'emirates_id', 'trade_license', 'other')),
+  file_url TEXT NOT NULL,
+  file_name TEXT NOT NULL,
+  file_size_bytes BIGINT,
+  uploaded_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+#### `notifications` — Push notification records
+```sql
+CREATE TABLE notifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN ('new_offer', 'payment_reminder', 'status_change', 'system')),
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  data JSONB,  -- Extra payload (offer_id, debt_id, etc.)
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
 
 ---
 
-## 6. Security
+## 3. Row Level Security (RLS) Policies
 
-| Measure | Implementation |
-|:--------|:---------------|
-| **Passwords** | bcrypt, 12 salt rounds, never returned in API |
-| **Rate Limiting** | Login: 5/15min, Register: 3/hr, API: 100/min |
-| **Input Sanitization** | Strip HTML, allow markdown, enforce max lengths |
-| **CORS** | Configured per environment |
-| **Data Encryption** | At rest (DB) and in transit (HTTPS) |
+> Every table must have RLS enabled. Users see only their own data.
+
+```sql
+-- Profiles: users see/edit only their own
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Debts: users see/manage only their own
+ALTER TABLE debts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own debts" ON debts FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own debts" ON debts FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users update own debts" ON debts FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users delete own debts" ON debts FOR DELETE USING (auth.uid() = user_id);
+
+-- Offers: public read (simulated offers visible to all authenticated users)
+ALTER TABLE offers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Authenticated users read offers" ON offers FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Offer Applications: users see only their own
+ALTER TABLE offer_applications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own applications" ON offer_applications FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users create applications" ON offer_applications FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Notifications: users see only their own
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own notifications" ON notifications FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users update own notifications" ON notifications FOR UPDATE USING (auth.uid() = user_id);
+```
 
 ---
 
-## AI Generation Prompt
+## 4. Edge Functions
+
+| Function | Trigger | Purpose |
+|:---------|:--------|:--------|
+| `calculate-savings` | On debt creation/update | Matches user debt against offers, calculates potential savings |
+| `generate-credit-health` | On debt creation/update | Estimates credit health based on total debt, DBR, debt count |
+| `submit-application` | On offer acceptance | Creates application record, triggers notification |
+| `send-notification` | On application status change / new offer match | Sends push notification to device |
+
+---
+
+## 5. Supabase Auth Configuration
+
+| Provider | Status | Config |
+|:---------|:-------|:-------|
+| Email + Password | ✅ Active | Email verification required |
+| Google OAuth | ✅ Active | Google Cloud Console OAuth credentials |
+| Apple Sign-In | ✅ Active | Apple Developer account |
+| Phone OTP | ✅ Active | Twilio integration (Supabase built-in) |
+| UAE Pass | 🟡 Coming Soon | Placeholder only |
+
+---
+
+## 6. Realtime Subscriptions
+
+| Subscription | What It Does |
+|:-------------|:-------------|
+| `notifications` table changes | Badge count on profile tab, in-app notification list |
+| `offer_applications` status changes | Offer status updates pushed to UI |
+| `offers` new inserts | "New offers available" notification trigger |
+
+---
+
+## 7. API Patterns
+
+### Client-Side (supabase-js)
+```typescript
+// Fetch user's debts
+const { data: debts } = await supabase
+  .from('debts')
+  .select('*')
+  .order('created_at', { ascending: false })
+
+// RLS automatically filters to current user's debts
+```
+
+### Edge Function (Deno)
+```typescript
+// calculate-savings function
+Deno.serve(async (req) => {
+  const { debt_id } = await req.json()
+  
+  // Fetch debt + matching offers
+  // Calculate monthly savings per offer
+  // Return ranked offers with savings
+})
+```
+
+---
+
+## 8. Storage Buckets
+
+| Bucket | Purpose | Access |
+|:-------|:--------|:-------|
+| `avatars` | User profile photos | Private (user's own only) |
+| `bank-logos` | Bank logo images | Public (read-only) |
+| `application-documents` | Salary certs, bank statements uploaded during closing flow | Private (user's own only, max 10MB per file) |
+
+---
+
+## 9. Monetary Values — Critical Rule
+
+> [!CAUTION]
+> **ALL monetary values stored as BIGINT in fils (1 AED = 100 fils).** Never use FLOAT or DECIMAL for money.
 
 ```
-Create a Backend Structure document for [YOUR APP].
+AED 45,000.00 → stored as 4500000 (fils)
+AED 1,234.56 → stored as 123456 (fils)
+```
 
-Backend Type: [REST API / BaaS (Firebase/Supabase) / GraphQL]
-Database: [PostgreSQL / Firestore / MongoDB]
-Auth Strategy: [JWT / Firebase Auth / Session]
-Main Features: [LIST FEATURES THAT NEED DATABASE SUPPORT]
-
-Generate:
-1. SCHEMA: For each table — all columns with exact types, constraints, indexes, relationships. Use markdown tables.
-2. API ENDPOINTS: For each endpoint — method, path, access level, request body (JSON), validation rules, response (JSON), error codes, side effects, caching.
-3. AUTH: Token structure, authorization levels, password security.
-4. ERROR HANDLING: Standard error format and code table.
-5. SECURITY: Rate limiting, input sanitization, CORS, encryption.
-
-CRITICAL: Exact data types with lengths. ALL constraints and indexes. Complete request/response examples.
+Display conversion happens at the UI layer:
+```typescript
+const displayAmount = (fils: number) => 
+  new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED' })
+    .format(fils / 100)
 ```

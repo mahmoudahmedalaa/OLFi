@@ -1,197 +1,186 @@
-# Application Flow & Navigation
+# Application Flow & Navigation — BuyOut MVP
 
-> Every screen, every transition, every user decision mapped out. AI builds exactly what's documented here — no guessing.
+> Maps every screen, transition, and user journey in the app.
+
+---
 
 ## 1. Navigation Structure
 
-### App Architecture
-<!-- Choose one: Tab-based / Stack / Drawer / Hybrid -->
+```
+Tab Bar (Bottom)
+├── 🏠 Dashboard (Home)
+├── 📊 My Debts
+├── 💰 Offers
+├── 👤 Profile
+```
 
-```
-App Root
-├── [Tab/Section 1] — [Purpose]
-│   ├── Screen 1.1 — [Name]
-│   └── Screen 1.2 — [Name]
-├── [Tab/Section 2] — [Purpose]
-│   ├── Screen 2.1 — [Name]
-│   └── Screen 2.2 — [Name]
-├── [Modal Screens]
-│   └── Screen M.1 — [Name]
-└── [Auth Screens]
-    ├── Login
-    ├── Register
-    └── Forgot Password
-```
+**Modal Screens (overlay on any tab):**
+- Add Debt Form
+- Offer Detail + Comparison
+- Offer Acceptance + Lead Capture
+- Coming Soon Previews (UAE Pass, AECB)
+- Credit Health Detail
+- Notifications
 
 ---
 
 ## 2. Screen Specifications
 
-### Screen: [Name]
+### Auth Flow
 
-**Route**: `/path/to/screen`  
-**Access**: Public / Authenticated / Premium  
-**Purpose**: [One sentence]
+| # | Screen | Route | Elements | Next |
+|:--|:-------|:------|:---------|:-----|
+| 1 | **Welcome** | `/welcome` | Logo, tagline "For every loan", Get Started button, "Already have account?" link | → Sign Up or Login |
+| 2 | **Sign Up** | `/auth/signup` | Email input, password, OR divider, Google button, Apple button, UAE Pass button (→ Coming Soon), "Already have account?" | → Email Verification |
+| 3 | **Login** | `/auth/login` | Email + password, OR divider, Google, Apple, UAE Pass (Coming Soon), "Forgot password?" | → Dashboard |
+| 4 | **Email Verification** | `/auth/verify` | OTP/magic link confirmation, resend button | → Onboarding |
+| 5 | **Forgot Password** | `/auth/reset` | Email input → reset link sent confirmation | → Login |
 
-#### Layout
-```
-┌─────────────────────────────┐
-│         Header / Nav        │
-├─────────────────────────────┤
-│                             │
-│       [Main Content]        │
-│                             │
-├─────────────────────────────┤
-│       [Actions / CTA]       │
-└─────────────────────────────┘
-```
+### Onboarding (First-Time Only)
 
-#### Elements
-| Element | Type | Behavior |
-|:--------|:-----|:---------|
-| | Button / Input / List / etc. | What happens on interaction |
+| # | Screen | Route | Elements | Next |
+|:--|:-------|:------|:---------|:-----|
+| 6 | **Welcome Step** | `/onboarding/1` | "See all your debts in one place" + illustration, progress dots | → Step 2 |
+| 7 | **Value Prop** | `/onboarding/2` | "Find better rates across banks" + illustration | → Step 3 |
+| 8 | **CTA Step** | `/onboarding/3` | "Switch with one tap" + "Add Your First Debt" button, "Skip for now" | → Add Debt or Dashboard |
 
-#### States
-- **Loading**: [What shows while data loads]
-- **Empty**: [What shows with no data]
-- **Error**: [What shows on failure]
-- **Success**: [Confirmation behavior]
+### Dashboard (Home Tab)
 
-#### Navigation
-- **Entry**: How users arrive at this screen
-- **Exit**: Where users go from here
-- **Back**: Behavior of back button/gesture
+| # | Screen | Route | Access | Key Elements |
+|:--|:-------|:------|:-------|:-------------|
+| 9 | **Dashboard** | `/(tabs)/dashboard` | Auth required | Hero: Total Debt (AED) + Potential Monthly Savings (green). Credit Health Indicator. Debt cards list (scrollable). "Add Debt" FAB. Quick stats: total debts count, avg rate, best savings opportunity |
+
+**Dashboard States:**
+- Empty: "Add your first debt to get started" + CTA
+- Loading: Skeleton shimmer
+- Populated: Cards with debt summaries
+- Error: Retry banner
+
+### My Debts Tab
+
+| # | Screen | Route | Key Elements |
+|:--|:-------|:------|:-------------|
+| 10 | **Debt List** | `/(tabs)/debts` | List of all debts with: bank logo, type badge, outstanding amount, rate, "See Offers" button. "Connect Bank" banner (→ Coming Soon). "Add Debt" button |
+| 11 | **Debt Detail** | `/debts/[id]` | Full details: bank, type, amount, rate, tenure, monthly payment, compliance type. Payment progress bar. "Edit" and "Delete" actions. Offers available count → link to filtered offers |
+
+### Add / Edit Debt (Modal)
+
+| # | Screen | Route | Key Elements |
+|:--|:-------|:------|:-------------|
+| 12 | **Add Debt** | `/debts/add` | Form: Bank name (searchable picker), Debt type (4 options), Outstanding amount, Monthly payment, Interest/profit rate, Remaining tenure, Compliance (Sharia / Conventional / Not Sure). "Save" button |
+| 13 | **Edit Debt** | `/debts/[id]/edit` | Same form, pre-filled with existing data |
+
+### Offers Tab
+
+| # | Screen | Route | Key Elements |
+|:--|:-------|:------|:-------------|
+| 14 | **Offers Overview** | `/(tabs)/offers` | Debt selector (horizontal scroll of user's debts). Filter toggles: Sharia Only, Lowest Rate, Shortest Tenure. Offer cards: bank logo, rate, tenure, EMI, savings vs current |
+| 15 | **Offer Detail** | `/offers/[id]` | Side-by-side comparison: Current vs This Offer. Savings breakdown: monthly, total over tenure. Bank info + offer terms. "Accept Offer" CTA (green, prominent) |
+| 16 | **Offer Acceptance** | `/offers/[id]/accept` | Step 1: Confirm details. Step 2: Success animation (Lottie checkmark). Step 3: Lead capture form (name, phone, preferred contact time). "Your application has been submitted to [Bank]. A BuyOut advisor will contact you within 24 hours." |
+
+### Application Tracker (Post-Offer Closing Journey)
+
+| # | Screen | Route | Key Elements |
+|:--|:-------|:------|:-------------|
+| 17 | **My Applications** | `/(tabs)/dashboard` (section) | List of submitted applications with status badges: Submitted (blue), Under Review (amber), Docs Requested (orange), Approved (green), Rejected (red), Completed (green check). Tap any to see detail |
+| 18 | **Application Detail** | `/applications/[id]` | Timeline view showing each status change with timestamp. Current status highlighted. Bank name + offer summary at top. Progress bar (visual pipeline). Action buttons based on status (e.g., "Upload Documents" when docs requested) |
+| 19 | **Document Upload** | `/applications/[id]/upload` | Camera capture or file picker. Document type selector (Salary Certificate, Bank Statement, Emirates ID, Trade License, Other). Upload progress indicator. List of already-submitted documents |
+| 20 | **Approval Screen** | `/applications/[id]/approved` | Celebration animation (Lottie confetti). New loan terms summary. "What happens next" — clear steps for the refinance execution. Bank contact info |
+| 21 | **Rejection Screen** | `/applications/[id]/rejected` | Empathetic messaging: "This offer wasn't a match, but we have alternatives." Rejection reason (if provided by bank). "Browse Alternative Offers" CTA → filtered offers excluding this bank |
+
+### Profile Tab
+
+| # | Screen | Route | Key Elements |
+|:--|:-------|:------|:-------------|
+| 22 | **Profile** | `/(tabs)/profile` | User info card (name, email, avatar). Menu: Personal Details, Notification Settings, Credit Health, My Applications, BuyOut Partners, Privacy & Security, About, Language, Rate Us, Invite Friends, Logout |
+| 23 | **Personal Details** | `/profile/details` | Edit: name, phone, nationality, employment type, salary (optional with tooltip) |
+| 24 | **Notification Settings** | `/profile/notifications` | Toggles: New offers, Payment reminders, Offer status updates, Application updates |
+| 25 | **Credit Health** | `/profile/credit-health` | Health indicator (Healthy/Needs Attention/At Risk). Factors: number of debts, DBR estimate, payment consistency. "Connect AECB for real score" → Coming Soon. Disclaimer text |
+
+### Coming Soon Modals
+
+| Feature | Trigger | Modal Content |
+|:--------|:--------|:-------------|
+| **UAE Pass** | Tap UAE Pass button on auth screen | 3-screen animated preview: Verify Identity → Select Bank → Auto-Sync. "We're integrating UAE Pass. For now, sign up with email or social." |
+| **AECB Bank Sync** | Tap "Connect Your Bank" | 3-screen preview: Connect → Select Accounts → Import Debts. "Automated bank sync coming soon. For now, add your debts manually." |
+| **AECB Credit Score** | Tap "Connect AECB" on credit health | Preview of real score dashboard. "Official AECB score integration coming soon." |
 
 ---
 
 ## 3. User Flows
 
-### Flow 1: First-Time User Experience
-
+### Flow 1: First-Time User (Happy Path)
 ```
-App Launch
-    │
-    ├─ First launch? ─── YES ──→ Welcome Screen
-    │                                  │
-    │                            Onboarding (3-5 steps)
-    │                                  │
-    │                            Auth Screen
-    │                             ├── Sign Up
-    │                             ├── Social Login
-    │                             └── Skip (if allowed)
-    │                                  │
-    │                             Home Screen
-    │
-    └─ Returning user ──→ Home Screen
+Welcome → Sign Up (Email) → Verify Email → Onboarding (3 steps)
+→ Add First Debt → Dashboard (1 debt showing)
+→ Browse Offers → Compare → Accept Offer
+→ Lead Capture → Dashboard (with "Submitted" badge)
+→ [Later] Push notification: "Under Review" → tap → Application Detail
+→ [Later] Push notification: "Documents Requested" → Upload salary cert
+→ [Later] Push notification: "Approved!" → Celebration screen → New loan terms
 ```
 
-### Flow 2: Core Feature Flow
+### Flow 2: Returning User
 ```
-[Map your primary use case here]
-```
-
-### Flow 3: Authentication Flow
-```
-Login Screen
-    │
-    ├── Email/Password
-    │   ├── Valid ──→ Home
-    │   ├── Wrong password ──→ Error message
-    │   └── Unverified ──→ "Check email" message
-    │
-    ├── Social Login (Google/Apple)
-    │   ├── Success ──→ Home
-    │   └── Cancelled ──→ Stay on Login
-    │
-    └── Forgot Password
-        ├── Send reset email ──→ Confirmation
-        └── Error ──→ "Email not found"
+App Open → Biometric Auth → Dashboard
+→ See application status badges on dashboard
+→ Notification: "ADIB has approved your refinance!"
+→ Tap → Approval Screen → See new terms + next steps
 ```
 
-### Flow 4: Settings & Account
+### Flow 3: Investor Demo
 ```
-Settings Screen
-    ├── Profile / Account
-    │   ├── Edit Profile
-    │   ├── Change Password
-    │   └── Delete Account (with confirmation!)
-    ├── Preferences
-    │   ├── Theme (Light/Dark)
-    │   ├── Notifications
-    │   └── Language
-    └── Sign Out (with confirmation)
+Sign Up → Add 3 sample debts (mix of personal, auto, card)
+→ Dashboard shows total + savings
+→ Tap "Connect Your Bank" → See Coming Soon preview
+→ Browse offers → Show Sharia filter
+→ Accept offer → Lead capture flow
+→ Profile → Credit Health → Show Coming Soon AECB
 ```
 
 ---
 
 ## 4. State Transitions
 
-### Authentication States
-```
-ANONYMOUS → REGISTERED → VERIFIED → AUTHENTICATED
-                                         ↕
-                                    SIGNED_OUT
-```
-
-### Data States (per entity)
-```
-LOADING → LOADED → STALE → REFRESHING → LOADED
-              ↓
-           EMPTY
-              ↓
-         ERROR → RETRY → LOADING
+```mermaid
+stateDiagram-v2
+    [*] --> Welcome
+    Welcome --> SignUp
+    Welcome --> Login
+    SignUp --> EmailVerification
+    EmailVerification --> Onboarding
+    Login --> Dashboard
+    Onboarding --> AddDebt
+    Onboarding --> Dashboard
+    AddDebt --> Dashboard
+    Dashboard --> DebtDetail
+    Dashboard --> OffersOverview
+    DebtDetail --> OfferDetail
+    OffersOverview --> OfferDetail
+    OfferDetail --> OfferAcceptance
+    OfferAcceptance --> LeadCapture
+    LeadCapture --> Dashboard
 ```
 
 ---
 
 ## 5. Error Handling UX
 
-| Error Type | User-Facing Message | Action |
-|:-----------|:---------------------|:-------|
-| Network offline | "No internet connection" | Retry button |
-| Auth expired | "Session expired" | Redirect to login |
-| Server error | "Something went wrong" | Retry button |
-| Not found | "Content not available" | Back button |
-| Permission denied | "Upgrade to access" | Upgrade CTA |
+| Error | Screen | Handling |
+|:------|:-------|:---------|
+| Network offline | Any | Banner: "You're offline. Some features may be limited." |
+| Auth failed | Login | Inline error: "Invalid email or password" |
+| Invalid debt data | Add Debt | Field-level validation with Zod. Red border + message |
+| Session expired | Any | Modal: "Session expired. Please sign in again." → Login |
+| Server error | Any | Full-screen: "Something went wrong" + Retry button |
 
 ---
 
-## 6. Deep Linking (if applicable)
+## 6. Deep Linking (Future)
 
-| Link Pattern | Target Screen | Parameters |
-|:-------------|:--------------|:-----------|
-| `app://item/:id` | Item Detail | `id` |
-| `app://settings` | Settings | — |
-
----
-
-## AI Generation Prompt
-
-```
-Create a comprehensive Application Flow document for [YOUR APP].
-
-App Type: [Tab-based mobile / Single-page web / Dashboard]
-Main Features: [LIST 3-5 CORE FEATURES]
-Auth Required: [Yes/No/Optional]
-Platform: [iOS / Android / Web]
-
-Generate documentation with:
-
-1. NAVIGATION STRUCTURE: ASCII tree showing all screens and hierarchy
-2. SCREEN SPECIFICATIONS: For each screen, provide:
-   - Route path
-   - Access level (Public/Auth/Premium)
-   - ASCII layout wireframe
-   - Interactive elements table
-   - States (loading, empty, error, success)
-   - Navigation entry/exit points
-3. USER FLOWS: ASCII flowcharts for:
-   - First-time user experience (onboarding → auth → home)
-   - Core feature primary flow
-   - Authentication (login, register, forgot password)
-   - Settings and account management
-4. STATE TRANSITIONS: Diagrams for auth states and data loading states
-5. ERROR HANDLING: Table mapping error types to user messages and actions
-
-Use ASCII art for wireframes and flowcharts. Be specific about what each element does.
-```
+| Link | Destination |
+|:-----|:------------|
+| `buyout://dashboard` | Dashboard |
+| `buyout://debts/add` | Add Debt form |
+| `buyout://offers?debt=123` | Offers filtered for specific debt |
+| `buyout://notifications` | Notification settings |
