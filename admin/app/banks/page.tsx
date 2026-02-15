@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { fetchBanks, createBank, updateBank, deleteBank } from '@/lib/actions';
 
 interface Bank {
     id: string;
@@ -23,14 +23,14 @@ export default function BanksPage() {
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
 
-    const fetchBanks = async () => {
+    const loadBanks = async () => {
         setLoading(true);
-        const { data } = await supabase.from('banks').select('*').order('name');
-        setBanks(data || []);
+        const data = await fetchBanks();
+        setBanks(data as Bank[]);
         setLoading(false);
     };
 
-    useEffect(() => { fetchBanks(); }, []);
+    useEffect(() => { loadBanks(); }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,16 +45,16 @@ export default function BanksPage() {
         };
 
         if (editing) {
-            await supabase.from('banks').update(payload).eq('id', editing);
+            await updateBank(editing, payload);
         } else {
-            await supabase.from('banks').insert(payload);
+            await createBank(payload);
         }
 
         setForm(emptyForm);
         setEditing(null);
         setShowForm(false);
         setSaving(false);
-        fetchBanks();
+        loadBanks();
     };
 
     const handleEdit = (bank: Bank) => {
@@ -72,8 +72,8 @@ export default function BanksPage() {
 
     const handleDelete = async (id: string) => {
         if (!confirm('Delete this bank? This will also affect related products.')) return;
-        await supabase.from('banks').delete().eq('id', id);
-        fetchBanks();
+        await deleteBank(id);
+        loadBanks();
     };
 
     return (
@@ -88,74 +88,46 @@ export default function BanksPage() {
                 </button>
             </div>
 
-            {/* Form */}
             {showForm && (
                 <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Name *</label>
-                            <input
-                                value={form.name}
-                                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                required
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            />
+                            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" />
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Name (Arabic)</label>
-                            <input
-                                value={form.name_ar}
-                                onChange={(e) => setForm({ ...form, name_ar: e.target.value })}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                                dir="rtl"
-                            />
+                            <input value={form.name_ar} onChange={(e) => setForm({ ...form, name_ar: e.target.value })}
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" dir="rtl" />
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Logo URL</label>
-                            <input
-                                value={form.logo_url}
-                                onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            />
+                            <input value={form.logo_url} onChange={(e) => setForm({ ...form, logo_url: e.target.value })}
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" />
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Website URL</label>
-                            <input
-                                value={form.website_url}
-                                onChange={(e) => setForm({ ...form, website_url: e.target.value })}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            />
+                            <input value={form.website_url} onChange={(e) => setForm({ ...form, website_url: e.target.value })}
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" />
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Min Salary (AED)</label>
-                            <input
-                                type="number"
-                                value={form.min_salary}
-                                onChange={(e) => setForm({ ...form, min_salary: e.target.value })}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            />
+                            <input type="number" value={form.min_salary} onChange={(e) => setForm({ ...form, min_salary: e.target.value })}
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" />
                         </div>
                         <div className="flex items-center gap-3 pt-6">
-                            <input
-                                type="checkbox"
-                                checked={form.is_islamic}
-                                onChange={(e) => setForm({ ...form, is_islamic: e.target.checked })}
-                                className="w-4 h-4 accent-emerald-500"
-                            />
+                            <input type="checkbox" checked={form.is_islamic} onChange={(e) => setForm({ ...form, is_islamic: e.target.checked })} className="w-4 h-4 accent-emerald-500" />
                             <label className="text-sm text-gray-300">Islamic Banking</label>
                         </div>
                     </div>
-                    <button
-                        type="submit"
-                        disabled={saving}
-                        className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
-                    >
+                    <button type="submit" disabled={saving}
+                        className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors">
                         {saving ? 'Saving...' : editing ? 'Update Bank' : 'Add Bank'}
                     </button>
                 </form>
             )}
 
-            {/* Table */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
                 {loading ? (
                     <div className="p-12 text-center text-gray-500">Loading...</div>
@@ -181,9 +153,7 @@ export default function BanksPage() {
                                     </td>
                                     <td className="px-6 py-4 text-gray-400" dir="rtl">{bank.name_ar || '—'}</td>
                                     <td className="px-6 py-4 text-center">
-                                        {bank.is_islamic ? (
-                                            <span className="px-2 py-1 rounded-full text-xs bg-emerald-500/10 text-emerald-400">Yes</span>
-                                        ) : '—'}
+                                        {bank.is_islamic ? <span className="px-2 py-1 rounded-full text-xs bg-emerald-500/10 text-emerald-400">Yes</span> : '—'}
                                     </td>
                                     <td className="px-6 py-4 text-right text-gray-300">
                                         {bank.min_salary ? `AED ${Number(bank.min_salary).toLocaleString()}` : '—'}

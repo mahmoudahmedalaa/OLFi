@@ -1,15 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import {
+    fetchNotifications, fetchUsersList,
+    sendNotification, broadcastNotification, deleteNotification,
+} from '@/lib/actions';
 
 interface Notification {
-    id: string;
-    user_id: string;
-    title: string;
-    body: string;
-    type: string;
-    is_read: boolean;
-    created_at: string;
+    id: string; user_id: string; title: string; body: string;
+    type: string; is_read: boolean; created_at: string;
 }
 
 export default function NotificationsPage() {
@@ -21,63 +19,40 @@ export default function NotificationsPage() {
     const [sending, setSending] = useState(false);
     const [broadcastMode, setBroadcastMode] = useState(false);
 
-    const fetchData = async () => {
+    const loadData = async () => {
         setLoading(true);
-        const [{ data: notifs }, { data: profiles }] = await Promise.all([
-            supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(100),
-            supabase.from('profiles').select('id, first_name, last_name, full_name'),
-        ]);
-        setNotifications(notifs || []);
-        setUsers((profiles || []).map((p: any) => ({
-            id: p.id,
-            name: p.first_name ? `${p.first_name} ${p.last_name || ''}`.trim() : p.full_name || 'User',
-        })));
+        const [notifs, userList] = await Promise.all([fetchNotifications(), fetchUsersList()]);
+        setNotifications(notifs as Notification[]);
+        setUsers(userList);
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { loadData(); }, []);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
         setSending(true);
-
         if (broadcastMode) {
-            // Send to all users
-            const inserts = users.map(u => ({
-                user_id: u.id,
-                title: form.title,
-                body: form.body,
-                type: form.type,
-            }));
-            await supabase.from('notifications').insert(inserts);
+            await broadcastNotification(form.title, form.body, form.type);
         } else {
-            await supabase.from('notifications').insert({
-                user_id: form.user_id,
-                title: form.title,
-                body: form.body,
-                type: form.type,
-            });
+            await sendNotification({ user_id: form.user_id, title: form.title, body: form.body, type: form.type });
         }
-
         setForm({ user_id: '', title: '', body: '', type: 'info' });
-        setShowForm(false);
-        setSending(false);
-        fetchData();
+        setShowForm(false); setSending(false);
+        loadData();
     };
 
-    const handleDelete = async (id: string) => {
-        await supabase.from('notifications').delete().eq('id', id);
-        fetchData();
+    const handleDeleteNotif = async (id: string) => {
+        await deleteNotification(id);
+        loadData();
     };
 
     return (
         <div>
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-2xl font-bold">Notifications</h1>
-                <button
-                    onClick={() => setShowForm(!showForm)}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors"
-                >
+                <button onClick={() => setShowForm(!showForm)}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors">
                     {showForm ? 'Cancel' : '+ Send Notification'}
                 </button>
             </div>
@@ -158,11 +133,9 @@ export default function NotificationsPage() {
                                     <td className="px-6 py-4 text-center">
                                         {n.is_read ? '✓' : <span className="w-2 h-2 inline-block bg-emerald-400 rounded-full"></span>}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-gray-400">
-                                        {new Date(n.created_at).toLocaleString()}
-                                    </td>
+                                    <td className="px-6 py-4 text-right text-gray-400">{new Date(n.created_at).toLocaleString()}</td>
                                     <td className="px-6 py-4 text-right">
-                                        <button onClick={() => handleDelete(n.id)} className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                        <button onClick={() => handleDeleteNotif(n.id)} className="text-red-400 hover:text-red-300 text-sm">Delete</button>
                                     </td>
                                 </tr>
                             ))}

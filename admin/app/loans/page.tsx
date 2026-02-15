@@ -1,5 +1,8 @@
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getLoans() {
     const { data } = await supabase
         .from('user_loans')
@@ -65,9 +68,9 @@ export default async function LoansPage() {
                                 <td className="px-6 py-4 text-right text-gray-300">AED {Number(loan.monthly_emi).toLocaleString()}</td>
                                 <td className="px-6 py-4 text-center">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${loan.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
-                                            loan.status === 'completed' ? 'bg-blue-500/10 text-blue-400' :
-                                                loan.status === 'refinanced' ? 'bg-purple-500/10 text-purple-400' :
-                                                    'bg-red-500/10 text-red-400'
+                                        loan.status === 'completed' ? 'bg-blue-500/10 text-blue-400' :
+                                            loan.status === 'refinanced' ? 'bg-purple-500/10 text-purple-400' :
+                                                'bg-red-500/10 text-red-400'
                                         }`}>
                                         {loan.status}
                                     </span>

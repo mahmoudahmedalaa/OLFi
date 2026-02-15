@@ -1,5 +1,8 @@
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getStats() {
   const [banks, products, users, loans] = await Promise.all([
     supabase.from('banks').select('*', { count: 'exact', head: true }),
@@ -77,8 +80,8 @@ export default async function Dashboard() {
                 <td className="px-6 py-4 text-right">AED {Number(loan.remaining_amount).toLocaleString()}</td>
                 <td className="px-6 py-4 text-center">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${loan.status === 'active' ? 'bg-emerald-500/10 text-emerald-400' :
-                      loan.status === 'completed' ? 'bg-blue-500/10 text-blue-400' :
-                        'bg-red-500/10 text-red-400'
+                    loan.status === 'completed' ? 'bg-blue-500/10 text-blue-400' :
+                      'bg-red-500/10 text-red-400'
                     }`}>
                     {loan.status}
                   </span>

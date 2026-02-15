@@ -1,5 +1,8 @@
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getUsers() {
     // Fetch profiles and join with auth.users is not possible directly via client,
     // but profiles has all we need
@@ -61,8 +64,8 @@ export default async function UsersPage() {
                                 </td>
                                 <td className="px-6 py-4 text-center">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${u.kyc_status === 'verified' ? 'bg-emerald-500/10 text-emerald-400' :
-                                            u.kyc_status === 'rejected' ? 'bg-red-500/10 text-red-400' :
-                                                'bg-yellow-500/10 text-yellow-400'
+                                        u.kyc_status === 'rejected' ? 'bg-red-500/10 text-red-400' :
+                                            'bg-yellow-500/10 text-yellow-400'
                                         }`}>
                                         {u.kyc_status || 'pending'}
                                     </span>

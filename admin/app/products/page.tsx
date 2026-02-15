@@ -1,30 +1,22 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import {
+    fetchProducts, fetchBanksList,
+    createProduct, updateProduct, deleteProduct, toggleProductActive,
+} from '@/lib/actions';
 
 interface Bank { id: string; name: string; }
 interface Product {
-    id: string;
-    bank_id: string;
-    product_type: string;
-    name: string;
-    interest_rate_min: number | null;
-    interest_rate_max: number | null;
-    min_amount: number | null;
-    max_amount: number | null;
-    min_tenure_months: number | null;
-    max_tenure_months: number | null;
-    processing_fee_pct: number | null;
-    early_settlement_fee_pct: number | null;
-    requires_salary_transfer: boolean;
-    features: string[];
-    is_active: boolean;
-    created_at: string;
-    banks?: Bank;
+    id: string; bank_id: string; product_type: string; name: string;
+    interest_rate_min: number | null; interest_rate_max: number | null;
+    min_amount: number | null; max_amount: number | null;
+    min_tenure_months: number | null; max_tenure_months: number | null;
+    processing_fee_pct: number | null; early_settlement_fee_pct: number | null;
+    requires_salary_transfer: boolean; features: string[]; is_active: boolean;
+    created_at: string; banks?: { name: string };
 }
 
 const TYPES = ['personal', 'auto', 'mortgage', 'credit_card', 'business'];
-
 const emptyForm = {
     bank_id: '', product_type: 'personal', name: '',
     interest_rate_min: '', interest_rate_max: '',
@@ -44,18 +36,15 @@ export default function ProductsPage() {
     const [saving, setSaving] = useState(false);
     const [filterType, setFilterType] = useState('all');
 
-    const fetchData = async () => {
+    const loadData = async () => {
         setLoading(true);
-        const [{ data: prods }, { data: bks }] = await Promise.all([
-            supabase.from('bank_products').select('*, banks(name)').order('name'),
-            supabase.from('banks').select('id, name').order('name'),
-        ]);
-        setProducts(prods || []);
-        setBanks(bks || []);
+        const [prods, bks] = await Promise.all([fetchProducts(), fetchBanksList()]);
+        setProducts(prods as Product[]);
+        setBanks(bks as Bank[]);
         setLoading(false);
     };
 
-    useEffect(() => { fetchData(); }, []);
+    useEffect(() => { loadData(); }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -76,25 +65,15 @@ export default function ProductsPage() {
             features: form.features ? form.features.split(',').map(s => s.trim()).filter(Boolean) : [],
             is_active: form.is_active,
         };
-
-        if (editing) {
-            await supabase.from('bank_products').update(payload).eq('id', editing);
-        } else {
-            await supabase.from('bank_products').insert(payload);
-        }
-
-        setForm(emptyForm);
-        setEditing(null);
-        setShowForm(false);
-        setSaving(false);
-        fetchData();
+        if (editing) await updateProduct(editing, payload);
+        else await createProduct(payload);
+        setForm(emptyForm); setEditing(null); setShowForm(false); setSaving(false);
+        loadData();
     };
 
     const handleEdit = (p: Product) => {
         setForm({
-            bank_id: p.bank_id,
-            product_type: p.product_type,
-            name: p.name,
+            bank_id: p.bank_id, product_type: p.product_type, name: p.name,
             interest_rate_min: p.interest_rate_min?.toString() || '',
             interest_rate_max: p.interest_rate_max?.toString() || '',
             min_amount: p.min_amount?.toString() || '',
@@ -107,19 +86,16 @@ export default function ProductsPage() {
             features: Array.isArray(p.features) ? p.features.join(', ') : '',
             is_active: p.is_active,
         });
-        setEditing(p.id);
-        setShowForm(true);
+        setEditing(p.id); setShowForm(true);
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDeleteProduct = async (id: string) => {
         if (!confirm('Delete this product?')) return;
-        await supabase.from('bank_products').delete().eq('id', id);
-        fetchData();
+        await deleteProduct(id); loadData();
     };
 
-    const toggleActive = async (id: string, currentState: boolean) => {
-        await supabase.from('bank_products').update({ is_active: !currentState }).eq('id', id);
-        fetchData();
+    const handleToggle = async (id: string, active: boolean) => {
+        await toggleProductActive(id, active); loadData();
     };
 
     const filtered = filterType === 'all' ? products : products.filter(p => p.product_type === filterType);
@@ -128,48 +104,34 @@ export default function ProductsPage() {
         <div>
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-2xl font-bold">Products</h1>
-                <button
-                    onClick={() => { setForm(emptyForm); setEditing(null); setShowForm(!showForm); }}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors"
-                >
+                <button onClick={() => { setForm(emptyForm); setEditing(null); setShowForm(!showForm); }}
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium transition-colors">
                     {showForm ? 'Cancel' : '+ Add Product'}
                 </button>
             </div>
 
-            {/* Form */}
             {showForm && (
                 <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Bank *</label>
-                            <select
-                                value={form.bank_id}
-                                onChange={(e) => setForm({ ...form, bank_id: e.target.value })}
-                                required
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            >
+                            <select value={form.bank_id} onChange={(e) => setForm({ ...form, bank_id: e.target.value })} required
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                                 <option value="">Select bank...</option>
                                 {banks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                             </select>
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Type *</label>
-                            <select
-                                value={form.product_type}
-                                onChange={(e) => setForm({ ...form, product_type: e.target.value })}
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            >
+                            <select value={form.product_type} onChange={(e) => setForm({ ...form, product_type: e.target.value })}
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500">
                                 {TYPES.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
                             </select>
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Product Name *</label>
-                            <input
-                                value={form.name}
-                                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                required
-                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500"
-                            />
+                            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required
+                                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" />
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Min Rate %</label>
@@ -213,8 +175,7 @@ export default function ProductsPage() {
                         </div>
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Features (comma-separated)</label>
-                            <input value={form.features} onChange={(e) => setForm({ ...form, features: e.target.value })}
-                                placeholder="e.g. No guarantor, Balance transfer"
+                            <input value={form.features} onChange={(e) => setForm({ ...form, features: e.target.value })} placeholder="e.g. No guarantor, Balance transfer"
                                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500" />
                         </div>
                     </div>
@@ -235,7 +196,6 @@ export default function ProductsPage() {
                 </form>
             )}
 
-            {/* Filters */}
             <div className="flex gap-2 mb-4">
                 {['all', ...TYPES].map(t => (
                     <button key={t} onClick={() => setFilterType(t)}
@@ -246,7 +206,6 @@ export default function ProductsPage() {
                 ))}
             </div>
 
-            {/* Table */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
                 {loading ? (
                     <div className="p-12 text-center text-gray-500">Loading...</div>
@@ -267,11 +226,9 @@ export default function ProductsPage() {
                             {filtered.map((p) => (
                                 <tr key={p.id} className="hover:bg-gray-800/30 transition-colors">
                                     <td className="px-6 py-4 font-medium">{p.name}</td>
-                                    <td className="px-6 py-4 text-gray-300">{(p as any).banks?.name || '—'}</td>
+                                    <td className="px-6 py-4 text-gray-300">{p.banks?.name || '—'}</td>
                                     <td className="px-6 py-4 text-center">
-                                        <span className="px-2 py-1 rounded-full text-xs bg-blue-500/10 text-blue-400 capitalize">
-                                            {p.product_type.replace('_', ' ')}
-                                        </span>
+                                        <span className="px-2 py-1 rounded-full text-xs bg-blue-500/10 text-blue-400 capitalize">{p.product_type.replace('_', ' ')}</span>
                                     </td>
                                     <td className="px-6 py-4 text-right text-gray-300">
                                         {p.interest_rate_min && p.interest_rate_max ? `${p.interest_rate_min}% – ${p.interest_rate_max}%` : '—'}
@@ -280,14 +237,14 @@ export default function ProductsPage() {
                                         {p.min_amount && p.max_amount ? `${Number(p.min_amount).toLocaleString()} – ${Number(p.max_amount).toLocaleString()}` : '—'}
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <button onClick={() => toggleActive(p.id, p.is_active)}
+                                        <button onClick={() => handleToggle(p.id, p.is_active)}
                                             className={`px-2 py-1 rounded-full text-xs font-medium ${p.is_active ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
                                             {p.is_active ? 'Active' : 'Inactive'}
                                         </button>
                                     </td>
                                     <td className="px-6 py-4 text-right space-x-2">
                                         <button onClick={() => handleEdit(p)} className="text-blue-400 hover:text-blue-300 text-sm">Edit</button>
-                                        <button onClick={() => handleDelete(p.id)} className="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                        <button onClick={() => handleDeleteProduct(p.id)} className="text-red-400 hover:text-red-300 text-sm">Delete</button>
                                     </td>
                                 </tr>
                             ))}
