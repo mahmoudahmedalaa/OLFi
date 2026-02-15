@@ -122,6 +122,10 @@ function RootLayoutInner() {
             options={{ presentation: 'modal', title: 'Edit Loan' }}
           />
           <Stack.Screen
+            name="loan-detail"
+            options={{ presentation: 'modal', title: 'Loan Details', headerShown: false }}
+          />
+          <Stack.Screen
             name="notifications"
             options={{ presentation: 'modal', title: 'Notifications' }}
           />

@@ -454,6 +454,8 @@ export default function DashboardScreen() {
                     emi={loan.monthly_emi}
                     progress={progress}
                     theme={theme}
+                    onPress={() => router.push({ pathname: '/loan-detail' as any, params: { loanId: loan.id } })}
+                    savingsEstimate={loan.interest_rate > 3 ? Math.round(loan.monthly_emi * 0.08) : 0}
                   />
                 </View>
               );
@@ -735,6 +737,8 @@ function LoanPreviewCard({
   emi,
   progress,
   theme,
+  onPress,
+  savingsEstimate,
 }: {
   bankName: string;
   type: string;
@@ -744,9 +748,12 @@ function LoanPreviewCard({
   emi: number;
   progress: number;
   theme: Theme;
+  onPress?: () => void;
+  savingsEstimate?: number;
 }) {
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={{
         backgroundColor: theme.colors.card,
         borderRadius: BorderRadius.lg,
@@ -879,6 +886,27 @@ function LoanPreviewCard({
       >
         {Math.round(progress * 100)}% paid of AED {amount.toLocaleString()}
       </Text>
+
+      {/* Savings badge */}
+      {savingsEstimate != null && savingsEstimate > 0 && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: `${Colors.brand.emerald}10`,
+            borderRadius: 8,
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            marginTop: 10,
+            gap: 6,
+          }}
+        >
+          <Ionicons name="trending-down" size={14} color={Colors.brand.emerald} />
+          <Text style={{ fontSize: 12, fontWeight: '600', color: Colors.brand.emerald }}>
+            Potential savings: ~AED {savingsEstimate.toLocaleString()}/mo
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }
