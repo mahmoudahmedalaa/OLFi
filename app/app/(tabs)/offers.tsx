@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 
 interface BankProduct {
     id: string;
@@ -547,9 +548,14 @@ export default function OffersScreen() {
                                                         borderRadius: BorderRadius.md,
                                                         paddingVertical: 14,
                                                         alignItems: 'center',
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'center',
+                                                        gap: 8,
                                                     }}
                                                     activeOpacity={0.8}
+                                                    onPress={() => router.push({ pathname: '/offer-details' as any, params: { productId: product.id } })}
                                                 >
+                                                    <Ionicons name="arrow-forward" size={18} color="#fff" />
                                                     <Text
                                                         style={{
                                                             fontSize: 15,
@@ -557,7 +563,7 @@ export default function OffersScreen() {
                                                             color: '#fff',
                                                         }}
                                                     >
-                                                        Apply Now
+                                                        View Details & Savings
                                                     </Text>
                                                 </TouchableOpacity>
                                             </View>

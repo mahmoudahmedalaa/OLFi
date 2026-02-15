@@ -38,6 +38,7 @@ export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [firstName, setFirstName] = useState('User');
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchLoans = useCallback(async () => {
     if (!user) return;
@@ -80,6 +81,7 @@ export default function DashboardScreen() {
   useEffect(() => {
     fetchLoans();
     fetchFirstName();
+    fetchUnreadCount();
   }, [fetchLoans, fetchFirstName]);
 
   // Re-fetch when screen comes into focus (e.g. after adding a loan)
@@ -94,6 +96,20 @@ export default function DashboardScreen() {
   const totalEmi = activeLoans.reduce((sum, l) => sum + l.monthly_emi, 0);
   // Simple savings estimate: 1% rate improvement across all active loans
   const potentialSavings = Math.round(totalDebt * 0.01);
+
+  const fetchUnreadCount = async () => {
+    if (!user) return;
+    try {
+      const { count, error } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+      if (!error && count !== null) setUnreadCount(count);
+    } catch (e) {
+      // Silently fail
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -152,12 +168,30 @@ export default function DashboardScreen() {
                 borderWidth: 1,
                 borderColor: theme.colors.border,
               }}
+              onPress={() => router.push('/notifications' as any)}
             >
               <Ionicons
                 name="notifications-outline"
                 size={20}
                 color={theme.colors.textPrimary}
               />
+              {unreadCount > 0 && (
+                <View style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  width: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  backgroundColor: Colors.error,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff' }}>
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>
