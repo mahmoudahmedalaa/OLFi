@@ -6,7 +6,6 @@ import {
     TouchableOpacity,
     Alert,
     ActivityIndicator,
-    Linking,
     Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,6 +41,7 @@ export default function OfferDetailsScreen() {
     const [userLoans, setUserLoans] = useState<any[]>([]);
     const [refinanceResults, setRefinanceResults] = useState<RefinanceResult[]>([]);
     const [selectedLoanId, setSelectedLoanId] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
     const fadeAnim = useState(new Animated.Value(0))[0];
 
     const fetchData = useCallback(async () => {
@@ -148,15 +148,69 @@ export default function OfferDetailsScreen() {
         : [];
 
     const handleApply = async () => {
-        if (!product?.bank?.website_url) {
-            Alert.alert('Coming Soon', 'Direct application will be available soon. Visit the bank\'s website to apply.');
+        if (!selectedResult || !selectedLoan || !product || !user) {
+            Alert.alert(
+                'Select a Loan',
+                'Please add and select a loan to compare savings before applying.'
+            );
             return;
         }
-        try {
-            await Linking.openURL(product.bank.website_url);
-        } catch {
-            Alert.alert('Error', 'Could not open bank website.');
-        }
+
+        Alert.alert(
+            'Apply for Refinance',
+            `Submit your application to refinance your ${selectedLoan.bank_name || ''} loan with ${product.bank?.name}?\n\nProjected savings: ${formatAED(selectedResult.monthlySavings)}/month`,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Submit Application',
+                    style: 'default',
+                    onPress: async () => {
+                        setSubmitting(true);
+                        try {
+                            const { error } = await supabase
+                                .from('refinance_applications')
+                                .insert({
+                                    user_id: user.id,
+                                    user_loan_id: selectedLoan.id,
+                                    bank_product_id: product.id,
+                                    status: 'submitted',
+                                    monthly_savings: selectedResult.monthlySavings,
+                                    total_savings: selectedResult.netSavings,
+                                    new_rate: selectedResult.newRate,
+                                    new_emi: selectedResult.newEmi,
+                                });
+
+                            if (error) throw error;
+
+                            // Send a notification
+                            await supabase.from('notifications').insert({
+                                user_id: user.id,
+                                title: 'Application Submitted!',
+                                body: `Your refinance application for ${product.bank?.name} has been submitted. We'll review it shortly.`,
+                                type: 'offer',
+                                data: { screen: 'my-applications' },
+                            });
+
+                            Alert.alert(
+                                'Application Submitted! 🎉',
+                                'Your refinance application has been submitted successfully. You can track its status in My Applications.',
+                                [
+                                    {
+                                        text: 'View My Applications',
+                                        onPress: () => router.replace('/my-applications' as any),
+                                    },
+                                ]
+                            );
+                        } catch (e) {
+                            console.error('Failed to submit application:', e);
+                            Alert.alert('Error', 'Failed to submit your application. Please try again.');
+                        } finally {
+                            setSubmitting(false);
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     if (loading) {
@@ -499,9 +553,9 @@ export default function OfferDetailsScreen() {
                 borderTopWidth: 1,
                 borderTopColor: theme.colors.border,
             }}>
-                <TouchableOpacity onPress={handleApply} activeOpacity={0.8}>
+                <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting}>
                     <LinearGradient
-                        colors={['#10B981', '#059669']}
+                        colors={submitting ? ['#94A3B8', '#64748B'] : ['#10B981', '#059669']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={{
@@ -513,10 +567,16 @@ export default function OfferDetailsScreen() {
                             gap: 8,
                         }}
                     >
-                        <Ionicons name="open-outline" size={20} color="#fff" />
-                        <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>
-                            Apply at {product.bank?.name || 'Bank'}
-                        </Text>
+                        {submitting ? (
+                            <ActivityIndicator color="#fff" size="small" />
+                        ) : (
+                            <>
+                                <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                                <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>
+                                    Apply for Refinance
+                                </Text>
+                            </>
+                        )}
                     </LinearGradient>
                 </TouchableOpacity>
             </View>

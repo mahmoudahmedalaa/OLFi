@@ -192,3 +192,111 @@ export function formatAED(amount: number): string {
     }
     return `AED ${amount.toLocaleString()}`;
 }
+
+// ─── Financial Health Report Functions ──────────────────────────────────
+
+export interface HealthScore {
+    score: 'excellent' | 'good' | 'fair' | 'poor';
+    color: string;
+    label: string;
+    description: string;
+    percentage: number; // 0-100 for gauge display
+}
+
+/**
+ * Calculate Debt-to-Income ratio
+ * DTI = (Total Monthly Debt Payments / Gross Monthly Income) × 100
+ */
+export function calculateDebtToIncome(totalMonthlyDebt: number, monthlySalary: number): number {
+    if (monthlySalary <= 0) return 0;
+    return Math.round((totalMonthlyDebt / monthlySalary) * 1000) / 10; // one decimal
+}
+
+/**
+ * Get a health score based on DTI ratio
+ * UAE banking standards:
+ *  - Excellent: DTI < 20%
+ *  - Good: 20-35%
+ *  - Fair: 35-50%
+ *  - Poor: > 50%
+ */
+export function getHealthScore(dtiRatio: number): HealthScore {
+    if (dtiRatio < 20) {
+        return {
+            score: 'excellent',
+            color: '#10B981', // emerald
+            label: 'Excellent',
+            description: 'Your debt level is very manageable. You have strong financial health.',
+            percentage: Math.max(90, 100 - dtiRatio),
+        };
+    }
+    if (dtiRatio < 35) {
+        return {
+            score: 'good',
+            color: '#3B82F6', // blue
+            label: 'Good',
+            description: 'Your debt is within a healthy range. Keep your payments on track.',
+            percentage: 70 + Math.round((35 - dtiRatio) / 15 * 20),
+        };
+    }
+    if (dtiRatio < 50) {
+        return {
+            score: 'fair',
+            color: '#F59E0B', // amber
+            label: 'Fair',
+            description: 'Your debt burden is moderate. Refinancing could help reduce your payments.',
+            percentage: 40 + Math.round((50 - dtiRatio) / 15 * 30),
+        };
+    }
+    return {
+        score: 'poor',
+        color: '#EF4444', // red
+        label: 'Needs Attention',
+        description: 'Your debt burden is high. We strongly recommend exploring refinance options.',
+        percentage: Math.max(10, 40 - Math.round((dtiRatio - 50) / 2)),
+    };
+}
+
+/**
+ * Calculate total interest burden across all loans
+ * Returns the total interest remaining to be paid
+ */
+export function calculateInterestBurden(
+    loans: { remainingAmount: number; monthlyEmi: number; interestRate: number }[]
+): number {
+    let totalInterest = 0;
+    for (const loan of loans) {
+        const months = estimateRemainingMonths(loan.remainingAmount, loan.monthlyEmi, loan.interestRate);
+        const totalPayments = loan.monthlyEmi * months;
+        totalInterest += Math.max(0, totalPayments - loan.remainingAmount);
+    }
+    return Math.round(totalInterest);
+}
+
+/**
+ * Calculate total potential savings across all loans against all products
+ */
+export function calculateTotalPotentialSavings(
+    loans: LoanDetails[],
+    products: BankOffer[]
+): { totalMonthlySavings: number; totalNetSavings: number; bestOfferCount: number } {
+    let totalMonthlySavings = 0;
+    let totalNetSavings = 0;
+    let bestOfferCount = 0;
+
+    for (const loan of loans) {
+        const results: RefinanceResult[] = [];
+        for (const product of products) {
+            const result = calculateRefinanceOffer(loan, product);
+            if (result) results.push(result);
+        }
+        const ranked = rankOffers(results);
+        if (ranked.length > 0) {
+            totalMonthlySavings += ranked[0].monthlySavings;
+            totalNetSavings += ranked[0].netSavings;
+            bestOfferCount++;
+        }
+    }
+
+    return { totalMonthlySavings, totalNetSavings, bestOfferCount };
+}

@@ -56,13 +56,13 @@ function useProtectedRoute(onboardingDone: boolean | null) {
     const inOnboarding = segments[0] === ('onboarding' as any);
 
     if (!onboardingDone && !inOnboarding) {
-      // First time → show onboarding
+      // First time → show onboarding (even if signed in)
       router.replace('/onboarding' as any);
-    } else if (!user && !inAuthGroup && !inOnboarding) {
-      // Not signed in → go to Login
+    } else if (onboardingDone && !user && !inAuthGroup && !inOnboarding) {
+      // Onboarding done, not signed in → go to Login
       router.replace('/(auth)/login');
-    } else if (user && (inAuthGroup || inOnboarding)) {
-      // Signed in but still on auth/onboarding screen → go to Dashboard
+    } else if (onboardingDone && user && (inAuthGroup || inOnboarding)) {
+      // Onboarding done + signed in but still on auth/onboarding → go to Dashboard
       router.replace('/(tabs)');
     }
   }, [user, loading, segments, onboardingDone]);
@@ -71,6 +71,7 @@ function useProtectedRoute(onboardingDone: boolean | null) {
 function RootLayoutInner() {
   const { theme } = useTheme();
   const { loading } = useAuth();
+  const segments = useSegments();
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -79,12 +80,24 @@ function RootLayoutInner() {
     }).catch(() => setOnboardingDone(true)); // On error, skip onboarding
   }, []);
 
+  // Re-read onboarding status when returning from onboarding screen
+  useEffect(() => {
+    if (segments[0] !== 'onboarding') {
+      AsyncStorage.getItem('buyout_onboarding_completed').then((val) => {
+        setOnboardingDone(val === 'true');
+      }).catch(() => { });
+    }
+  }, [segments]);
+
   useProtectedRoute(onboardingDone);
 
   useEffect(() => {
     if (!loading) {
-      // Hide splash once auth state is resolved
-      SplashScreen.hideAsync();
+      // Minimum splash display of 1.5s for branding impact
+      const timer = setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 1500);
+      return () => clearTimeout(timer);
     }
   }, [loading]);
 

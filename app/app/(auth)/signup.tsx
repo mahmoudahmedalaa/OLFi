@@ -60,8 +60,13 @@ export default function SignupScreen() {
                         email: email,
                     });
                 }
-                // Navigate to tabs (auth gate will handle redirect)
-                router.replace('/(tabs)');
+                // Profile saved — auth gate will now take over
+                // Since onboarding isn't marked done, user will see onboarding slides
+                Alert.alert(
+                    'Welcome!',
+                    `Account created successfully, ${firstName.trim()}! Let\u2019s get you started.`,
+                );
+                // Auth gate will redirect based on onboarding status
             }
         } catch (e: any) {
             Alert.alert('Error', e.message);

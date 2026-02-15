@@ -8,6 +8,7 @@ const nav = [
     { href: '/products', label: 'Products', icon: '📦' },
     { href: '/users', label: 'Users', icon: '👥' },
     { href: '/loans', label: 'Loans', icon: '💳' },
+    { href: '/applications', label: 'Applications', icon: '📋' },
     { href: '/notifications', label: 'Notifications', icon: '🔔' },
 ];
 
@@ -32,8 +33,8 @@ export default function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
-                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                    : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
                                 }`}
                         >
                             <span className="text-lg">{item.icon}</span>

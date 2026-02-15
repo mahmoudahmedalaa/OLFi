@@ -97,3 +97,72 @@ export async function deleteNotification(id: string) {
     const { error } = await supabase.from('notifications').delete().eq('id', id);
     if (error) throw error;
 }
+
+// ── Applications ────────────────────────────────────
+export async function fetchApplications() {
+    const { data, error } = await supabase
+        .from('refinance_applications')
+        .select(`
+            *,
+            profile:profiles!refinance_applications_user_id_fkey (first_name, last_name, full_name),
+            user_loan:user_loans!refinance_applications_user_loan_id_fkey (bank_name, loan_type, remaining_amount, interest_rate),
+            bank_product:bank_products!refinance_applications_bank_product_id_fkey (name, bank:banks!bank_products_bank_id_fkey (name))
+        `)
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+}
+
+export async function updateApplicationStatus(
+    id: string,
+    status: string,
+    adminNotes?: string | null,
+    rejectionReason?: string | null,
+    userId?: string
+) {
+    const updatePayload: Record<string, unknown> = {
+        status,
+        updated_at: new Date().toISOString(),
+    };
+    if (adminNotes !== undefined) updatePayload.admin_notes = adminNotes;
+    if (rejectionReason !== undefined) updatePayload.rejection_reason = rejectionReason;
+
+    const { error } = await supabase
+        .from('refinance_applications')
+        .update(updatePayload)
+        .eq('id', id);
+    if (error) throw error;
+
+    // Send notification to user
+    if (userId) {
+        const statusLabels: Record<string, string> = {
+            under_review: 'Your application is now under review.',
+            documents_required: 'Additional documents are needed for your application.',
+            approved: 'Congratulations! Your refinance application has been approved! 🎉',
+            rejected: 'Unfortunately, your refinance application could not be approved.',
+        };
+        const body = statusLabels[status] || `Your application status has been updated to: ${status}`;
+        await supabase.from('notifications').insert({
+            user_id: userId,
+            title: 'Application Update',
+            body,
+            type: 'offer',
+            data: { screen: 'my-applications' },
+        });
+    }
+}
+
+export async function fetchApplicationStats() {
+    const { data, error } = await supabase
+        .from('refinance_applications')
+        .select('status');
+    if (error) throw error;
+    const stats: Record<string, number> = {
+        submitted: 0, under_review: 0, documents_required: 0, approved: 0, rejected: 0, total: 0,
+    };
+    for (const app of data || []) {
+        stats.total++;
+        if (stats[app.status] !== undefined) stats[app.status]++;
+    }
+    return stats;
+}
