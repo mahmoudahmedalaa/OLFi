@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -54,8 +55,10 @@ export default async function UsersPage() {
                         {users.map((u: any) => (
                             <tr key={u.id} className="hover:bg-gray-800/30 transition-colors">
                                 <td className="px-6 py-4 font-medium">
-                                    {u.first_name || u.full_name || 'Anonymous'}
-                                    {u.last_name ? ` ${u.last_name}` : ''}
+                                    <Link href={`/users/${u.id}`} className="hover:text-emerald-400 transition-colors">
+                                        {u.first_name || u.full_name || 'Anonymous'}
+                                        {u.last_name ? ` ${u.last_name}` : ''}
+                                    </Link>
                                 </td>
                                 <td className="px-6 py-4 text-gray-300">{u.phone || '—'}</td>
                                 <td className="px-6 py-4 text-gray-300">{u.nationality || '—'}</td>

@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { View, Platform } from 'react-native';
 import { Colors } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { trackScreen } from '@/lib/analytics';
 
 export default function TabLayout() {
   const { theme } = useTheme();
@@ -27,6 +28,12 @@ export default function TabLayout() {
           fontSize: 11,
           fontWeight: '600',
           letterSpacing: 0.2,
+        },
+      }}
+      screenListeners={{
+        tabPress: (e) => {
+          const tabName = e.target?.split('-')[0] || 'unknown';
+          trackScreen(tabName);
         },
       }}
     >

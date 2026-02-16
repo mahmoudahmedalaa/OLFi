@@ -16,6 +16,7 @@ import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useAuth } from '@/lib/auth-context';
 
 const { width } = Dimensions.get('window');
 
@@ -62,6 +63,7 @@ const slides: Slide[] = [
 
 export default function OnboardingScreen() {
     const { theme } = useTheme();
+    const { user } = useAuth();
     const [currentIndex, setCurrentIndex] = useState(0);
     const flatListRef = useRef<FlatList>(null);
     const scrollX = useRef(new Animated.Value(0)).current;
@@ -91,7 +93,12 @@ export default function OnboardingScreen() {
 
     const completeOnboarding = async () => {
         try {
+            // Always set device-level flag
             await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+            // Also set per-user flag if user is logged in
+            if (user) {
+                await AsyncStorage.setItem(`buyout_onboarding_completed_${user.id}`, 'true');
+            }
         } catch {
             // Silently fail — user can still proceed
         }

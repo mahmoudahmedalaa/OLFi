@@ -2,17 +2,24 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@rea
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
+import { Colors, BorderRadius } from '@/lib/constants';
 import '@/global.css';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
+
+const BIOMETRIC_KEY = '@buyout_biometric_lock';
 
 // Custom navigation themes
 const BuyOutDarkTheme = {
@@ -70,24 +77,90 @@ function useProtectedRoute(onboardingDone: boolean | null) {
 
 function RootLayoutInner() {
   const { theme } = useTheme();
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
   const segments = useSegments();
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
+  const [biometricLocked, setBiometricLocked] = useState<boolean | null>(null);
+
+  // Per-user onboarding key: each user gets their own flag
+  const onboardingKey = user
+    ? `buyout_onboarding_completed_${user.id}`
+    : 'buyout_onboarding_completed';
 
   useEffect(() => {
-    AsyncStorage.getItem('buyout_onboarding_completed').then((val) => {
-      setOnboardingDone(val === 'true');
-    }).catch(() => setOnboardingDone(true)); // On error, skip onboarding
-  }, []);
+    if (loading) return;
+
+    const checkOnboarding = async () => {
+      try {
+        // If user is logged in, check their per-user key first
+        if (user) {
+          const userVal = await AsyncStorage.getItem(onboardingKey);
+          if (userVal === 'true') {
+            setOnboardingDone(true);
+            return;
+          }
+          // Migrate device-level flag to per-user if it exists
+          const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
+          if (deviceVal === 'true') {
+            await AsyncStorage.setItem(onboardingKey, 'true');
+            setOnboardingDone(true);
+            return;
+          }
+          // New user on this device — needs onboarding
+          setOnboardingDone(false);
+        } else {
+          // No user — check device-level flag for pre-login onboarding
+          const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
+          setOnboardingDone(deviceVal === 'true');
+        }
+      } catch {
+        setOnboardingDone(false);
+      }
+    };
+
+    checkOnboarding();
+  }, [loading, user, onboardingKey]);
 
   // Re-read onboarding status when returning from onboarding screen
   useEffect(() => {
     if (segments[0] !== 'onboarding') {
-      AsyncStorage.getItem('buyout_onboarding_completed').then((val) => {
+      AsyncStorage.getItem(onboardingKey).then((val) => {
         setOnboardingDone(val === 'true');
       }).catch(() => { });
     }
-  }, [segments]);
+  }, [segments, onboardingKey]);
+
+  // ─── Biometric Lock ────────────────────────────────────────────────
+  useEffect(() => {
+    if (loading || !user) {
+      setBiometricLocked(false);
+      return;
+    }
+    AsyncStorage.getItem(BIOMETRIC_KEY).then((val) => {
+      if (val === 'true') {
+        setBiometricLocked(true);
+      } else {
+        setBiometricLocked(false);
+      }
+    }).catch(() => setBiometricLocked(false));
+  }, [loading, user]);
+
+  const attemptBiometricUnlock = useCallback(async () => {
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: 'Unlock BuyOut',
+      fallbackLabel: 'Use Passcode',
+    });
+    if (result.success) {
+      setBiometricLocked(false);
+    }
+  }, []);
+
+  // Auto-prompt on lock
+  useEffect(() => {
+    if (biometricLocked === true) {
+      attemptBiometricUnlock();
+    }
+  }, [biometricLocked, attemptBiometricUnlock]);
 
   useProtectedRoute(onboardingDone);
 
@@ -126,6 +199,26 @@ function RootLayoutInner() {
             options={{ presentation: 'modal', title: 'Loan Details', headerShown: false }}
           />
           <Stack.Screen
+            name="calculator"
+            options={{ presentation: 'modal', title: 'Calculator', headerShown: false }}
+          />
+          <Stack.Screen
+            name="edit-profile"
+            options={{ presentation: 'modal', title: 'Edit Profile', headerShown: false }}
+          />
+          <Stack.Screen
+            name="notification-settings"
+            options={{ presentation: 'modal', title: 'Notifications', headerShown: false }}
+          />
+          <Stack.Screen
+            name="security-settings"
+            options={{ presentation: 'modal', title: 'Security', headerShown: false }}
+          />
+          <Stack.Screen
+            name="my-applications"
+            options={{ presentation: 'modal', title: 'My Applications', headerShown: false }}
+          />
+          <Stack.Screen
             name="notifications"
             options={{ presentation: 'modal', title: 'Notifications' }}
           />
@@ -139,6 +232,95 @@ function RootLayoutInner() {
           />
         </Stack>
         <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+
+        {/* ─── Biometric Lock Overlay ─────────────────────────────── */}
+        {biometricLocked && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 9999,
+            }}
+          >
+            <LinearGradient
+              colors={theme.isDark ? ['#0F172A', '#1E293B'] : ['#FFFFFF', '#F0FDF4']}
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 40,
+              }}
+            >
+              <Image
+                source={require('@/assets/images/icon.png')}
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 20,
+                  marginBottom: 24,
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: '700',
+                  color: theme.colors.textPrimary,
+                  marginBottom: 8,
+                }}
+              >
+                BuyOut is Locked
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: theme.colors.textSecondary,
+                  textAlign: 'center',
+                  lineHeight: 22,
+                }}
+              >
+                Authenticate with Face ID or Touch ID to access your financial data
+              </Text>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '500',
+                  color: Colors.brand.teal,
+                  fontStyle: 'italic',
+                  letterSpacing: 0.3,
+                  marginBottom: 32,
+                }}
+              >
+                your debt, rewritten
+              </Text>
+              <TouchableOpacity
+                onPress={attemptBiometricUnlock}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['#14B8A6', '#10B981']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 10,
+                    paddingHorizontal: 28,
+                    paddingVertical: 14,
+                    borderRadius: BorderRadius.md,
+                  }}
+                >
+                  <Ionicons name="finger-print" size={22} color="#fff" />
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>
+                    Unlock
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+        )}
       </NavThemeProvider>
     </GluestackUIProvider>
   );

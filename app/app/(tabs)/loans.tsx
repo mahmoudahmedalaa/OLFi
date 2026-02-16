@@ -249,6 +249,7 @@ export default function LoansScreen() {
             {loading ? (
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <ActivityIndicator color={Colors.brand.emerald} size="large" />
+                    <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
                 </View>
             ) : (
                 <FlatList

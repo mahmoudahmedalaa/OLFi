@@ -9,6 +9,7 @@ import {
     Platform,
     ScrollView,
     ActivityIndicator,
+    Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -17,6 +18,7 @@ import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -59,19 +61,15 @@ export default function LoginScreen() {
                 >
                     {/* Logo & Welcome */}
                     <View style={{ alignItems: 'center', marginTop: 48, marginBottom: 40 }}>
-                        <LinearGradient
-                            colors={theme.gradients.brand}
+                        <Image
+                            source={require('@/assets/images/icon.png')}
                             style={{
-                                width: 64,
-                                height: 64,
-                                borderRadius: 20,
-                                alignItems: 'center',
-                                justifyContent: 'center',
+                                width: 72,
+                                height: 72,
+                                borderRadius: 18,
                                 marginBottom: 24,
                             }}
-                        >
-                            <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff' }}>B</Text>
-                        </LinearGradient>
+                        />
                         <Text
                             style={{
                                 fontSize: 28,
@@ -84,12 +82,15 @@ export default function LoginScreen() {
                         </Text>
                         <Text
                             style={{
-                                fontSize: 15,
-                                color: theme.colors.textSecondary,
+                                fontSize: 14,
+                                fontWeight: '500',
+                                color: Colors.brand.teal,
                                 textAlign: 'center',
+                                fontStyle: 'italic',
+                                letterSpacing: 0.3,
                             }}
                         >
-                            Sign in to manage your loans
+                            your debt, rewritten
                         </Text>
                     </View>
 
@@ -219,7 +220,42 @@ export default function LoginScreen() {
                     </TouchableOpacity>
 
                     {/* Forgot Password */}
-                    <TouchableOpacity style={{ alignItems: 'center', marginTop: 16 }}>
+                    <TouchableOpacity
+                        style={{ alignItems: 'center', marginTop: 16 }}
+                        onPress={() => {
+                            Alert.prompt(
+                                'Reset Password',
+                                'Enter your email address and we\'ll send you a password reset link.',
+                                [
+                                    { text: 'Cancel', style: 'cancel' },
+                                    {
+                                        text: 'Send Reset Link',
+                                        onPress: async (inputEmail?: string) => {
+                                            const resetEmail = (inputEmail || email).trim();
+                                            if (!resetEmail) {
+                                                Alert.alert('Error', 'Please enter your email address.');
+                                                return;
+                                            }
+                                            try {
+                                                const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+                                                    redirectTo: 'buyout://reset-password',
+                                                });
+                                                if (error) throw error;
+                                                Alert.alert(
+                                                    'Check Your Email ✉️',
+                                                    `We've sent a password reset link to ${resetEmail}. Check your inbox (and spam folder).`
+                                                );
+                                            } catch (e: any) {
+                                                Alert.alert('Error', e.message || 'Failed to send reset email.');
+                                            }
+                                        },
+                                    },
+                                ],
+                                'plain-text',
+                                email
+                            );
+                        }}
+                    >
                         <Text
                             style={{
                                 fontSize: 13,

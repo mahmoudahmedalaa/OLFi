@@ -45,11 +45,12 @@ export default function SignupScreen() {
         }
         setLoading(true);
         try {
-            const { error } = await signUp(email, password);
+            // Pass name as metadata so it's available immediately via user_metadata
+            const { error } = await signUp(email, password, firstName.trim(), lastName.trim());
             if (error) {
                 Alert.alert('Signup Error', error.message);
             } else {
-                // Save profile with first/last name
+                // Also save to profiles table for richer queries
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
                     await supabase.from('profiles').upsert({
@@ -60,13 +61,11 @@ export default function SignupScreen() {
                         email: email,
                     });
                 }
-                // Profile saved — auth gate will now take over
-                // Since onboarding isn't marked done, user will see onboarding slides
                 Alert.alert(
                     'Welcome!',
                     `Account created successfully, ${firstName.trim()}! Let\u2019s get you started.`,
                 );
-                // Auth gate will redirect based on onboarding status
+                // Auth gate will redirect based on per-user onboarding status
             }
         } catch (e: any) {
             Alert.alert('Error', e.message);
@@ -116,11 +115,14 @@ export default function SignupScreen() {
                         </Text>
                         <Text
                             style={{
-                                fontSize: 15,
-                                color: theme.colors.textSecondary,
+                                fontSize: 14,
+                                fontWeight: '500',
+                                color: Colors.brand.teal,
+                                fontStyle: 'italic',
+                                letterSpacing: 0.3,
                             }}
                         >
-                            Start managing your debts smarter
+                            your debt, rewritten
                         </Text>
                     </View>
 

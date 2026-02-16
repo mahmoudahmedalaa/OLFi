@@ -300,3 +300,61 @@ export function calculateTotalPotentialSavings(
 
     return { totalMonthlySavings, totalNetSavings, bestOfferCount };
 }
+
+// ─── Debt Consolidation Engine ─────────────────────────────────────────
+
+/**
+ * Consolidate multiple loans into a single virtual loan for unified comparison.
+ * This merges remaining amounts and EMIs of selected loans, then compares the
+ * consolidated loan against bank products to find savings.
+ */
+export function consolidateLoans(
+    loans: LoanDetails[]
+): LoanDetails {
+    if (loans.length === 0) {
+        return { remainingAmount: 0, interestRate: 0, monthlyEmi: 0, remainingMonths: 0 };
+    }
+    if (loans.length === 1) return loans[0];
+
+    const totalRemaining = loans.reduce((sum, l) => sum + l.remainingAmount, 0);
+    const totalEmi = loans.reduce((sum, l) => sum + l.monthlyEmi, 0);
+
+    // Weighted average interest rate (by remaining amount)
+    const weightedRate = loans.reduce(
+        (sum, l) => sum + l.interestRate * (l.remainingAmount / totalRemaining),
+        0
+    );
+
+    // Use max remaining months (consolidation uses longest horizon)
+    const maxMonths = Math.max(...loans.map(l => l.remainingMonths));
+
+    return {
+        remainingAmount: totalRemaining,
+        interestRate: Math.round(weightedRate * 100) / 100,
+        monthlyEmi: totalEmi,
+        remainingMonths: maxMonths,
+    };
+}
+
+/**
+ * Calculate consolidation offers: merge selected loans and compare against bank products.
+ * Returns results showing savings from consolidating all debts into a single product.
+ */
+export function calculateConsolidationOffers(
+    loans: LoanDetails[],
+    products: BankOffer[]
+): RefinanceResult[] {
+    if (loans.length < 2 || products.length === 0) return [];
+
+    const consolidated = consolidateLoans(loans);
+    const results: RefinanceResult[] = [];
+
+    for (const product of products) {
+        const result = calculateRefinanceOffer(consolidated, product);
+        if (result && result.monthlySavings > 0) {
+            results.push(result);
+        }
+    }
+
+    return rankOffers(results);
+}

@@ -16,6 +16,7 @@ import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { trackOfferViewed, trackApplicationStarted } from '@/lib/analytics';
 import SavingsChart from '@/components/SavingsChart';
 import {
     calculateEMI,
@@ -59,6 +60,7 @@ export default function OfferDetailsScreen() {
 
             if (prodErr) throw prodErr;
             setProduct(productData);
+            trackOfferViewed(productData.id, productData.bank?.name || '');
 
             // Fetch user loans for comparison
             const { data: loanData, error: loanErr } = await supabase
@@ -147,7 +149,7 @@ export default function OfferDetailsScreen() {
         )
         : [];
 
-    const handleApply = async () => {
+    const handleApply = () => {
         if (!selectedResult || !selectedLoan || !product || !user) {
             Alert.alert(
                 'Select a Loan',
@@ -156,67 +158,26 @@ export default function OfferDetailsScreen() {
             return;
         }
 
-        Alert.alert(
-            'Apply for Refinance',
-            `Submit your application to refinance your ${selectedLoan.bank_name || ''} loan with ${product.bank?.name}?\n\nProjected savings: ${formatAED(selectedResult.monthlySavings)}/month`,
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Submit Application',
-                    style: 'default',
-                    onPress: async () => {
-                        setSubmitting(true);
-                        try {
-                            const { error } = await supabase
-                                .from('refinance_applications')
-                                .insert({
-                                    user_id: user.id,
-                                    user_loan_id: selectedLoan.id,
-                                    bank_product_id: product.id,
-                                    status: 'submitted',
-                                    monthly_savings: selectedResult.monthlySavings,
-                                    total_savings: selectedResult.netSavings,
-                                    new_rate: selectedResult.newRate,
-                                    new_emi: selectedResult.newEmi,
-                                });
-
-                            if (error) throw error;
-
-                            // Send a notification
-                            await supabase.from('notifications').insert({
-                                user_id: user.id,
-                                title: 'Application Submitted!',
-                                body: `Your refinance application for ${product.bank?.name} has been submitted. We'll review it shortly.`,
-                                type: 'offer',
-                                data: { screen: 'my-applications' },
-                            });
-
-                            Alert.alert(
-                                'Application Submitted! 🎉',
-                                'Your refinance application has been submitted successfully. You can track its status in My Applications.',
-                                [
-                                    {
-                                        text: 'View My Applications',
-                                        onPress: () => router.replace('/my-applications' as any),
-                                    },
-                                ]
-                            );
-                        } catch (e) {
-                            console.error('Failed to submit application:', e);
-                            Alert.alert('Error', 'Failed to submit your application. Please try again.');
-                        } finally {
-                            setSubmitting(false);
-                        }
-                    },
-                },
-            ]
-        );
+        router.push({
+            pathname: '/apply-offer' as any,
+            params: {
+                productId: product.id,
+                productName: product.name,
+                bankName: product.bank?.name || '',
+                loanId: selectedLoan.id,
+                monthlySavings: String(selectedResult.monthlySavings),
+                totalSavings: String(selectedResult.netSavings),
+                newRate: String(selectedResult.newRate),
+                newEmi: String(selectedResult.newEmi),
+            },
+        });
     };
 
     if (loading) {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.brand.emerald} />
+                <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
             </SafeAreaView>
         );
     }

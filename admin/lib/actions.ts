@@ -166,3 +166,117 @@ export async function fetchApplicationStats() {
     }
     return stats;
 }
+
+// ── Analytics ───────────────────────────────────────
+export async function fetchAnalyticsSummary() {
+    const now = new Date();
+    const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+    const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const last30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const [events24h, events7d, events30d, activeUsers24h, activeUsers7d] = await Promise.all([
+        supabase.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last24h),
+        supabase.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last7d),
+        supabase.from('analytics_events').select('*', { count: 'exact', head: true }).gte('created_at', last30d),
+        supabase.from('analytics_events').select('user_id').gte('created_at', last24h),
+        supabase.from('analytics_events').select('user_id').gte('created_at', last7d),
+    ]);
+
+    const uniqueUsers24h = new Set((activeUsers24h.data || []).map((e: { user_id: string }) => e.user_id)).size;
+    const uniqueUsers7d = new Set((activeUsers7d.data || []).map((e: { user_id: string }) => e.user_id)).size;
+
+    return {
+        events24h: events24h.count ?? 0,
+        events7d: events7d.count ?? 0,
+        events30d: events30d.count ?? 0,
+        activeUsers24h: uniqueUsers24h,
+        activeUsers7d: uniqueUsers7d,
+    };
+}
+
+export async function fetchTopEvents(days: number = 7) {
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+        .from('analytics_events')
+        .select('event_name')
+        .gte('created_at', since);
+    if (error) throw error;
+
+    const counts: Record<string, number> = {};
+    for (const e of data || []) {
+        counts[e.event_name] = (counts[e.event_name] || 0) + 1;
+    }
+
+    return Object.entries(counts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count);
+}
+
+export async function fetchFunnel(days: number = 30) {
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await supabase
+        .from('analytics_events')
+        .select('event_name, user_id')
+        .in('event_name', ['screen_view', 'offer_viewed', 'offer_apply_started', 'offer_applied'])
+        .gte('created_at', since);
+    if (error) throw error;
+
+    const funnel = {
+        screenViews: new Set<string>(),
+        offerViews: new Set<string>(),
+        applyStarted: new Set<string>(),
+        applied: new Set<string>(),
+    };
+
+    for (const e of data || []) {
+        const uid = e.user_id;
+        if (e.event_name === 'screen_view') funnel.screenViews.add(uid);
+        if (e.event_name === 'offer_viewed') funnel.offerViews.add(uid);
+        if (e.event_name === 'offer_apply_started') funnel.applyStarted.add(uid);
+        if (e.event_name === 'offer_applied') funnel.applied.add(uid);
+    }
+
+    return {
+        screenViews: funnel.screenViews.size,
+        offerViews: funnel.offerViews.size,
+        applyStarted: funnel.applyStarted.size,
+        applied: funnel.applied.size,
+    };
+}
+
+export async function fetchRecentEvents(limit: number = 50) {
+    const { data, error } = await supabase
+        .from('analytics_events')
+        .select('id, user_id, event_name, screen, created_at, event_data')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+    if (error) throw error;
+    return data || [];
+}
+
+// ── User Detail ─────────────────────────────────────
+export async function fetchUserDetail(userId: string) {
+    const [profile, loans, applications, events] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', userId).single(),
+        supabase.from('user_loans').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+        supabase
+            .from('refinance_applications')
+            .select('*, bank_product:bank_products!refinance_applications_bank_product_id_fkey(name, bank:banks!bank_products_bank_id_fkey(name))')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false }),
+        supabase
+            .from('analytics_events')
+            .select('event_name, screen, created_at')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(30),
+    ]);
+
+    return {
+        profile: profile.data,
+        loans: loans.data || [],
+        applications: applications.data || [],
+        recentActivity: events.data || [],
+    };
+}
+

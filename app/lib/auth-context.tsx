@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
+import { initAnalytics, clearAnalytics, trackSignIn, trackSignUp } from './analytics';
 
 interface AuthContextType {
     user: User | null;
     session: Session | null;
     loading: boolean;
-    signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+    signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: Error | null }>;
     signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
     signOut: () => Promise<void>;
 }
@@ -38,6 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             (_event, session) => {
                 setSession(session);
                 setUser(session?.user ?? null);
+                if (session?.user) {
+                    initAnalytics(session.user.id);
+                } else {
+                    clearAnalytics();
+                }
                 setLoading(false);
             }
         );
@@ -45,9 +51,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return () => subscription.unsubscribe();
     }, []);
 
-    const signUp = async (email: string, password: string) => {
-        const { error } = await supabase.auth.signUp({ email, password });
+    const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+        const { error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    first_name: firstName || '',
+                    last_name: lastName || '',
+                    full_name: [firstName, lastName].filter(Boolean).join(' '),
+                },
+            },
+        });
         return { error: error as Error | null };
+        // Track after successful signup is handled by auth state change
     };
 
     const signIn = async (email: string, password: string) => {
@@ -59,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signOut = async () => {
+        clearAnalytics();
         await supabase.auth.signOut();
     };
 

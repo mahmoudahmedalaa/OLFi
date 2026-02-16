@@ -19,6 +19,8 @@ import {
     calculateRefinanceOffer,
     rankOffers,
     formatAED,
+    consolidateLoans,
+    calculateConsolidationOffers,
     type LoanDetails,
     type BankOffer,
     type RefinanceResult,
@@ -66,6 +68,62 @@ export default function OffersScreen() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [activeFilters, setActiveFilters] = useState<string[]>([]);
+    const [selectedLoanIds, setSelectedLoanIds] = useState<Set<string>>(new Set());
+    const [consolidationOffers, setConsolidationOffers] = useState<(RefinanceResult & { productData?: BankProduct })[]>([]);
+
+    const toggleLoanSelection = (loanId: string) => {
+        setSelectedLoanIds(prev => {
+            const next = new Set(prev);
+            if (next.has(loanId)) next.delete(loanId);
+            else next.add(loanId);
+            return next;
+        });
+    };
+
+    const selectAllLoans = () => {
+        if (selectedLoanIds.size === userLoans.length) {
+            setSelectedLoanIds(new Set());
+        } else {
+            setSelectedLoanIds(new Set(userLoans.map(l => l.id)));
+        }
+    };
+
+    // Recalculate consolidation whenever selection changes
+    useEffect(() => {
+        if (selectedLoanIds.size < 2 || products.length === 0) {
+            setConsolidationOffers([]);
+            return;
+        }
+        const selectedLoans = userLoans.filter(l => selectedLoanIds.has(l.id));
+        const loanDetails: LoanDetails[] = selectedLoans.map(l => ({
+            remainingAmount: l.remaining_amount,
+            interestRate: l.interest_rate,
+            monthlyEmi: l.monthly_emi,
+            remainingMonths: l.tenure_months,
+        }));
+
+        const bankOffers: BankOffer[] = products.map(p => ({
+            productId: p.id,
+            bankName: p.bank?.name || 'Unknown',
+            productName: p.name,
+            interestRateMin: p.interest_rate_min || 0,
+            interestRateMax: p.interest_rate_max || 0,
+            processingFeePct: p.processing_fee_pct,
+            earlysettlementFeePct: p.early_settlement_fee_pct,
+            maxTenureMonths: p.max_tenure_months,
+            minAmount: p.min_amount,
+            maxAmount: p.max_amount,
+            isIslamic: p.bank?.is_islamic || false,
+            features: p.features?.map((f: any) => (typeof f === 'string' ? f : '')) || [],
+        }));
+
+        const results = calculateConsolidationOffers(loanDetails, bankOffers);
+        const enriched = results.slice(0, 5).map(r => ({
+            ...r,
+            productData: products.find(p => p.id === r.productId),
+        }));
+        setConsolidationOffers(enriched);
+    }, [selectedLoanIds, userLoans, products]);
     const { theme } = useTheme();
     const { user } = useAuth();
 
@@ -262,9 +320,204 @@ export default function OffersScreen() {
                     </Text>
                 </View>
 
+                {/* ═══ LOAN SELECTOR FOR CONSOLIDATION ═══ */}
+                {!loading && userLoans.length >= 2 && (
+                    <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                <Ionicons name="git-merge" size={18} color={Colors.brand.teal} />
+                                <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textPrimary }}>Consolidate Loans</Text>
+                            </View>
+                            <TouchableOpacity onPress={selectAllLoans}>
+                                <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>
+                                    {selectedLoanIds.size === userLoans.length ? 'Deselect All' : 'Select All'}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                        <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginBottom: 12 }}>
+                            Select 2+ loans to see consolidation offers
+                        </Text>
+
+                        {userLoans.map(loan => {
+                            const isSelected = selectedLoanIds.has(loan.id);
+                            return (
+                                <TouchableOpacity
+                                    key={loan.id}
+                                    onPress={() => toggleLoanSelection(loan.id)}
+                                    activeOpacity={0.7}
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        backgroundColor: isSelected ? `${Colors.brand.emerald}08` : theme.colors.card,
+                                        borderRadius: BorderRadius.md,
+                                        padding: 14,
+                                        marginBottom: 8,
+                                        borderWidth: 1.5,
+                                        borderColor: isSelected ? Colors.brand.emerald : theme.colors.border,
+                                    }}
+                                >
+                                    <View style={{
+                                        width: 22,
+                                        height: 22,
+                                        borderRadius: 6,
+                                        borderWidth: 2,
+                                        borderColor: isSelected ? Colors.brand.emerald : theme.colors.border,
+                                        backgroundColor: isSelected ? Colors.brand.emerald : 'transparent',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginRight: 12,
+                                    }}>
+                                        {isSelected && <Ionicons name="checkmark" size={14} color="#fff" />}
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.textPrimary }}>
+                                            {loan.bank_name || 'Unknown'} — {loan.loan_type.replace(/_/g, ' ')}
+                                        </Text>
+                                        <Text style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 2 }}>
+                                            {formatAED(loan.remaining_amount)} at {loan.interest_rate}% • EMI {formatAED(loan.monthly_emi)}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        })}
+
+                        {/* Consolidation Summary */}
+                        {selectedLoanIds.size >= 2 && (
+                            <View style={{
+                                backgroundColor: `${Colors.brand.teal}10`,
+                                borderRadius: BorderRadius.lg,
+                                padding: 16,
+                                marginTop: 4,
+                                borderWidth: 1,
+                                borderColor: `${Colors.brand.teal}30`,
+                            }}>
+                                <Text style={{ fontSize: 13, fontWeight: '700', color: Colors.brand.teal, marginBottom: 8 }}>
+                                    📊 Consolidated Summary ({selectedLoanIds.size} loans)
+                                </Text>
+                                {(() => {
+                                    const sel = userLoans.filter(l => selectedLoanIds.has(l.id));
+                                    const totalAmt = sel.reduce((s, l) => s + l.remaining_amount, 0);
+                                    const totalEmi = sel.reduce((s, l) => s + l.monthly_emi, 0);
+                                    const avgRate = sel.reduce((s, l) => s + l.interest_rate * (l.remaining_amount / totalAmt), 0);
+                                    return (
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                            <View>
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Combined Debt</Text>
+                                                <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAED(totalAmt)}</Text>
+                                            </View>
+                                            <View>
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Combined EMI</Text>
+                                                <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAED(totalEmi)}</Text>
+                                            </View>
+                                            <View>
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Avg. Rate</Text>
+                                                <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{avgRate.toFixed(2)}%</Text>
+                                            </View>
+                                        </View>
+                                    );
+                                })()}
+                            </View>
+                        )}
+
+                        {/* Consolidation Offers */}
+                        {consolidationOffers.length > 0 && (
+                            <View style={{ marginTop: 16 }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                                    <Ionicons name="sparkles" size={16} color={Colors.brand.emerald} />
+                                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textPrimary }}>Consolidation Offers</Text>
+                                </View>
+                                {consolidationOffers.map((offer, idx) => (
+                                    <TouchableOpacity
+                                        key={offer.productId}
+                                        activeOpacity={0.8}
+                                        onPress={() => router.push({
+                                            pathname: '/offer-details' as any,
+                                            params: { productId: offer.productId },
+                                        })}
+                                        style={{
+                                            backgroundColor: theme.colors.card,
+                                            borderRadius: BorderRadius.lg,
+                                            padding: 16,
+                                            marginBottom: 8,
+                                            borderWidth: idx === 0 ? 1.5 : 1,
+                                            borderColor: idx === 0 ? Colors.brand.emerald : theme.colors.border,
+                                        }}
+                                    >
+                                        {idx === 0 && (
+                                            <View style={{
+                                                position: 'absolute',
+                                                top: -8,
+                                                right: 12,
+                                                backgroundColor: Colors.brand.emerald,
+                                                paddingHorizontal: 8,
+                                                paddingVertical: 2,
+                                                borderRadius: 6,
+                                            }}>
+                                                <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>BEST DEAL</Text>
+                                            </View>
+                                        )}
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <View style={{ flex: 1 }}>
+                                                <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textPrimary }}>
+                                                    {offer.bankName}
+                                                </Text>
+                                                <Text style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 2 }}>
+                                                    {offer.productName} • {offer.newRate}%
+                                                </Text>
+                                            </View>
+                                            <View style={{ alignItems: 'flex-end' }}>
+                                                <Text style={{ fontSize: 16, fontWeight: '700', color: Colors.brand.emerald }}>
+                                                    Save {formatAED(offer.monthlySavings)}/mo
+                                                </Text>
+                                                <Text style={{ fontSize: 11, color: theme.colors.textSecondary, marginTop: 2 }}>
+                                                    {formatAED(offer.netSavings)} total
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', gap: 16, marginTop: 10 }}>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                                <Ionicons name="cash-outline" size={12} color={theme.colors.textTertiary} />
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>New EMI: {formatAED(offer.newEmi)}</Text>
+                                            </View>
+                                            {offer.processingFee > 0 && (
+                                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                                    <Ionicons name="receipt-outline" size={12} color={theme.colors.textTertiary} />
+                                                    <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Fee: {formatAED(offer.processingFee)}</Text>
+                                                </View>
+                                            )}
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                                                <Ionicons name="time-outline" size={12} color={theme.colors.textTertiary} />
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Break-even: {offer.breakEvenMonths}mo</Text>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+
+                        {selectedLoanIds.size >= 2 && consolidationOffers.length === 0 && (
+                            <View style={{
+                                backgroundColor: `${Colors.warning}10`,
+                                borderRadius: BorderRadius.md,
+                                padding: 14,
+                                marginTop: 8,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 10,
+                            }}>
+                                <Ionicons name="information-circle" size={20} color={Colors.warning} />
+                                <Text style={{ fontSize: 13, color: theme.colors.textSecondary, flex: 1 }}>
+                                    No consolidation offers found for the selected combination. Try different loans or check individual recommendations below.
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                )}
+
                 {loading ? (
                     <View style={{ paddingVertical: 40, alignItems: 'center' }}>
                         <ActivityIndicator color={Colors.brand.emerald} size="large" />
+                        <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
                     </View>
                 ) : (
                     <>

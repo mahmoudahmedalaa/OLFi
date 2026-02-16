@@ -78,6 +78,9 @@ export default function DashboardScreen() {
         setFirstName(data.first_name);
       } else if (data?.full_name) {
         setFirstName(data.full_name.split(' ')[0]);
+      } else if ((user as any).user_metadata?.first_name) {
+        // Fallback to auth metadata (set during signup)
+        setFirstName((user as any).user_metadata.first_name);
       } else {
         setFirstName(user.email?.split('@')[0] || 'User');
       }
@@ -345,7 +348,7 @@ export default function DashboardScreen() {
               label="Calculator"
               color={Colors.brand.teal}
               theme={theme}
-              onPress={() => { }}
+              onPress={() => router.push('/calculator' as any)}
             />
             <QuickActionCard
               icon="swap-horizontal"
