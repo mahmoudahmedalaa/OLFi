@@ -26,6 +26,7 @@
 
 | Task | Deliverable | Dependencies |
 |:-----|:------------|:-------------|
+| Dark/Light mode toggle | Theme context + AsyncStorage persistence + toggle in Profile. Supports Light / Dark / System. All screens updated to use dynamic theme colors | Design System |
 | Onboarding flow (3 steps) | Animated welcome screens | Navigation |
 | Add Debt form | Working form with all 7 fields + validation | Database + Auth |
 | Edit / Delete Debt | Full CRUD on debts | Add Debt |

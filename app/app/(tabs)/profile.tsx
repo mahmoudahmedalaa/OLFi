@@ -1,322 +1,317 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
     ScrollView,
     TouchableOpacity,
     Alert,
+    ActivityIndicator,
+    RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Typography } from '@/lib/constants';
+import { useTheme } from '@/lib/theme-context';
+import { supabase } from '@/lib/supabase';
+import { ComingSoonCards } from '@/components/coming-soon-modal';
+import { hapticLight, hapticWarning } from '@/lib/haptics';
 
-interface MenuItem {
-    icon: keyof typeof Ionicons.glyphMap;
-    label: string;
-    subtitle: string;
-    onPress: () => void;
-    badge?: string;
-    chevron?: boolean;
+interface Profile {
+    first_name: string | null;
+    last_name: string | null;
+    full_name: string | null;
+    email: string | null;
+    salary: number | null;
+    employment_type: string | null;
+    nationality: string | null;
 }
 
 export default function ProfileScreen() {
     const { user, signOut } = useAuth();
-    const email = user?.email || 'user@example.com';
-    const initial = email.charAt(0).toUpperCase();
+    const { theme, mode, setMode } = useTheme();
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchProfile = useCallback(async () => {
+        if (!user) return;
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('first_name, last_name, full_name, email, salary, employment_type, nationality')
+                .eq('id', user.id)
+                .maybeSingle();
+            if (error) throw error;
+            setProfile(data || { first_name: null, last_name: null, full_name: null, email: user.email || null, salary: null, employment_type: null, nationality: null });
+        } catch (e) {
+            console.error('Failed to fetch profile:', e);
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, [user]);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchProfile();
+        }, [fetchProfile])
+    );
 
     const handleSignOut = () => {
+        hapticWarning();
         Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
             { text: 'Cancel', style: 'cancel' },
             {
                 text: 'Sign Out',
                 style: 'destructive',
                 onPress: async () => {
-                    await signOut();
-                    router.replace('/(auth)/login');
+                    try {
+                        await signOut();
+                    } catch (e: any) {
+                        Alert.alert('Error', e.message);
+                    }
                 },
             },
         ]);
     };
 
-    const menuSections: { title: string; items: MenuItem[] }[] = [
-        {
-            title: 'Account',
-            items: [
-                {
-                    icon: 'person-outline',
-                    label: 'Personal Info',
-                    subtitle: 'Name, phone, Emirates ID',
-                    onPress: () => { },
-                    chevron: true,
-                },
-                {
-                    icon: 'document-text-outline',
-                    label: 'Documents',
-                    subtitle: 'Salary slips, bank statements',
-                    onPress: () => { },
-                    chevron: true,
-                },
-                {
-                    icon: 'shield-checkmark-outline',
-                    label: 'Verification',
-                    subtitle: 'Complete your KYC',
-                    onPress: () => { },
-                    badge: 'Required',
-                    chevron: true,
-                },
-            ],
-        },
-        {
-            title: 'Preferences',
-            items: [
-                {
-                    icon: 'notifications-outline',
-                    label: 'Notifications',
-                    subtitle: 'Push, email, SMS',
-                    onPress: () => { },
-                    chevron: true,
-                },
-                {
-                    icon: 'language-outline',
-                    label: 'Language',
-                    subtitle: 'English',
-                    onPress: () => { },
-                    chevron: true,
-                },
-                {
-                    icon: 'moon-outline',
-                    label: 'Appearance',
-                    subtitle: 'Dark mode',
-                    onPress: () => { },
-                    chevron: true,
-                },
-            ],
-        },
-        {
-            title: 'Support',
-            items: [
-                {
-                    icon: 'help-circle-outline',
-                    label: 'Help Center',
-                    subtitle: 'FAQs and support',
-                    onPress: () => { },
-                    chevron: true,
-                },
-                {
-                    icon: 'chatbubble-outline',
-                    label: 'Contact Us',
-                    subtitle: 'Chat or email support',
-                    onPress: () => { },
-                    chevron: true,
-                },
-                {
-                    icon: 'star-outline',
-                    label: 'Rate BuyOut',
-                    subtitle: 'Love the app? Leave a review',
-                    onPress: () => { },
-                    chevron: true,
-                },
-            ],
-        },
-    ];
+    const displayName = (profile?.first_name && profile?.last_name)
+        ? `${profile.first_name} ${profile.last_name}`
+        : profile?.full_name || user?.email?.split('@')[0] || 'User';
+    const displayEmail = profile?.email || user?.email || '';
+    const initials = displayName
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.dark.primary }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
             <ScrollView
                 contentContainerStyle={{ paddingBottom: 32 }}
                 showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={() => {
+                            setRefreshing(true);
+                            fetchProfile();
+                        }}
+                        tintColor={Colors.brand.emerald}
+                    />
+                }
             >
-                {/* Profile Header */}
-                <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 24 }}>
-                    <View style={{ alignItems: 'center' }}>
-                        <LinearGradient
-                            colors={Colors.gradients.brand as unknown as [string, string]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{
-                                width: 80,
-                                height: 80,
-                                borderRadius: 40,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginBottom: 12,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    fontSize: 32,
-                                    fontWeight: '700',
-                                    color: '#fff',
-                                }}
-                            >
-                                {initial}
-                            </Text>
-                        </LinearGradient>
-                        <Text
-                            style={{
-                                fontSize: 20,
-                                fontWeight: '600',
-                                color: Colors.text.dark.primary,
-                            }}
-                        >
-                            {email.split('@')[0]}
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 13,
-                                color: Colors.text.dark.tertiary,
-                                marginTop: 2,
-                            }}
-                        >
-                            {email}
-                        </Text>
+                {/* Header */}
+                <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 }}>
+                    <Text
+                        style={{
+                            fontSize: 24,
+                            fontWeight: '700',
+                            color: theme.colors.textPrimary,
+                        }}
+                    >
+                        Profile
+                    </Text>
+                </View>
 
-                        {/* Verification banner */}
-                        <TouchableOpacity
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                backgroundColor: `${Colors.warning}15`,
-                                paddingHorizontal: 16,
-                                paddingVertical: 10,
-                                borderRadius: BorderRadius.md,
-                                marginTop: 16,
-                                gap: 8,
-                            }}
-                            activeOpacity={0.8}
-                        >
-                            <Ionicons name="warning" size={16} color={Colors.warning} />
-                            <Text
-                                style={{
-                                    fontSize: 13,
-                                    fontWeight: '500',
-                                    color: Colors.warning,
-                                }}
-                            >
-                                Complete verification to unlock full features
-                            </Text>
-                        </TouchableOpacity>
+                {/* User Card */}
+                <View style={{ paddingHorizontal: 20, marginBottom: 24, marginTop: 8 }}>
+                    <LinearGradient
+                        colors={theme.gradients.card}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={{
+                            borderRadius: BorderRadius.xl,
+                            padding: 24,
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                        }}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color={Colors.brand.emerald} style={{ paddingVertical: 16 }} />
+                        ) : (
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                                <LinearGradient
+                                    colors={theme.gradients.brand}
+                                    style={{
+                                        width: 56,
+                                        height: 56,
+                                        borderRadius: 28,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+                                            fontWeight: '700',
+                                            color: '#fff',
+                                        }}
+                                    >
+                                        {initials}
+                                    </Text>
+                                </LinearGradient>
+                                <View style={{ flex: 1 }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 20,
+                                            fontWeight: '700',
+                                            color: theme.colors.textPrimary,
+                                        }}
+                                    >
+                                        {displayName}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 13,
+                                            color: theme.colors.textSecondary,
+                                            marginTop: 4,
+                                        }}
+                                    >
+                                        {displayEmail}
+                                    </Text>
+                                    {profile?.employment_type && (
+                                        <Text
+                                            style={{
+                                                fontSize: 12,
+                                                color: theme.colors.textTertiary,
+                                                marginTop: 2,
+                                            }}
+                                        >
+                                            {profile.employment_type}
+                                            {profile.nationality ? ` • ${profile.nationality}` : ''}
+                                        </Text>
+                                    )}
+                                </View>
+                            </View>
+                        )}
+                    </LinearGradient>
+                </View>
+
+                {/* Appearance Section */}
+                <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
+                    <Text
+                        style={{
+                            fontSize: 13,
+                            fontWeight: '600',
+                            color: theme.colors.textTertiary,
+                            textTransform: 'uppercase',
+                            letterSpacing: 0.5,
+                            marginBottom: 12,
+                        }}
+                    >
+                        Appearance
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            backgroundColor: theme.colors.card,
+                            borderRadius: BorderRadius.md,
+                            padding: 4,
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                        }}
+                    >
+                        {(['light', 'dark', 'system'] as const).map((m) => {
+                            const isActive = mode === m;
+                            const icons = {
+                                light: 'sunny' as const,
+                                dark: 'moon' as const,
+                                system: 'phone-portrait-outline' as const,
+                            };
+                            return (
+                                <TouchableOpacity
+                                    key={m}
+                                    onPress={() => { hapticLight(); setMode(m); }}
+                                    style={{
+                                        flex: 1,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 6,
+                                        paddingVertical: 10,
+                                        borderRadius: BorderRadius.sm,
+                                        backgroundColor: isActive
+                                            ? Colors.brand.emerald
+                                            : 'transparent',
+                                    }}
+                                    activeOpacity={0.7}
+                                >
+                                    <Ionicons
+                                        name={icons[m]}
+                                        size={16}
+                                        color={isActive ? '#fff' : theme.colors.textSecondary}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 13,
+                                            fontWeight: '600',
+                                            color: isActive ? '#fff' : theme.colors.textSecondary,
+                                            textTransform: 'capitalize',
+                                        }}
+                                    >
+                                        {m}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
                     </View>
                 </View>
 
                 {/* Menu Sections */}
-                {menuSections.map((section) => (
-                    <View key={section.title} style={{ marginBottom: 24 }}>
-                        <Text
-                            style={{
-                                fontSize: 13,
-                                fontWeight: '600',
-                                color: Colors.text.dark.tertiary,
-                                textTransform: 'uppercase',
-                                letterSpacing: 0.5,
-                                paddingHorizontal: 20,
-                                marginBottom: 8,
-                            }}
-                        >
-                            {section.title}
-                        </Text>
-                        <View
-                            style={{
-                                marginHorizontal: 20,
-                                backgroundColor: Colors.dark.secondary,
-                                borderRadius: BorderRadius.lg,
-                                borderWidth: 1,
-                                borderColor: Colors.dark.tertiary,
-                                overflow: 'hidden',
-                            }}
-                        >
-                            {section.items.map((item, index) => (
-                                <TouchableOpacity
-                                    key={item.label}
-                                    style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        padding: 16,
-                                        borderBottomWidth:
-                                            index < section.items.length - 1 ? 1 : 0,
-                                        borderBottomColor: Colors.dark.tertiary,
-                                    }}
-                                    activeOpacity={0.7}
-                                    onPress={item.onPress}
-                                >
-                                    <Ionicons
-                                        name={item.icon}
-                                        size={22}
-                                        color={Colors.text.dark.secondary}
-                                    />
-                                    <View style={{ flex: 1, marginLeft: 12 }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 15,
-                                                fontWeight: '500',
-                                                color: Colors.text.dark.primary,
-                                            }}
-                                        >
-                                            {item.label}
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                fontSize: 12,
-                                                color: Colors.text.dark.tertiary,
-                                                marginTop: 1,
-                                            }}
-                                        >
-                                            {item.subtitle}
-                                        </Text>
-                                    </View>
-                                    {item.badge && (
-                                        <View
-                                            style={{
-                                                backgroundColor: `${Colors.warning}20`,
-                                                paddingHorizontal: 8,
-                                                paddingVertical: 3,
-                                                borderRadius: 6,
-                                                marginRight: 8,
-                                            }}
-                                        >
-                                            <Text
-                                                style={{
-                                                    fontSize: 10,
-                                                    fontWeight: '600',
-                                                    color: Colors.warning,
-                                                }}
-                                            >
-                                                {item.badge}
-                                            </Text>
-                                        </View>
-                                    )}
-                                    {item.chevron && (
-                                        <Ionicons
-                                            name="chevron-forward"
-                                            size={18}
-                                            color={Colors.text.dark.tertiary}
-                                        />
-                                    )}
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    </View>
-                ))}
+                <View style={{ paddingHorizontal: 20 }}>
+                    <MenuSection
+                        title="GENERAL"
+                        items={[
+                            { icon: 'person-outline', label: 'Edit Profile', onPress: () => router.push('/edit-profile' as any) },
+                            { icon: 'notifications-outline', label: 'Notifications', onPress: () => router.push('/notification-settings' as any) },
+                            { icon: 'lock-closed-outline', label: 'Security', onPress: () => router.push('/security-settings' as any) },
+                        ]}
+                        theme={theme}
+                    />
+                    <MenuSection
+                        title="SUPPORT"
+                        items={[
+                            { icon: 'help-circle-outline', label: 'Help & FAQ', onPress: () => Alert.alert('Help & FAQ', 'Visit buyout.ae/help for answers to common questions.') },
+                            { icon: 'chatbubble-outline', label: 'Contact Us', onPress: () => Alert.alert('Contact Us', 'Email us at support@buyout.ae') },
+                            { icon: 'document-text-outline', label: 'Privacy Policy', onPress: () => router.push('/privacy-policy' as any) },
+                        ]}
+                        theme={theme}
+                    />
+                </View>
+
+                {/* Coming Soon */}
+                <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
+                    <Text
+                        style={{
+                            ...Typography.overline,
+                            color: theme.colors.textTertiary,
+                            marginBottom: 12,
+                        }}
+                    >
+                        COMING SOON
+                    </Text>
+                    <ComingSoonCards />
+                </View>
 
                 {/* Sign Out */}
-                <View style={{ paddingHorizontal: 20, marginTop: 8 }}>
+                <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
                     <TouchableOpacity
+                        onPress={handleSignOut}
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            paddingVertical: 16,
-                            backgroundColor: Colors.dark.secondary,
-                            borderRadius: BorderRadius.lg,
-                            borderWidth: 1,
-                            borderColor: `${Colors.error}30`,
                             gap: 8,
+                            padding: 16,
+                            backgroundColor: `${Colors.error}10`,
+                            borderRadius: BorderRadius.md,
                         }}
                         activeOpacity={0.7}
-                        onPress={handleSignOut}
                     >
                         <Ionicons name="log-out-outline" size={20} color={Colors.error} />
                         <Text
@@ -331,12 +326,12 @@ export default function ProfileScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* App Version */}
+                {/* Version */}
                 <Text
                     style={{
+                        fontSize: 12,
+                        color: theme.colors.textTertiary,
                         textAlign: 'center',
-                        fontSize: 11,
-                        color: Colors.text.dark.disabled,
                         marginTop: 24,
                     }}
                 >
@@ -344,5 +339,78 @@ export default function ProfileScreen() {
                 </Text>
             </ScrollView>
         </SafeAreaView>
+    );
+}
+
+function MenuSection({
+    title,
+    items,
+    theme,
+}: {
+    title: string;
+    items: { icon: keyof typeof Ionicons.glyphMap; label: string; onPress: () => void }[];
+    theme: ReturnType<typeof useTheme>['theme'];
+}) {
+    return (
+        <View style={{ marginBottom: 24 }}>
+            <Text
+                style={{
+                    fontSize: 13,
+                    fontWeight: '600',
+                    color: theme.colors.textTertiary,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    marginBottom: 12,
+                }}
+            >
+                {title}
+            </Text>
+            <View
+                style={{
+                    backgroundColor: theme.colors.card,
+                    borderRadius: BorderRadius.lg,
+                    overflow: 'hidden',
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                }}
+            >
+                {items.map((item, i) => (
+                    <TouchableOpacity
+                        key={item.label}
+                        onPress={item.onPress}
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            padding: 16,
+                            borderBottomWidth: i < items.length - 1 ? 1 : 0,
+                            borderBottomColor: theme.colors.border,
+                        }}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons
+                            name={item.icon}
+                            size={22}
+                            color={theme.colors.textSecondary}
+                            style={{ marginRight: 14 }}
+                        />
+                        <Text
+                            style={{
+                                flex: 1,
+                                fontSize: 15,
+                                fontWeight: '500',
+                                color: theme.colors.textPrimary,
+                            }}
+                        >
+                            {item.label}
+                        </Text>
+                        <Ionicons
+                            name="chevron-forward"
+                            size={18}
+                            color={theme.colors.textTertiary}
+                        />
+                    </TouchableOpacity>
+                ))}
+            </View>
+        </View>
     );
 }
