@@ -71,12 +71,24 @@ export async function fetchNotifications() {
 }
 
 export async function fetchUsersList() {
-    const { data, error } = await supabase.from('profiles').select('id, first_name, last_name, full_name');
-    if (error) throw error;
-    return (data || []).map((p: Record<string, unknown>) => ({
-        id: p.id as string,
-        name: p.first_name ? `${p.first_name} ${p.last_name || ''}`.trim() : (p.full_name as string) || 'User',
-    }));
+    const { data: profiles, error: pErr } = await supabase.from('profiles').select('id, first_name, last_name, full_name');
+    if (pErr) throw pErr;
+
+    // Fetch emails from auth.users via admin API
+    const { data: authData } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+    const emailMap: Record<string, string> = {};
+    for (const u of authData?.users || []) {
+        emailMap[u.id] = u.email || '';
+    }
+
+    return (profiles || []).map((p: Record<string, unknown>) => {
+        const name = p.first_name
+            ? `${p.first_name} ${p.last_name || ''}`.trim()
+            : (p.full_name as string) || null;
+        const email = emailMap[p.id as string] || '';
+        const displayName = name || email || `User ${(p.id as string).slice(0, 8)}`;
+        return { id: p.id as string, name: displayName, email };
+    });
 }
 
 export async function sendNotification(payload: {
@@ -150,6 +162,54 @@ export async function updateApplicationStatus(
             data: { screen: 'my-applications' },
         });
     }
+}
+
+// ── Loan Management ────────────────────────────────
+export async function fetchLoans() {
+    const { data: loans, error } = await supabase
+        .from('user_loans')
+        .select('*, profile:profiles!user_loans_user_id_fkey (id, first_name, last_name, full_name)')
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+
+    // Get emails for user display
+    const { data: authData } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+    const emailMap: Record<string, string> = {};
+    for (const u of authData?.users || []) {
+        emailMap[u.id] = u.email || '';
+    }
+
+    return (loans || []).map((loan: any) => {
+        const p = loan.profile;
+        const name = p?.first_name
+            ? `${p.first_name} ${p.last_name || ''}`.trim()
+            : p?.full_name || null;
+        const email = emailMap[loan.user_id] || '';
+        return {
+            ...loan,
+            user_display: name || email || `User ${loan.user_id.slice(0, 8)}`,
+            user_email: email,
+        };
+    });
+}
+
+export async function updateLoanStatus(id: string, status: string) {
+    const { error } = await supabase
+        .from('user_loans')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', id);
+    if (error) throw error;
+}
+
+export async function updateLoanDetails(id: string, updates: Record<string, unknown>) {
+    updates.updated_at = new Date().toISOString();
+    const { error } = await supabase.from('user_loans').update(updates).eq('id', id);
+    if (error) throw error;
+}
+
+export async function deleteLoan(id: string) {
+    const { error } = await supabase.from('user_loans').delete().eq('id', id);
+    if (error) throw error;
 }
 
 export async function fetchApplicationStats() {
