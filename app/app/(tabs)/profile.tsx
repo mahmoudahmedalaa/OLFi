@@ -13,16 +13,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { supabase } from '@/lib/supabase';
+import { ComingSoonCards } from '@/components/coming-soon-modal';
+import { hapticLight, hapticWarning } from '@/lib/haptics';
 
 interface Profile {
     first_name: string | null;
     last_name: string | null;
     full_name: string | null;
     email: string | null;
-    monthly_income: number | null;
+    salary: number | null;
     employment_type: string | null;
     nationality: string | null;
 }
@@ -39,11 +41,15 @@ export default function ProfileScreen() {
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('first_name, last_name, full_name, email, monthly_income, employment_type, nationality')
+                .select('first_name, last_name, full_name, salary, employment_type, nationality')
                 .eq('id', user.id)
                 .maybeSingle();
             if (error) throw error;
-            setProfile(data || { first_name: null, last_name: null, full_name: null, email: user.email || null, monthly_income: null, employment_type: null, nationality: null });
+            if (data) {
+                setProfile({ ...data, email: user.email || null });
+            } else {
+                setProfile({ first_name: null, last_name: null, full_name: null, email: user.email || null, salary: null, employment_type: null, nationality: null });
+            }
         } catch (e) {
             console.error('Failed to fetch profile:', e);
         } finally {
@@ -59,6 +65,7 @@ export default function ProfileScreen() {
     );
 
     const handleSignOut = () => {
+        hapticWarning();
         Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
             { text: 'Cancel', style: 'cancel' },
             {
@@ -223,7 +230,7 @@ export default function ProfileScreen() {
                             return (
                                 <TouchableOpacity
                                     key={m}
-                                    onPress={() => setMode(m)}
+                                    onPress={() => { hapticLight(); setMode(m); }}
                                     style={{
                                         flex: 1,
                                         flexDirection: 'row',
@@ -264,21 +271,35 @@ export default function ProfileScreen() {
                     <MenuSection
                         title="GENERAL"
                         items={[
-                            { icon: 'person-outline', label: 'Edit Profile', onPress: () => { } },
-                            { icon: 'notifications-outline', label: 'Notifications', onPress: () => { } },
-                            { icon: 'lock-closed-outline', label: 'Security', onPress: () => { } },
+                            { icon: 'person-outline', label: 'Edit Profile', onPress: () => router.push('/edit-profile' as any) },
+                            { icon: 'notifications-outline', label: 'Notifications', onPress: () => router.push('/notification-settings' as any) },
+                            { icon: 'lock-closed-outline', label: 'Security', onPress: () => router.push('/security-settings' as any) },
                         ]}
                         theme={theme}
                     />
                     <MenuSection
                         title="SUPPORT"
                         items={[
-                            { icon: 'help-circle-outline', label: 'Help & FAQ', onPress: () => { } },
-                            { icon: 'chatbubble-outline', label: 'Contact Us', onPress: () => { } },
-                            { icon: 'document-text-outline', label: 'Privacy Policy', onPress: () => { } },
+                            { icon: 'help-circle-outline', label: 'Help & FAQ', onPress: () => Alert.alert('Help & FAQ', 'Visit buyout.ae/help for answers to common questions.') },
+                            { icon: 'chatbubble-outline', label: 'Contact Us', onPress: () => Alert.alert('Contact Us', 'Email us at support@buyout.ae') },
+                            { icon: 'document-text-outline', label: 'Privacy Policy', onPress: () => router.push('/privacy-policy' as any) },
                         ]}
                         theme={theme}
                     />
+                </View>
+
+                {/* Coming Soon */}
+                <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
+                    <Text
+                        style={{
+                            ...Typography.overline,
+                            color: theme.colors.textTertiary,
+                            marginBottom: 12,
+                        }}
+                    >
+                        COMING SOON
+                    </Text>
+                    <ComingSoonCards />
                 </View>
 
                 {/* Sign Out */}

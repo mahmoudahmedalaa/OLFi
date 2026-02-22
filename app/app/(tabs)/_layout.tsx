@@ -2,17 +2,21 @@ import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { View, Platform } from 'react-native';
 import { Colors } from '@/lib/constants';
+import { useTheme } from '@/lib/theme-context';
+import { trackScreen } from '@/lib/analytics';
 
 export default function TabLayout() {
+  const { theme } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: Colors.brand.emerald,
-        tabBarInactiveTintColor: Colors.text.dark.tertiary,
+        tabBarInactiveTintColor: theme.colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: Colors.dark.secondary,
-          borderTopColor: Colors.dark.tertiary,
+          backgroundColor: theme.colors.card,
+          borderTopColor: theme.colors.border,
           borderTopWidth: 0.5,
           height: Platform.OS === 'ios' ? 88 : 64,
           paddingBottom: Platform.OS === 'ios' ? 28 : 8,
@@ -24,6 +28,12 @@ export default function TabLayout() {
           fontSize: 11,
           fontWeight: '600',
           letterSpacing: 0.2,
+        },
+      }}
+      screenListeners={{
+        tabPress: (e) => {
+          const tabName = e.target?.split('-')[0] || 'unknown';
+          trackScreen(tabName);
         },
       }}
     >

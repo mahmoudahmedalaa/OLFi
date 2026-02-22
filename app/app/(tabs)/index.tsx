@@ -16,6 +16,13 @@ import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme, Theme } from '@/lib/theme-context';
 import { supabase } from '@/lib/supabase';
+import {
+  calculateDebtToIncome,
+  getHealthScore,
+  calculateInterestBurden,
+  formatAED,
+  type HealthScore,
+} from '@/lib/refinance-calculator';
 
 const { width } = Dimensions.get('window');
 
@@ -38,6 +45,8 @@ export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [firstName, setFirstName] = useState('User');
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [salary, setSalary] = useState<number | null>(null);
 
   const fetchLoans = useCallback(async () => {
     if (!user) return;
@@ -57,30 +66,37 @@ export default function DashboardScreen() {
     }
   }, [user]);
 
-  const fetchFirstName = useCallback(async () => {
+  const fetchProfile = useCallback(async () => {
     if (!user) return;
     try {
       const { data } = await supabase
         .from('profiles')
-        .select('first_name, full_name')
+        .select('first_name, full_name, salary')
         .eq('id', user.id)
         .maybeSingle();
       if (data?.first_name) {
         setFirstName(data.first_name);
       } else if (data?.full_name) {
         setFirstName(data.full_name.split(' ')[0]);
+      } else if ((user as any).user_metadata?.first_name) {
+        // Fallback to auth metadata (set during signup)
+        setFirstName((user as any).user_metadata.first_name);
       } else {
         setFirstName(user.email?.split('@')[0] || 'User');
       }
+      if (data?.salary) {
+        setSalary(Number(data.salary));
+      }
     } catch (e) {
-      console.error('Failed to fetch profile name:', e);
+      console.error('Failed to fetch profile:', e);
     }
   }, [user]);
 
   useEffect(() => {
     fetchLoans();
-    fetchFirstName();
-  }, [fetchLoans, fetchFirstName]);
+    fetchProfile();
+    fetchUnreadCount();
+  }, [fetchLoans, fetchProfile]);
 
   // Re-fetch when screen comes into focus (e.g. after adding a loan)
   useFocusEffect(
@@ -92,8 +108,40 @@ export default function DashboardScreen() {
   const activeLoans = loans.filter((l) => l.status === 'active');
   const totalDebt = activeLoans.reduce((sum, l) => sum + l.remaining_amount, 0);
   const totalEmi = activeLoans.reduce((sum, l) => sum + l.monthly_emi, 0);
-  // Simple savings estimate: 1% rate improvement across all active loans
-  const potentialSavings = Math.round(totalDebt * 0.01);
+
+  // Financial health calculations
+  const dtiRatio = salary ? calculateDebtToIncome(totalEmi, salary) : null;
+  const healthScore = dtiRatio !== null ? getHealthScore(dtiRatio) : null;
+  const interestBurden = activeLoans.length > 0
+    ? calculateInterestBurden(
+      activeLoans.map((l) => ({
+        remainingAmount: l.remaining_amount,
+        monthlyEmi: l.monthly_emi,
+        interestRate: l.interest_rate,
+      }))
+    )
+    : 0;
+  // Rough savings estimate based on average rate reduction
+  const avgRate = activeLoans.length > 0
+    ? activeLoans.reduce((s, l) => s + l.interest_rate, 0) / activeLoans.length
+    : 0;
+  const potentialMonthlySavings = avgRate > 0
+    ? Math.round(totalEmi * (avgRate > 3 ? 0.08 : 0.03))
+    : 0;
+
+  const fetchUnreadCount = async () => {
+    if (!user) return;
+    try {
+      const { count, error } = await supabase
+        .from('notifications')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+      if (!error && count !== null) setUnreadCount(count);
+    } catch (e) {
+      // Silently fail
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -152,12 +200,30 @@ export default function DashboardScreen() {
                 borderWidth: 1,
                 borderColor: theme.colors.border,
               }}
+              onPress={() => router.push('/notifications' as any)}
             >
               <Ionicons
                 name="notifications-outline"
                 size={20}
                 color={theme.colors.textPrimary}
               />
+              {unreadCount > 0 && (
+                <View style={{
+                  position: 'absolute',
+                  top: 6,
+                  right: 6,
+                  width: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  backgroundColor: Colors.error,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff' }}>
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -247,7 +313,7 @@ export default function DashboardScreen() {
                           color: Colors.brand.emerald,
                         }}
                       >
-                        AED {potentialSavings.toLocaleString()}
+                        AED {potentialMonthlySavings.toLocaleString()}/mo
                       </Text>
                     </View>
                   </View>
@@ -282,7 +348,7 @@ export default function DashboardScreen() {
               label="Calculator"
               color={Colors.brand.teal}
               theme={theme}
-              onPress={() => { }}
+              onPress={() => router.push('/calculator' as any)}
             />
             <QuickActionCard
               icon="swap-horizontal"
@@ -292,11 +358,11 @@ export default function DashboardScreen() {
               onPress={() => router.push('/(tabs)/offers')}
             />
             <QuickActionCard
-              icon="document-text"
-              label="Documents"
+              icon="briefcase"
+              label="Applications"
               color={Colors.warning}
               theme={theme}
-              onPress={() => { }}
+              onPress={() => router.push('/my-applications' as any)}
             />
           </View>
         </View>
@@ -391,12 +457,164 @@ export default function DashboardScreen() {
                     emi={loan.monthly_emi}
                     progress={progress}
                     theme={theme}
+                    onPress={() => router.push({ pathname: '/loan-detail' as any, params: { loanId: loan.id } })}
+                    savingsEstimate={loan.interest_rate > 3 ? Math.round(loan.monthly_emi * 0.08) : 0}
                   />
                 </View>
               );
             })
           )}
         </View>
+
+        {/* Financial Health Report Card */}
+        {activeLoans.length > 0 && (
+          <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '600',
+                color: theme.colors.textPrimary,
+                marginBottom: 16,
+              }}
+            >
+              Financial Health
+            </Text>
+            <View
+              style={{
+                backgroundColor: theme.colors.card,
+                borderRadius: BorderRadius.lg,
+                padding: 20,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+              }}
+            >
+              {/* Health Score Badge */}
+              {healthScore ? (
+                <View style={{ marginBottom: 20 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                    <View
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 24,
+                        backgroundColor: `${healthScore.color}20`,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Ionicons
+                        name={
+                          healthScore.score === 'excellent' ? 'shield-checkmark' :
+                            healthScore.score === 'good' ? 'thumbs-up' :
+                              healthScore.score === 'fair' ? 'alert-circle' : 'warning'
+                        }
+                        size={24}
+                        color={healthScore.color}
+                      />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 18, fontWeight: '700', color: healthScore.color }}>
+                        {healthScore.label}
+                      </Text>
+                      <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 2 }}>
+                        Debt-to-Income: {dtiRatio}%
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Health Bar */}
+                  <View style={{ height: 6, backgroundColor: theme.colors.border, borderRadius: 3, overflow: 'hidden' }}>
+                    <View
+                      style={{
+                        width: `${healthScore.percentage}%`,
+                        height: '100%',
+                        backgroundColor: healthScore.color,
+                        borderRadius: 3,
+                      }}
+                    />
+                  </View>
+                  <Text style={{ fontSize: 12, color: theme.colors.textTertiary, marginTop: 8 }}>
+                    {healthScore.description}
+                  </Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => router.push('/(tabs)/profile')}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 12,
+                    backgroundColor: `${Colors.info}15`,
+                    padding: 14,
+                    borderRadius: BorderRadius.md,
+                    marginBottom: 20,
+                  }}
+                >
+                  <Ionicons name="information-circle" size={20} color={Colors.info} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.info }}>
+                      Add your salary to see your health score
+                    </Text>
+                    <Text style={{ fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 }}>
+                      Tap to update your profile
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color={Colors.info} />
+                </TouchableOpacity>
+              )}
+
+              {/* Stats Row */}
+              <View style={{ flexDirection: 'row', gap: 12 }}>
+                <View style={{ flex: 1, backgroundColor: `${Colors.brand.emerald}10`, borderRadius: BorderRadius.md, padding: 14, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 11, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+                    Monthly Debt
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>
+                    AED {totalEmi.toLocaleString()}
+                  </Text>
+                </View>
+                <View style={{ flex: 1, backgroundColor: `${Colors.warning}10`, borderRadius: BorderRadius.md, padding: 14, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 11, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 4 }}>
+                    Interest Burden
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: '700', color: Colors.warning }}>
+                    {formatAED(interestBurden)}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Savings Teaser */}
+              {potentialMonthlySavings > 0 && (
+                <TouchableOpacity
+                  onPress={() => router.push('/(tabs)/offers')}
+                  activeOpacity={0.8}
+                  style={{ marginTop: 16 }}
+                >
+                  <LinearGradient
+                    colors={['rgba(16,185,129,0.12)', 'rgba(16,185,129,0.04)']}
+                    style={{
+                      borderRadius: BorderRadius.md,
+                      padding: 14,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      borderWidth: 1,
+                      borderColor: `${Colors.brand.emerald}30`,
+                    }}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 14, fontWeight: '600', color: Colors.brand.emerald }}>
+                        💰 You could save ~AED {potentialMonthlySavings.toLocaleString()}/month
+                      </Text>
+                      <Text style={{ fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 }}>
+                        Check personalized refinance offers →
+                      </Text>
+                    </View>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+        )}
 
         {/* Refinance CTA */}
         {totalDebt > 0 && (
@@ -425,7 +643,7 @@ export default function DashboardScreen() {
                       marginBottom: 4,
                     }}
                   >
-                    Save AED {potentialSavings.toLocaleString()}
+                    Compare Refinance Offers
                   </Text>
                   <Text
                     style={{
@@ -433,7 +651,7 @@ export default function DashboardScreen() {
                       color: 'rgba(255,255,255,0.8)',
                     }}
                   >
-                    Check refinance options from UAE banks
+                    Personalized recommendations for your loans
                   </Text>
                 </View>
                 <Ionicons name="arrow-forward-circle" size={32} color="#fff" />
@@ -522,6 +740,8 @@ function LoanPreviewCard({
   emi,
   progress,
   theme,
+  onPress,
+  savingsEstimate,
 }: {
   bankName: string;
   type: string;
@@ -531,9 +751,12 @@ function LoanPreviewCard({
   emi: number;
   progress: number;
   theme: Theme;
+  onPress?: () => void;
+  savingsEstimate?: number;
 }) {
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={{
         backgroundColor: theme.colors.card,
         borderRadius: BorderRadius.lg,
@@ -666,6 +889,27 @@ function LoanPreviewCard({
       >
         {Math.round(progress * 100)}% paid of AED {amount.toLocaleString()}
       </Text>
+
+      {/* Savings badge */}
+      {savingsEstimate != null && savingsEstimate > 0 && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: `${Colors.brand.emerald}10`,
+            borderRadius: 8,
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            marginTop: 10,
+            gap: 6,
+          }}
+        >
+          <Ionicons name="trending-down" size={14} color={Colors.brand.emerald} />
+          <Text style={{ fontSize: 12, fontWeight: '600', color: Colors.brand.emerald }}>
+            Potential savings: ~AED {savingsEstimate.toLocaleString()}/mo
+          </Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 }

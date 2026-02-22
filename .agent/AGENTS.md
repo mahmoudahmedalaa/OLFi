@@ -4,8 +4,11 @@
 
 ## ⚠️ MANDATORY — Read Before ANYTHING Else
 1. **Read `.agent/rules/base.md`** — Tech stack, design system, financial rules, The Ralph Mandate
-2. **Know `.agent/workflows/ralph-loop.md`** — Every feature must pass the verification loop before completion
-3. **Then read this file** for build/deploy context
+2. **Read `.agent/rules/design-reference.md`** — Fintech color system, financial UX patterns, Arabic typography, UAE conventions
+3. **Know `.agent/workflows/ralph-loop.md`** — Every feature must pass the verification loop before completion
+4. **Know `.agent/workflows/verification.md`** — 4-level verification (Exists → Substantive → Wired → Functional). Catches stubs.
+5. **Know `.agent/workflows/debug-loop.md`** — Structured debugging with hypothesis tracking. Never debug ad-hoc.
+6. **Then read this file** for build/deploy context
 
 This workspace contains mobile and web applications built with:
 - **Mobile:** React Native (Expo) with TypeScript
@@ -106,21 +109,26 @@ npm run build
 
 ## File Structure Awareness
 
-### Template Structure
+### Project Structure
 
 ```
-template/
+buyout/
 ├── .agent/
 │   ├── AGENTS.md              # This file
+│   ├── rules/
+│   │   ├── base.md            # Tech stack, financial rules
+│   │   └── design-reference.md # Fintech colors, UX patterns, Arabic typography
 │   └── workflows/
-│       └── app-store-launch.md # iOS deployment workflow
-├── 01-architecture/           # Architecture docs
-├── 02-implementation/         # Implementation guides
-├── 03-workflows/
-│   ├── XCODE_GUIDE.md        # Xcode build reference
-│   ├── DEPLOYMENT.md         # Deployment procedures
-│   └── TESTING.md            # Testing strategies
-└── build-ios.sh              # Generic iOS build script
+│       ├── app-store-launch.md # iOS deployment workflow
+│       ├── debug-loop.md      # Structured debugging protocol
+│       ├── dev-quick-reference.md # Quick dev commands
+│       ├── ralph-loop.md      # Build/lint verification loop
+│       └── verification.md    # 4-level feature verification
+├── app/                       # Application code (Expo Router)
+├── ios/                       # Native iOS code
+├── assets/                    # Images, fonts
+├── app.json                   # Expo config
+└── build-ios.sh              # iOS build script
 ```
 
 ### Project Structure (React Native/Expo)
@@ -280,11 +288,11 @@ What changed?
 
 ## Resources
 
-- **Xcode Guide:** `03-workflows/XCODE_GUIDE.md`
-- **Deployment:** `03-workflows/DEPLOYMENT.md`
-- **Testing:** `03-workflows/TESTING.md`
 - **Launch Workflow:** `.agent/workflows/app-store-launch.md`
-- **Build Script:** `build-ios.sh` (copy to project root)
+- **Debug Protocol:** `.agent/workflows/debug-loop.md`
+- **Verification:** `.agent/workflows/verification.md`
+- **Design Reference:** `.agent/rules/design-reference.md`
+- **Build Script:** `build-ios.sh`
 
 ---
 
@@ -296,5 +304,5 @@ When workflows change:
 3. Test new workflows before documenting
 4. Keep examples current and accurate
 
-**Last updated:** 2026-02-08
-**Version:** 1.0.0
+**Last updated:** 2026-02-15
+**Version:** 1.1.0

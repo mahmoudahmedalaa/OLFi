@@ -10,9 +10,11 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
+      "buildNumber": "10",
       "bundleIdentifier": "com.mahmoudahmedalaa.buyout",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Authenticate securely with Face ID to access your financial data"
+        "NSFaceIDUsageDescription": "Authenticate securely with Face ID to access your financial data",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
