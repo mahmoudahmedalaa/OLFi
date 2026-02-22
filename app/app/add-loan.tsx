@@ -19,6 +19,7 @@ import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { calculateEMI } from '@/lib/refinance-calculator';
 import SuccessModal from '@/components/SuccessModal';
 
 const LOAN_TYPES = [
@@ -109,6 +110,20 @@ export default function AddLoanScreen() {
             setLoadingBanks(false);
         }
     };
+
+    // Auto-calculate EMI when principal, rate, and tenure are provided
+    useEffect(() => {
+        const p = Number(stripCommas(remainingAmount));
+        const r = Number(interestRate);
+        const t = Number(tenureMonths);
+
+        if (p > 0 && r > 0 && t > 0) {
+            const emi = calculateEMI(p, r, t);
+            // Don't overwrite if the user is currently typing something that matches closely, 
+            // but setting it directly overrides manual entry to ensure mathematical accuracy.
+            setMonthlyEmi(Math.round(emi).toString());
+        }
+    }, [remainingAmount, interestRate, tenureMonths]);
 
     const validate = (): string | null => {
         if (!selectedBank && !customBankName.trim()) return 'Please select or enter a bank name';

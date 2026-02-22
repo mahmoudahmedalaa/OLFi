@@ -325,14 +325,14 @@ export function consolidateLoans(
         0
     );
 
-    // Use max remaining months (consolidation uses longest horizon)
-    const maxMonths = Math.max(...loans.map(l => l.remainingMonths));
+    // Standard bank consolidation uses a new 48-month (4-year) tenure
+    const standardConsolidationMonths = 48;
 
     return {
         remainingAmount: totalRemaining,
         interestRate: Math.round(weightedRate * 100) / 100,
         monthlyEmi: totalEmi,
-        remainingMonths: maxMonths,
+        remainingMonths: standardConsolidationMonths,
     };
 }
 

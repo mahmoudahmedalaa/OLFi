@@ -41,11 +41,15 @@ export default function ProfileScreen() {
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('first_name, last_name, full_name, email, salary, employment_type, nationality')
+                .select('first_name, last_name, full_name, salary, employment_type, nationality')
                 .eq('id', user.id)
                 .maybeSingle();
             if (error) throw error;
-            setProfile(data || { first_name: null, last_name: null, full_name: null, email: user.email || null, salary: null, employment_type: null, nationality: null });
+            if (data) {
+                setProfile({ ...data, email: user.email || null });
+            } else {
+                setProfile({ first_name: null, last_name: null, full_name: null, email: user.email || null, salary: null, employment_type: null, nationality: null });
+            }
         } catch (e) {
             console.error('Failed to fetch profile:', e);
         } finally {
