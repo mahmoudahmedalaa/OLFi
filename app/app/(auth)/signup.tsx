@@ -3,6 +3,7 @@ import {
     View,
     Text,
     TextInput,
+    Image,
     TouchableOpacity,
     Alert,
     KeyboardAvoidingView,
@@ -101,8 +102,17 @@ export default function SignupScreen() {
                         />
                     </TouchableOpacity>
 
-                    {/* Header */}
-                    <View style={{ marginBottom: 32 }}>
+                    {/* Logo & Header */}
+                    <View style={{ alignItems: 'center', marginBottom: 32 }}>
+                        <Image
+                            source={require('@/assets/images/icon.png')}
+                            style={{
+                                width: 72,
+                                height: 72,
+                                borderRadius: 18,
+                                marginBottom: 24,
+                            }}
+                        />
                         <Text
                             style={{
                                 fontSize: 28,

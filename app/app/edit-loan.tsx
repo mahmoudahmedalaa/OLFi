@@ -18,6 +18,7 @@ import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
+import { calculateEMI } from '@/lib/refinance-calculator';
 
 const LOAN_TYPES = [
     { key: 'personal', label: 'Personal', icon: 'person-outline' },
@@ -75,6 +76,18 @@ export default function EditLoanScreen() {
     useEffect(() => {
         fetchLoan();
     }, [fetchLoan]);
+
+    // Auto-calculate EMI when principal, rate, and tenure change
+    useEffect(() => {
+        const p = Number(remainingAmount.replace(/,/g, ''));
+        const r = Number(interestRate);
+        const t = Number(tenureMonths);
+
+        if (p > 0 && r > 0 && t > 0) {
+            const emi = calculateEMI(p, r, t);
+            setMonthlyEmi(Math.round(emi).toString());
+        }
+    }, [remainingAmount, interestRate, tenureMonths]);
 
     const handleSave = async () => {
         if (!originalAmount || !remainingAmount || !interestRate || !monthlyEmi || !tenureMonths) {
