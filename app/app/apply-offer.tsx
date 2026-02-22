@@ -71,6 +71,9 @@ export default function ApplyOfferScreen() {
     const successAnim = useRef(new Animated.Value(0)).current;
     const checkmarkScale = useRef(new Animated.Value(0)).current;
 
+    const [verifyingOffer, setVerifyingOffer] = useState(true);
+    const [edgeOfferData, setEdgeOfferData] = useState<any>(null);
+
     const [formData, setFormData] = useState<ApplicationData>({
         phone: '',
         salary: '',
@@ -115,26 +118,61 @@ export default function ApplyOfferScreen() {
         setDynamicTotalSavings(Math.max(0, netSavings));
     }, [selectedTenure, params.loanRemainingAmount, params.newRate, params.loanMonthlyEmi, params.processingFee]);
 
-    // Pre-fill from profile
+    // Pre-fill from profile and verify offer with Edge Function
     useEffect(() => {
-        if (user) {
-            supabase
-                .from('profiles')
-                .select('phone, salary, employer')
-                .eq('id', user.id)
-                .maybeSingle()
-                .then(({ data }) => {
-                    if (data) {
-                        setFormData(prev => ({
-                            ...prev,
-                            phone: data.phone || '',
-                            salary: data.salary ? String(data.salary) : '',
-                            employer: data.employer || '',
-                        }));
+        let isMounted = true;
+        const initData = async () => {
+            if (!user) return;
+            try {
+                // 1. Fetch Profile
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('phone, salary, employer')
+                    .eq('id', user.id)
+                    .maybeSingle();
+
+                if (profile && isMounted) {
+                    setFormData(prev => ({
+                        ...prev,
+                        phone: profile.phone || '',
+                        salary: profile.salary ? String(profile.salary) : '',
+                        employer: profile.employer || '',
+                    }));
+                }
+
+                // 2. Invoke Edge Function to verify & cache the offer
+                const salaryVal = profile?.salary || 0;
+                if (params.loanId && params.loanRemainingAmount && salaryVal > 0) {
+                    const { data: edgeData, error: edgeErr } = await supabase.functions.invoke('fetch-bank-offers', {
+                        body: {
+                            user_id: user.id,
+                            user_loan_id: params.loanId,
+                            salary: salaryVal,
+                            requested_amount: parseFloat(params.loanRemainingAmount)
+                        }
+                    });
+
+                    if (edgeErr) {
+                        console.error('Edge Function Error:', edgeErr);
+                    } else if (edgeData && Array.isArray(edgeData)) {
+                        const verifiedOffer = edgeData.find(o => o.provider_id === params.productId);
+                        if (verifiedOffer && isMounted) {
+                            setEdgeOfferData(verifiedOffer);
+                            // We could override local dynamic states here with verified data, 
+                            // but local calculator manages custom tenure which the Edge Function doesn't.
+                        }
                     }
-                });
-        }
-    }, [user]);
+                }
+            } catch (err) {
+                console.error('Init error:', err);
+            } finally {
+                if (isMounted) setVerifyingOffer(false);
+            }
+        };
+
+        initData();
+        return () => { isMounted = false; };
+    }, [user, params.loanId, params.loanRemainingAmount, params.productId]);
 
     const totalSteps = 4; // Added Customize Offer step
 
@@ -381,6 +419,17 @@ export default function ApplyOfferScreen() {
     }
 
     // ─── Main Form ──────────────────────────────────────────────────────────
+    if (verifyingOffer) {
+        return (
+            <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color={Colors.brand.emerald} />
+                <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, marginTop: 12 }}>
+                    Verifying offer details securely...
+                </Text>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
             {/* Header */}
@@ -538,7 +587,7 @@ export default function ApplyOfferScreen() {
                                     {params.bankName}
                                 </Text>
                                 <Text style={{ ...Typography.caption, color: theme.colors.textSecondary }}>
-                                    {params.productName} · Save {formatAED(parseFloat(params.monthlySavings || '0'))}/mo
+                                    {params.productName} · Save {formatAED(edgeOfferData?.monthly_savings || parseFloat(params.monthlySavings || '0'))}/mo
                                 </Text>
                             </View>
                         </View>
