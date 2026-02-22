@@ -9,6 +9,8 @@ import {
     ActivityIndicator,
     KeyboardAvoidingView,
     Platform,
+    Modal,
+    FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -46,22 +48,45 @@ export default function EditProfileScreen() {
     const [nationality, setNationality] = useState('');
     const [residencyStatus, setResidencyStatus] = useState('resident');
 
+    const [nationalities, setNationalities] = useState<string[]>([]);
+    const [showNatModal, setShowNatModal] = useState(false);
+    const [natSearch, setNatSearch] = useState('');
+
+    useEffect(() => {
+        fetch('https://restcountries.com/v3.1/all?fields=name')
+            .then(res => res.json())
+            .then(data => {
+                const nats = data.map((d: any) => d.name.common).sort();
+                setNationalities(nats);
+            })
+            .catch(e => console.error('Error fetching nationalities:', e));
+    }, []);
+
     const fetchProfile = useCallback(async () => {
         if (!user) return;
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('first_name, last_name, salary, employment_type, nationality, residency_status')
+                .select('first_name, last_name, salary, residency_status')
                 .eq('id', user.id)
                 .maybeSingle();
+
             if (error) throw error;
+
+            const userMetadata = (user as any).user_metadata || {};
+
             if (data) {
-                setFirstName(data.first_name || '');
-                setLastName(data.last_name || '');
-                setMonthlyIncome(data.salary ? String(data.salary) : '');
-                setEmploymentType(data.employment_type || 'salaried');
-                setNationality(data.nationality || '');
+                setFirstName(data.first_name || userMetadata.first_name || '');
+                setLastName(data.last_name || userMetadata.last_name || '');
+                setMonthlyIncome(data.salary ? Number(data.salary).toLocaleString('en-US') : '');
+                setEmploymentType(userMetadata.employment_type || 'salaried');
+                setNationality(userMetadata.nationality || '');
                 setResidencyStatus(data.residency_status || 'resident');
+            } else {
+                setFirstName(userMetadata.first_name || '');
+                setLastName(userMetadata.last_name || '');
+                setEmploymentType(userMetadata.employment_type || 'salaried');
+                setNationality(userMetadata.nationality || '');
             }
         } catch (e) {
             console.error('Error fetching profile:', e);
@@ -79,6 +104,16 @@ export default function EditProfileScreen() {
         }
         setSaving(true);
         try {
+            // Update auth metadata for fields missing in profiles table
+            await supabase.auth.updateUser({
+                data: {
+                    first_name: firstName.trim(),
+                    last_name: lastName.trim(),
+                    nationality: nationality.trim() || null,
+                    employment_type: employmentType,
+                }
+            });
+
             const { error } = await supabase
                 .from('profiles')
                 .upsert({
@@ -86,9 +121,7 @@ export default function EditProfileScreen() {
                     first_name: firstName.trim(),
                     last_name: lastName.trim(),
                     full_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
-                    salary: monthlyIncome ? parseFloat(monthlyIncome) : null,
-                    employment_type: employmentType,
-                    nationality: nationality.trim() || null,
+                    salary: monthlyIncome ? parseFloat(monthlyIncome.replace(/,/g, '')) : null,
                     residency_status: residencyStatus,
                     updated_at: new Date().toISOString(),
                 });
@@ -193,7 +226,29 @@ export default function EditProfileScreen() {
                     </View>
 
                     <InputField label="Monthly Income (AED)" value={monthlyIncome} onChangeText={setMonthlyIncome} placeholder="25000" theme={theme} keyboardType="numeric" />
-                    <InputField label="Nationality" value={nationality} onChangeText={setNationality} placeholder="e.g. UAE, India, Egypt" theme={theme} />
+
+                    {/* Nationality */}
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textSecondary, marginBottom: 6 }}>Nationality</Text>
+                    <TouchableOpacity
+                        onPress={() => setShowNatModal(true)}
+                        style={{
+                            backgroundColor: theme.colors.card,
+                            borderRadius: BorderRadius.md,
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                            paddingHorizontal: 14,
+                            paddingVertical: 14,
+                            marginBottom: 20,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between'
+                        }}
+                    >
+                        <Text style={{ fontSize: 16, color: nationality ? theme.colors.textPrimary : theme.colors.textDisabled }}>
+                            {nationality || 'Select Nationality'}
+                        </Text>
+                        <Ionicons name="chevron-down" size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
 
                     {/* Employment Type */}
                     <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textSecondary, marginBottom: 10 }}>Employment Type</Text>
@@ -291,6 +346,61 @@ export default function EditProfileScreen() {
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
+
+            {/* Nationality Selection Modal */}
+            <Modal visible={showNatModal} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setShowNatModal(false)}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
+                        <TouchableOpacity onPress={() => setShowNatModal(false)} style={{ padding: 4, marginRight: 12 }}>
+                            <Ionicons name="close" size={24} color={theme.colors.textPrimary} />
+                        </TouchableOpacity>
+                        <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.textPrimary }}>Select Nationality</Text>
+                    </View>
+                    <View style={{ padding: 16 }}>
+                        <TextInput
+                            value={natSearch}
+                            onChangeText={setNatSearch}
+                            placeholder="Search countries..."
+                            placeholderTextColor={theme.colors.textDisabled}
+                            style={{
+                                backgroundColor: theme.colors.card,
+                                borderRadius: BorderRadius.md,
+                                paddingHorizontal: 14,
+                                paddingVertical: 12,
+                                color: theme.colors.textPrimary,
+                                fontSize: 16,
+                            }}
+                        />
+                    </View>
+                    {nationalities.length === 0 ? (
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <ActivityIndicator size="small" color={Colors.brand.emerald} />
+                            <Text style={{ color: theme.colors.textSecondary, marginTop: 12 }}>Loading countries...</Text>
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={nationalities.filter(n => n.toLowerCase().includes(natSearch.toLowerCase()))}
+                            keyExtractor={(item) => item}
+                            initialNumToRender={20}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity
+                                    onPress={() => { setNationality(item); setShowNatModal(false); setNatSearch(''); }}
+                                    style={{
+                                        paddingHorizontal: 20,
+                                        paddingVertical: 16,
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: theme.colors.border,
+                                    }}
+                                >
+                                    <Text style={{ fontSize: 16, color: item === nationality ? Colors.brand.emerald : theme.colors.textPrimary, fontWeight: item === nationality ? '600' : '400' }}>
+                                        {item}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                        />
+                    )}
+                </SafeAreaView>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -310,12 +420,25 @@ function InputField({
     theme: any;
     keyboardType?: 'default' | 'numeric';
 }) {
+    const handleTextChange = (text: string) => {
+        if (keyboardType === 'numeric') {
+            const numStr = text.replace(/\D/g, '');
+            if (numStr) {
+                onChangeText(Number(numStr).toLocaleString('en-US'));
+            } else {
+                onChangeText('');
+            }
+        } else {
+            onChangeText(text);
+        }
+    };
+
     return (
         <View style={{ marginBottom: 20 }}>
             <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textSecondary, marginBottom: 6 }}>{label}</Text>
             <TextInput
                 value={value}
-                onChangeText={onChangeText}
+                onChangeText={handleTextChange}
                 placeholder={placeholder}
                 placeholderTextColor={theme.colors.textDisabled}
                 keyboardType={keyboardType}

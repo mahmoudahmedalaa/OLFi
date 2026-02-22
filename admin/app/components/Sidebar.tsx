@@ -10,6 +10,8 @@ const nav = [
     { href: '/users', label: 'Users', icon: '👥' },
     { href: '/loans', label: 'Loans', icon: '💳' },
     { href: '/applications', label: 'Applications', icon: '📋' },
+    { href: '/documents', label: 'Document Vault', icon: '📂' },
+    { href: '/offers', label: 'Manual Offers', icon: '⭐' },
     { href: '/notifications', label: 'Notifications', icon: '🔔' },
 ];
 

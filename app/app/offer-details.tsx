@@ -169,6 +169,11 @@ export default function OfferDetailsScreen() {
                 totalSavings: String(selectedResult.netSavings),
                 newRate: String(selectedResult.newRate),
                 newEmi: String(selectedResult.newEmi),
+                loanRemainingAmount: String(selectedLoan.remaining_amount),
+                loanMonthlyEmi: String(selectedLoan.monthly_emi),
+                processingFee: String(selectedResult.processingFee),
+                maxTenureMonths: String(product.max_tenure_months || 48),
+                defaultTenure: String(selectedResult.newTenureMonths),
             },
         });
     };

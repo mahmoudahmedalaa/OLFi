@@ -245,12 +245,30 @@ export async function fetchAnalyticsSummary() {
     const uniqueUsers24h = new Set((activeUsers24h.data || []).map((e: { user_id: string }) => e.user_id)).size;
     const uniqueUsers7d = new Set((activeUsers7d.data || []).map((e: { user_id: string }) => e.user_id)).size;
 
+    // Fetch Total Debt Tracked
+    const { data: loansData, error: lErr } = await supabase.from('user_loans').select('remaining_amount');
+    let totalDebtTracked = 0;
+    if (!lErr && loansData) {
+        totalDebtTracked = loansData.reduce((acc, curr) => acc + (curr.remaining_amount || 0), 0);
+    }
+
+    // Fetch Average Savings Offered (for accepted/completed or all visible)
+    // We'll calculate based on refinance_offers for simplicity or applications
+    const { data: offersData, error: oErr } = await supabase.from('refinance_offers').select('net_savings');
+    let averageSavings = 0;
+    if (!oErr && offersData && offersData.length > 0) {
+        const total = offersData.reduce((acc, curr) => acc + (curr.net_savings || 0), 0);
+        averageSavings = Math.round(total / offersData.length);
+    }
+
     return {
         events24h: events24h.count ?? 0,
         events7d: events7d.count ?? 0,
         events30d: events30d.count ?? 0,
         activeUsers24h: uniqueUsers24h,
         activeUsers7d: uniqueUsers7d,
+        totalDebtTracked,
+        averageSavings
     };
 }
 

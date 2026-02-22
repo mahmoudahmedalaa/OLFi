@@ -25,8 +25,6 @@ interface Profile {
     full_name: string | null;
     email: string | null;
     salary: number | null;
-    employment_type: string | null;
-    nationality: string | null;
 }
 
 export default function ProfileScreen() {
@@ -41,14 +39,14 @@ export default function ProfileScreen() {
         try {
             const { data, error } = await supabase
                 .from('profiles')
-                .select('first_name, last_name, full_name, salary, employment_type, nationality')
+                .select('first_name, last_name, full_name, salary')
                 .eq('id', user.id)
                 .maybeSingle();
             if (error) throw error;
             if (data) {
                 setProfile({ ...data, email: user.email || null });
             } else {
-                setProfile({ first_name: null, last_name: null, full_name: null, email: user.email || null, salary: null, employment_type: null, nationality: null });
+                setProfile({ first_name: null, last_name: null, full_name: null, email: user.email || null, salary: null });
             }
         } catch (e) {
             console.error('Failed to fetch profile:', e);
@@ -178,18 +176,6 @@ export default function ProfileScreen() {
                                     >
                                         {displayEmail}
                                     </Text>
-                                    {profile?.employment_type && (
-                                        <Text
-                                            style={{
-                                                fontSize: 12,
-                                                color: theme.colors.textTertiary,
-                                                marginTop: 2,
-                                            }}
-                                        >
-                                            {profile.employment_type}
-                                            {profile.nationality ? ` • ${profile.nationality}` : ''}
-                                        </Text>
-                                    )}
                                 </View>
                             </View>
                         )}

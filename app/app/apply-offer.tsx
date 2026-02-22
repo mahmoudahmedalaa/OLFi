@@ -20,9 +20,11 @@ import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { formatAED } from '@/lib/refinance-calculator';
+import { formatAED, calculateEMI } from '@/lib/refinance-calculator';
 import { hapticLight, hapticMedium, hapticSuccess, hapticSelection } from '@/lib/haptics';
 import { trackApplicationStarted, trackApplicationSubmitted } from '@/lib/analytics';
+import { TenureSlider } from '@/components/ui/tenure-slider';
+import { useApplicationStore } from '@/store/useApplicationStore';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -55,6 +57,11 @@ export default function ApplyOfferScreen() {
         totalSavings: string;
         newRate: string;
         newEmi: string;
+        loanRemainingAmount: string;
+        loanMonthlyEmi: string;
+        processingFee: string;
+        maxTenureMonths: string;
+        defaultTenure: string;
     }>();
 
     const [step, setStep] = useState(0);
@@ -71,6 +78,42 @@ export default function ApplyOfferScreen() {
         callbackTime: '',
         consent: false,
     });
+
+    // Dynamic offer calculations
+    const selectedTenure = useApplicationStore((state) => state.selectedTenure);
+    const setSelectedTenure = useApplicationStore((state) => state.setSelectedTenure);
+
+    const [dynamicEmi, setDynamicEmi] = useState(
+        params.newEmi ? parseFloat(params.newEmi) : 0
+    );
+    const [dynamicMonthlySavings, setDynamicMonthlySavings] = useState(
+        params.monthlySavings ? parseFloat(params.monthlySavings) : 0
+    );
+    const [dynamicTotalSavings, setDynamicTotalSavings] = useState(
+        params.totalSavings ? parseFloat(params.totalSavings) : 0
+    );
+
+    const [dynamicGrossTotalSavings, setDynamicGrossTotalSavings] = useState(0);
+
+    // Recalculate on tenure change
+    useEffect(() => {
+        if (!params.loanRemainingAmount || !params.newRate || !params.loanMonthlyEmi || !params.processingFee) return;
+
+        const principal = parseFloat(params.loanRemainingAmount);
+        const rate = parseFloat(params.newRate);
+        const oldEmi = parseFloat(params.loanMonthlyEmi);
+        const fee = parseFloat(params.processingFee);
+
+        const newCalculatedEmi = calculateEMI(principal, rate, selectedTenure);
+        const mSavings = oldEmi - newCalculatedEmi;
+        const grossSavings = mSavings * selectedTenure;
+        const netSavings = grossSavings - fee;
+
+        setDynamicEmi(newCalculatedEmi);
+        setDynamicMonthlySavings(mSavings);
+        setDynamicGrossTotalSavings(grossSavings);
+        setDynamicTotalSavings(Math.max(0, netSavings));
+    }, [selectedTenure, params.loanRemainingAmount, params.newRate, params.loanMonthlyEmi, params.processingFee]);
 
     // Pre-fill from profile
     useEffect(() => {
@@ -93,7 +136,7 @@ export default function ApplyOfferScreen() {
         }
     }, [user]);
 
-    const totalSteps = 3;
+    const totalSteps = 4; // Added Customize Offer step
 
     const animateToStep = (nextStep: number) => {
         hapticMedium();
@@ -118,10 +161,11 @@ export default function ApplyOfferScreen() {
                     user_loan_id: params.loanId,
                     bank_product_id: params.productId,
                     status: 'submitted',
-                    monthly_savings: parseFloat(params.monthlySavings || '0'),
-                    total_savings: parseFloat(params.totalSavings || '0'),
+                    monthly_savings: dynamicMonthlySavings,
+                    total_savings: dynamicTotalSavings,
                     new_rate: parseFloat(params.newRate || '0'),
-                    new_emi: parseFloat(params.newEmi || '0'),
+                    new_emi: dynamicEmi,
+                    selected_tenure_months: selectedTenure,
                 });
 
             if (error) throw error;
@@ -246,23 +290,46 @@ export default function ApplyOfferScreen() {
                         }}>
                             Projected Savings
                         </Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 }}>
                             <View>
-                                <Text style={{ ...Typography.h2, color: theme.colors.textPrimary }}>
-                                    {formatAED(parseFloat(params.monthlySavings || '0'))}
+                                <Text style={{ ...Typography.h3, color: theme.colors.textPrimary }}>
+                                    {formatAED(dynamicMonthlySavings)}
                                 </Text>
                                 <Text style={{ ...Typography.caption, color: theme.colors.textSecondary }}>
                                     per month
                                 </Text>
                             </View>
                             <View style={{ alignItems: 'flex-end' }}>
-                                <Text style={{ ...Typography.h2, color: theme.colors.textPrimary }}>
-                                    {formatAED(parseFloat(params.totalSavings || '0'))}
+                                <Text style={{ ...Typography.h3, color: theme.colors.textPrimary }}>
+                                    {formatAED(dynamicGrossTotalSavings)}
                                 </Text>
                                 <Text style={{ ...Typography.caption, color: theme.colors.textSecondary }}>
-                                    total savings
+                                    gross savings
                                 </Text>
                             </View>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
+                            <View>
+                                <Text style={{ ...Typography.bodyBold, color: theme.colors.textPrimary }}>
+                                    Processing Fee
+                                </Text>
+                                <Text style={{ ...Typography.caption, color: theme.colors.textTertiary }}>
+                                    (Deducted)
+                                </Text>
+                            </View>
+                            <Text style={{ ...Typography.bodyBold, color: Colors.error }}>
+                                - {formatAED(parseFloat(params.processingFee || '0'))}
+                            </Text>
+                        </View>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ ...Typography.h3, color: theme.colors.textPrimary }}>
+                                Net Savings
+                            </Text>
+                            <Text style={{ ...Typography.h2, color: Colors.brand.emerald }}>
+                                {formatAED(dynamicTotalSavings)}
+                            </Text>
                         </View>
                     </View>
 
@@ -374,11 +441,63 @@ export default function ApplyOfferScreen() {
                     width: SCREEN_WIDTH * totalSteps,
                     transform: [{
                         translateX: slideAnim.interpolate({
-                            inputRange: [0, 1, 2],
-                            outputRange: [0, -SCREEN_WIDTH, -SCREEN_WIDTH * 2],
+                            inputRange: [0, 1, 2, 3],
+                            outputRange: [0, -SCREEN_WIDTH, -SCREEN_WIDTH * 2, -SCREEN_WIDTH * 3],
                         }),
                     }],
                 }}>
+                    {/* Step 0: Customize Offer */}
+                    <ScrollView
+                        style={{ width: SCREEN_WIDTH }}
+                        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <Text style={{ ...Typography.h1, color: theme.colors.textPrimary, marginBottom: 4 }}>
+                            Customize Your Plan
+                        </Text>
+                        <Text style={{ ...Typography.body, color: theme.colors.textSecondary, marginBottom: 24 }}>
+                            Adjust the tenure to find the perfect monthly payment for you.
+                        </Text>
+
+                        <View style={{
+                            backgroundColor: theme.colors.card,
+                            borderRadius: BorderRadius.lg,
+                            padding: 24,
+                            marginBottom: 24,
+                            borderWidth: 1,
+                            borderColor: Colors.brand.emerald + '40',
+                            alignItems: 'center',
+                        }}>
+                            <Text style={{ ...Typography.captionBold, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+                                New Monthly EMI
+                            </Text>
+                            <Text style={{ fontSize: 48, fontWeight: '800', color: Colors.brand.emerald, letterSpacing: -1 }}>
+                                {formatAED(Math.round(dynamicEmi))}
+                            </Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginTop: 24, paddingTop: 24, paddingBottom: 16, borderTopWidth: 1, borderTopColor: theme.colors.border }}>
+                                <View style={{ alignItems: 'center', flex: 1 }}>
+                                    <Text style={{ ...Typography.h3, color: theme.colors.textPrimary }}>{formatAED(Math.round(dynamicMonthlySavings))}</Text>
+                                    <Text style={{ ...Typography.caption, color: theme.colors.textTertiary, marginTop: 4 }}>/mo savings</Text>
+                                </View>
+                                <View style={{ width: 1, backgroundColor: theme.colors.border }} />
+                                <View style={{ alignItems: 'center', flex: 1 }}>
+                                    <Text style={{ ...Typography.h3, color: theme.colors.textPrimary }}>{formatAED(Math.round(dynamicGrossTotalSavings))}</Text>
+                                    <Text style={{ ...Typography.caption, color: theme.colors.textTertiary, marginTop: 4 }}>Gross savings</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: theme.colors.bg, borderRadius: BorderRadius.md }}>
+                                <Text style={{ ...Typography.caption, color: theme.colors.textSecondary }}>Net Savings (After {formatAED(parseFloat(params.processingFee || '0'))} Fee)</Text>
+                                <Text style={{ ...Typography.captionBold, color: Colors.brand.emerald }}>{formatAED(Math.round(dynamicTotalSavings))}</Text>
+                            </View>
+                        </View>
+
+                        <TenureSlider
+                            tenure={selectedTenure}
+                            onTenureChange={setSelectedTenure}
+                            maxTenureMonths={params.maxTenureMonths ? parseInt(params.maxTenureMonths) : 48}
+                        />
+                    </ScrollView>
+
                     {/* Step 1: Contact Info */}
                     <ScrollView
                         style={{ width: SCREEN_WIDTH }}
@@ -708,8 +827,11 @@ export default function ApplyOfferScreen() {
                             <ReviewRow label="Bank" value={params.bankName || ''} theme={theme} icon="business-outline" />
                             <ReviewRow label="Product" value={params.productName || ''} theme={theme} icon="card-outline" />
                             <ReviewRow label="New Rate" value={`${params.newRate || '0'}%`} theme={theme} icon="trending-down-outline" />
-                            <ReviewRow label="Monthly Savings" value={formatAED(parseFloat(params.monthlySavings || '0'))} theme={theme} icon="cash-outline" highlight />
-                            <ReviewRow label="Total Savings" value={formatAED(parseFloat(params.totalSavings || '0'))} theme={theme} icon="wallet-outline" highlight isLast />
+                            <ReviewRow label="Target Tenure" value={`${selectedTenure} months`} theme={theme} icon="calendar-outline" />
+                            <ReviewRow label="Monthly Savings" value={formatAED(dynamicMonthlySavings)} theme={theme} icon="cash-outline" highlight />
+                            <ReviewRow label="Gross Savings" value={formatAED(dynamicGrossTotalSavings)} theme={theme} icon="wallet-outline" />
+                            <ReviewRow label="Processing Fee" value={`- ${formatAED(parseFloat(params.processingFee || '0'))}`} theme={theme} icon="calculator-outline" />
+                            <ReviewRow label="Net Savings" value={formatAED(dynamicTotalSavings)} theme={theme} icon="trophy-outline" highlight isLast />
                         </View>
 
                         {/* Contact Details Card */}
@@ -807,20 +929,21 @@ export default function ApplyOfferScreen() {
             }}>
                 <TouchableOpacity
                     onPress={() => {
-                        if (step === 0 && canProceedStep0) animateToStep(1);
-                        else if (step === 1) animateToStep(2);
-                        else if (step === 2 && canProceedStep2) handleSubmit();
+                        if (step === 0) animateToStep(1);
+                        else if (step === 1 && canProceedStep0) animateToStep(2);
+                        else if (step === 2) animateToStep(3);
+                        else if (step === 3 && canProceedStep2) handleSubmit();
                     }}
                     activeOpacity={0.8}
                     disabled={
-                        (step === 0 && !canProceedStep0) ||
-                        (step === 2 && !canProceedStep2) ||
+                        (step === 1 && !canProceedStep0) ||
+                        (step === 3 && !canProceedStep2) ||
                         submitting
                     }
                 >
                     <LinearGradient
                         colors={
-                            (step === 0 && !canProceedStep0) || (step === 2 && !canProceedStep2)
+                            (step === 1 && !canProceedStep0) || (step === 3 && !canProceedStep2)
                                 ? ['#94A3B8', '#64748B']
                                 : [Colors.brand.emerald, Colors.brand.emeraldDark]
                         }
@@ -840,10 +963,10 @@ export default function ApplyOfferScreen() {
                         ) : (
                             <>
                                 <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>
-                                    {step === 2 ? 'Submit Application' : 'Continue'}
+                                    {step === 3 ? 'Submit Application' : 'Continue'}
                                 </Text>
                                 <Ionicons
-                                    name={step === 2 ? 'checkmark-circle' : 'arrow-forward'}
+                                    name={step === 3 ? 'checkmark-circle' : 'arrow-forward'}
                                     size={20}
                                     color="#fff"
                                 />
@@ -852,9 +975,9 @@ export default function ApplyOfferScreen() {
                     </LinearGradient>
                 </TouchableOpacity>
 
-                {step === 1 && (
+                {step === 2 && (
                     <TouchableOpacity
-                        onPress={() => animateToStep(2)}
+                        onPress={() => animateToStep(3)}
                         style={{ alignItems: 'center', marginTop: 12 }}
                     >
                         <Text style={{ ...Typography.caption, color: theme.colors.textTertiary }}>

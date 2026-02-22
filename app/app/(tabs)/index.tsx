@@ -539,7 +539,7 @@ export default function DashboardScreen() {
                 </View>
               ) : (
                 <TouchableOpacity
-                  onPress={() => router.push('/(tabs)/profile')}
+                  onPress={() => router.push('/edit-profile' as any)}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',

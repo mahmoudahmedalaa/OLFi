@@ -56,13 +56,19 @@ export default function ApplicationsPage() {
                 docs: 'documents_required',
                 review: 'under_review',
             };
+
+            // For docs we want admin_notes, for reject we want rejection_reason
+            const adminNotes = actionModal.type === 'docs' ? notes : undefined;
+            const rejectionReason = actionModal.type === 'reject' ? notes : undefined;
+
             await updateApplicationStatus(
                 actionModal.id,
                 statusMap[actionModal.type],
-                actionModal.type === 'docs' ? notes : undefined,
-                actionModal.type === 'reject' ? notes : undefined,
+                adminNotes,
+                rejectionReason,
                 actionModal.userId
             );
+
             setActionModal(null);
             setNotes('');
             await load();
@@ -124,8 +130,8 @@ export default function ApplicationsPage() {
                         key={f}
                         onClick={() => setFilter(f)}
                         className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === f
-                                ? 'bg-emerald-500 text-white'
-                                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                            ? 'bg-emerald-500 text-white'
+                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
                             }`}
                     >
                         {f === 'all' ? 'All' : STATUS_LABELS[f] || f}
@@ -279,10 +285,10 @@ export default function ApplicationsPage() {
                                 onClick={handleAction}
                                 disabled={saving || ((actionModal.type === 'reject' || actionModal.type === 'docs') && !notes.trim())}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${actionModal.type === 'reject'
-                                        ? 'bg-red-500 text-white hover:bg-red-600'
-                                        : actionModal.type === 'approve'
-                                            ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-                                            : 'bg-amber-500 text-white hover:bg-amber-600'
+                                    ? 'bg-red-500 text-white hover:bg-red-600'
+                                    : actionModal.type === 'approve'
+                                        ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                                        : 'bg-amber-500 text-white hover:bg-amber-600'
                                     }`}
                             >
                                 {saving ? 'Saving...' : 'Confirm'}

@@ -50,7 +50,7 @@ The app has grown significantly. **All core user flows are now fully functional 
 - **Notion Architecture Build:** A Notion MCP connection is established with a BuyOut Internal bot (`ntn_...`). The most immediate task is picking up the `implementation_plan.md` from the previous session to fully construct the Engineering, Legal, and Product databases under a single Notion Root Page.
 - **Tenure Adjustment Slider:** `refinance-calculator.ts` logic has been mathematically audited and perfected. However, `apply-offer.tsx` needs a UI slider so users can toggle between maximizing monthly cash savings vs. total debt interest savings.
 - **Push Notifications:** The database structure for `notifications` exists and is populated via Edge Functions/Admin Panel. Real APNs/FCM push notification delivery requires Expo credentials setup.
-- **Khatma/Islamic filtering:** Sharia compliance toggles exist in the UI and DB, but need stricter enforcement during offer matching if requested by the user.
+- **Islamic Finance filtering:** Sharia compliance toggles exist in the UI and DB, but need stricter enforcement during offer matching if requested by the user.
 
 ---
 
