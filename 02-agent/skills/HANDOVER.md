@@ -1,120 +1,80 @@
 # BuyOut — Handover Document
-> Last updated: 2026-02-14 by Session 6a3131f4
+> Last updated: 2026-02-16
 
 ---
 
 ## Project Overview
 
-**BuyOut** — A fintech iOS app for UAE consumers to aggregate debts, compare refinancing offers, and execute switches. Built with Expo (React Native) + Supabase.
+**BuyOut** is a fintech iOS app for UAE consumers to aggregate their debts, compare refinancing offers effortlessly, and execute switches to save money. The product ecosystem consists of:
+1. **iOS App** (React Native / Expo / NativeWind)
+2. **Admin Panel** (Next.js / Tailwind)
+3. **Backend** (Supabase: Postgres + Auth + Edge Functions)
 
 - **Repo:** https://github.com/mahmoudahmedalaa/buyout
-- **Branches:** `main` and `develop` (in sync)
+- **Branches:** `main` and `feature/phase-4-advanced` (currently active)
 - **Supabase Project ID:** `uivkpqjdoqwgfhvnskaw`
 - **Bundle ID:** `com.mahmoudahmedalaa.buyout`
-- **TestFlight:** Build 1.0.0 (2) live, internal testing group set up
 
 ---
 
-## Current State: Phase 1 ~70% Complete
+## Current State: Phase 4 (Polish & Admin) Complete
 
-### ✅ Done
-- **Expo + TypeScript project** — builds and runs on TestFlight
-- **Design system** — dark theme tokens in `app/lib/constants.ts` (Colors, Spacing, Typography, BorderRadius)
-- **Tab navigation** — Home, Loans, Offers, Profile
-- **Auth stack** — Login + Signup screens wired to Supabase Auth (email only)
-- **Supabase database** — 7 tables with RLS:
-  - `profiles` (0 rows) — user profiles linked to auth.users
-  - `banks` (8 rows) — UAE banks seeded
-  - `bank_products` (8 rows) — loan products seeded
-  - `user_loans` (0 rows) — user's debts
-  - `refinance_offers` (0 rows) — generated offers
-  - `user_documents` (0 rows) — doc uploads
-  - `notifications` (0 rows) — in-app notifications
-- **App icon** — "B" lettermark (geometric white B on dark navy)
-- **Git** — clean repo, `.gitignore` set up, git-flow workflow in `.agent/workflows/git-flow.md`
+The app has grown significantly. **All core user flows are now fully functional and connected to the real database.**
 
-### 🟡 Exists But Not Connected
-All 4 tab screens render with **hardcoded mock data** — nothing queries Supabase:
-- `app/(tabs)/index.tsx` — Dashboard with mock total debt, savings, loan cards
-- `app/(tabs)/loans.tsx` — Loan list with filters, mock loans
-- `app/(tabs)/offers.tsx` — Offer cards with mock bank offers
-- `app/(tabs)/profile.tsx` — Menu items (all `onPress` are no-ops or alerts)
+### ✅ Features Done & Fully Integrated
 
-### ❌ Not Started
-- Phase 2: Add Debt CRUD, Dashboard ↔ Supabase, Credit Health, Onboarding, **Dark/Light mode toggle**
-- Phase 3: Offer comparison, savings calculator, lead capture, application tracker
-- Phase 4: Coming Soon modals, animations, haptics
-- Phase 5: Beta testing, App Store metadata
+**Mobile App (iOS):**
+- **Auth & Profiles:** Signup, Login, Profile editing, push notification settings structure.
+- **Theming:** Full Dark/Light mode toggle with persistence via context.
+- **Debt Management:** Users can Add, Edit, and Delete their loans.
+- **Dashboard:** Dynamic calculation of total debt and potential savings based on real user loans.
+- **Refinancing Engine (Edge Functions):** The app securely calls `match-offers` to calculate real-time savings based on actual bank products in the DB.
+- **Offer Flow:** Users can browse matched offers, view detailed comparison (Current vs. New EMI), and initiate an application.
+- **Application Submission:** Securely handled via `submit-application` Edge Function which writes to the DB and triggers notifications.
+- **Analytics:** Custom client-side tracker (`trackEvent`, `trackScreen`) logging events to the `analytics_events` table in Supabase.
+- **UX Polish:** "Coming Soon" modals (UAE Pass, AECB), empty states, error handling, haptic feedback on key interactions.
+
+**Admin Panel (Next.js):**
+- **Dashboard:** Key metrics, recent applications, and recent loans.
+- **Analytics Dashboard:** Event streams, active users counts, conversion funnels (Screen Views → Offer Views → Applications).
+- **Application Management:** View applications, update status (Approve, Reject, Request Docs) via modals. Formally notifies the user via Supabase.
+- **Loans Management:** Full CRUD. Clickable rows to drill down, edit details inline, or manually change loan status.
+- **Bank & Product Management:** Full CRUD system for managing the mock UAE banks and their associated loan products.
+- **Notifications system:** Send targeted or broadcast in-app messages to users. User dropdown displays verified emails directly from `auth.users`.
+- **User Drill-down:** Inspect a specific user's profile, loans, applications, and activity timeline.
 
 ---
 
-## Next Session Should Start With: Phase 2
+### ⏳ In Progress / Needs Polish
 
-### Priority order:
-1. **Dark/Light mode toggle** — Theme context wrapping the app, AsyncStorage persistence, toggle in Profile screen (Light/Dark/System). Update all screens to use dynamic `theme.colors.*` instead of hardcoded `Colors.dark.*`. This is first because every subsequent screen change benefits from it.
-2. **Add Debt form** — New screen with bank picker, debt type, amount, rate, tenure, EMI, compliance type. Insert into `user_loans` table.
-3. **Dashboard ↔ Supabase** — Fetch real `user_loans`, calculate real totals and savings.
-4. **Loans screen ↔ Supabase** — Real CRUD (edit, delete), real filter/status.
-5. **Offers screen ↔ Supabase** — Fetch from `bank_products` + `refinance_offers`, wire Sharia filter.
-6. **Profile screen** — Fetch/update `profiles` table, wire menu items.
-7. **Onboarding flow** — 3-step animated welcome.
-8. **Credit Health Indicator** — Calculate from entered data.
+- **Notion Architecture Build:** A Notion MCP connection is established with a BuyOut Internal bot (`ntn_...`). The most immediate task is picking up the `implementation_plan.md` from the previous session to fully construct the Engineering, Legal, and Product databases under a single Notion Root Page.
+- **Tenure Adjustment Slider:** `refinance-calculator.ts` logic has been mathematically audited and perfected. However, `apply-offer.tsx` needs a UI slider so users can toggle between maximizing monthly cash savings vs. total debt interest savings.
+- **Push Notifications:** The database structure for `notifications` exists and is populated via Edge Functions/Admin Panel. Real APNs/FCM push notification delivery requires Expo credentials setup.
+- **Khatma/Islamic filtering:** Sharia compliance toggles exist in the UI and DB, but need stricter enforcement during offer matching if requested by the user.
 
 ---
 
-## Key Files
+### 🔮 Future Features (Phase 5 & Post-MVP)
 
-| File | Purpose |
-|:-----|:--------|
-| `app/app.json` | Expo config (buildNumber: "2", bundleId, icon path) |
-| `app/lib/supabase.ts` | Supabase client (URL + anon key) |
-| `app/lib/auth-context.tsx` | Auth context provider |
-| `app/lib/constants.ts` | Design tokens (Colors, Spacing, Typography) |
-| `app/app/_layout.tsx` | Root layout (auth check, routing) |
-| `app/app/(auth)/login.tsx` | Login screen |
-| `app/app/(auth)/signup.tsx` | Signup screen |
-| `app/app/(tabs)/index.tsx` | Dashboard (mock data) |
-| `app/app/(tabs)/loans.tsx` | Loans list (mock data) |
-| `app/app/(tabs)/offers.tsx` | Offers list (mock data) |
-| `app/app/(tabs)/profile.tsx` | Profile menu |
-| `01-docs/PRD.md` | Full product requirements |
-| `01-docs/IMPLEMENTATION_PLAN.md` | 5-phase build plan |
-| `01-docs/TECH_STACK.md` | Technology decisions |
-| `01-docs/FRONTEND_GUIDELINES.md` | Design standards |
-| `.agent/workflows/git-flow.md` | Git branching workflow |
+- **TestFlight Distribution:** Final Xcode archiving, fixing any provisioning profile issues, and pushing to internal testers.
+- **AECB Integration:** Replace "Coming Soon" modals with actual API integration or a secure sandbox environment for fetching real credit scores and debt data.
+- **UAE Pass:** Native integration for seamless onboarding.
+- **Document OCR:** Allow users to upload loan statements and automatically parse the remaining amount, rate, and EMI.
+- **Investor Demo Polish:** Scripting the happy path and ensuring the mock data in Supabase perfectly aligns with the pitch narrative.
 
 ---
 
-## Build & Deploy
+## Next Agent Instructions
 
-```bash
-# Dev server
-cd app && npx expo start
+Start by reviewing this document to understand the architecture. **The project is currently working from the `feature/phase-4-advanced` branch**, but recent Admin Panel fixes and Legal Documents (`docs/privacy-policy.md` + `docs/terms-of-service.md`) were successfully merged up to `main` for Vercel/GitHub Pages deployment.
 
-# iOS prebuild (must do before Xcode archive)
-cd app && rm -rf ios && npx expo prebuild --platform ios
-cd app/ios && pod install  # IMPORTANT: run in same shell session
+**Key Architecture Notes:**
+1. **Notion Automation (NEW):** You have access to the Notion MCP. Ask the user for the parent Page ID, and start constructing the detailed business databases outlined in their latest conversations.
+2. **Supabase Edge Functions** handle sensitive operations: `match-offers` (business logic for calculating savings) and `submit-application` (saving to DB and triggering notifications).
+3. **Admin Panel** uses Server Actions exclusively (`admin/lib/actions.ts`).
+4. **App Styling** uses NativeWind and a strictly enforced `theme-context.tsx`.
 
-# Open Xcode
-open app/ios/BuyOutapp.xcworkspace
-
-# Archive: Xcode → Product → Archive → Distribute → App Store Connect
-# Build number must be bumped in app.json before each upload
-```
-
-### Known quirks:
-- `pod install` sometimes silently fails when run via separate shell commands. Always chain it: `cd app/ios && pod install 2>&1`
-- `expo prebuild --clean` with the `--no-install` flag skips CocoaPods — always run `pod install` after
-- TestFlight requires clearing Export Compliance for new apps (one-time)
-- Internal testers must be App Store Connect team members
-
----
-
-## Design Standards
-
-- **Dark-first** design (Revolut/Wise inspired), light mode to be added in Phase 2
-- Colors: Emerald green (#10B981) brand accent on Slate 900 (#0F172A) backgrounds
-- Typography: System fonts with defined scale (display/h1/h2/h3/body/caption)
-- Cards: Gradient backgrounds (`Colors.gradients.card`), 14px border radius
-- No placeholder images — generate real assets
-- Premium feel: gradients, subtle shadows, proper spacing
+**Immediate Next Steps:**
+1. Focus heavily on executing the Notion Architecture build. Ask the user for the parent page URL/ID to begin scaffolding databases.
+2. Once the Notion build is stable, pivot immediately back to implementing the "Tenure Adjustment Slider" in `apply-offer.tsx`.
+3. Use `npx expo start` to verify mobile builds during UI modifications.
