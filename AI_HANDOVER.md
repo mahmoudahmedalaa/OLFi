@@ -6,28 +6,26 @@ BuyOut has fully pivoted to an **Islamic Fintech** application. The app allows u
 - **Core Value Prop:** Escaping Riba (Usury), debt consolidation without interest, transparent flat subscription fees (Wakalah framework), profit-sharing (Mudarabah).
 - **Tech Stack:** React Native / Expo (development via native builds `npx expo run:ios`, **NEVER** use Expo Go for testing), TypeScript, Gluestack UI, Supabase.
 
-## 2. Work Completed in Last Session
-### A. Product & Copy Refinement
-- Transitioned all UI terminology from conventional finance terms to Islamic finance terms.
-  - "Interest-Free" -> "0% Interest / Halal"
-  - "Lending/Loans" -> "Financing / BuyOuts"
-  - "Subscription" -> "Wakalah (Service Fee)"
-  - "Investments" -> "Mudarabah (Profit Sharing)"
-- Implemented and polished the **Tenure Adjustment Slider** on the Manual Offers screen, allowing users to customize their repayment schedule before accepting a BuyOut offer.
+## 2. Work Completed in Last Development Session
+### A. Refactoring & Code Quality
+- Addressed significant technical debt across the application by resolving React hook exhaustive dependency warnings (`react-hooks/exhaustive-deps`) and removing unused variables/imports.
+- Extensively modularized core screens (`app/add-loan.tsx`, `app/apply-offer.tsx`, `app/dashboard.tsx`, `app/offers.tsx`) by separating UI rendering components from state and side-effects.
+- Abstracted complex business and fetch logic into dedicated custom hooks (e.g., `useAddLoan`, `useApplyOffer`, `useDashboardData`, `useOffersData`).
 
-### B. Documentation (Notion Integration)
-- Completely rebuilt the Notion engineering wiki via the MCP server to reflect the Islamic Finance pivot and the **TestFlight-only** launch strategy.
-- Created/Updated: Developer Setup, App Store Connect SOP, Copy & Tone of Voice, Design System, Database ERD, App Flow & Navigation, and Legal & Compliance.
+### B. Biometric Security Enhancements
+- Integrated seamless Face ID/Touch ID login.
+- Configured user credentials to save securely in the device's keychain using `expo-secure-store` upon manual authentication.
+- Altered `login.tsx` to automatically prompt for bio-auth and refactored the root `_layout.tsx` to properly delay splash screen dismissal to prevent content flashing prior to bio-auth validation.
 
-### C. Critical UI/UX Pre-Flight Fixes
-- **App Icon & Splash Screen:** Fixed a critical bug where iOS rendered the transparent PNGs as black squares. Wrote custom Node.js scripts (`pngjs`) to perfectly map the App Icon (`icon-solid.png`) and Splash Screen (`logo-solid.png`) to a solid, 100% opaque `#0F172A` background to bypass strict Apple transparency bans.
-- **SafeAreaView Deprecation:** The user had a strict requirement to eliminate a yellow LogBox warning about `SafeAreaView` being deprecated. It originated from internal `node_modules`. 
-  - Patched `moti` dependency via `patch-package`.
-  - Surgically removed the warning trigger from `node_modules/react-native/index.js` via `patch-package`.
+### C. Limiting MVP Loan Types
+- Conducted strategic analysis determining that retaining Mortgages, Credit Cards, Business loans, and "Other" types distorts standard EMI calculations.
+- Cleaned the entire application surface area to exclusively support **Personal Finance** and **Auto Finance**. 
+- Removed residual references, icons, text, and data structures referencing non-MVP loan types across `add-loan`, `edit-loan`, `loan-detail`, onboarding descriptions, calculator insights, legal privacy policies, and the global application store types.
 
 ## 3. Current State
 - The codebase is currently being compiled on a native iOS development build (`npx expo run:ios`).
-- All `SafeAreaView` warnings have been eradicated at the React Native core level.
+- Biometric flow has been built and works safely inside the native scope.
+- `SafeAreaView` warnings have been eradicated at the React Native core level via `patch-package`.
 - The user is preparing to **manually archive** the app via Xcode themselves to submit to TestFlight. **Do not run the archive command.**
 
 ## 4. Next Steps for Incoming AI
