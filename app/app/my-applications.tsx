@@ -215,7 +215,6 @@ export default function MyApplicationsScreen() {
                     applications.map((app) => {
                         const statusConfig = STATUS_CONFIG[app.status] || STATUS_CONFIG.submitted;
                         const bankName = (app.bank_product as any)?.bank?.name || 'Bank';
-                        const productName = (app.bank_product as any)?.name || 'Product';
                         const isIslamic = (app.bank_product as any)?.bank?.is_islamic;
                         const loanBank = (app.user_loan as any)?.bank_name || 'Your';
                         const loanType = (app.user_loan as any)?.loan_type || 'loan';

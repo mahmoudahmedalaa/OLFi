@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export interface DebtItem {
     id: string;
-    type: 'credit_card' | 'personal_loan' | 'auto_loan';
+    type: 'personal_loan' | 'auto_loan';
     balanceFils: number;
     emiFils: number;
     tenureRemaining?: number;

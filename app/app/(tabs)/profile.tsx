@@ -8,7 +8,6 @@ import {
     ActivityIndicator,
     RefreshControl,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
@@ -18,6 +17,7 @@ import { useTheme } from '@/lib/theme-context';
 import { supabase } from '@/lib/supabase';
 import { ComingSoonCards } from '@/components/coming-soon-modal';
 import { hapticLight, hapticWarning } from '@/lib/haptics';
+import GlassHeader from '@/components/ui/GlassHeader';
 
 interface Profile {
     first_name: string | null;
@@ -92,9 +92,22 @@ export default function ProfileScreen() {
         .slice(0, 2);
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
+        <View style={{ flex: 1, backgroundColor: theme.colors.bg }}>
+            {/* Glass Header */}
+            <GlassHeader>
+                <Text
+                    style={{
+                        fontSize: 24,
+                        fontWeight: '700',
+                        color: theme.colors.textPrimary,
+                    }}
+                >
+                    Profile
+                </Text>
+            </GlassHeader>
+
             <ScrollView
-                contentContainerStyle={{ paddingBottom: 32 }}
+                contentContainerStyle={{ paddingBottom: 32, paddingTop: 16 }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl
@@ -107,18 +120,6 @@ export default function ProfileScreen() {
                     />
                 }
             >
-                {/* Header */}
-                <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 }}>
-                    <Text
-                        style={{
-                            fontSize: 24,
-                            fontWeight: '700',
-                            color: theme.colors.textPrimary,
-                        }}
-                    >
-                        Profile
-                    </Text>
-                </View>
 
                 {/* User Card */}
                 <View style={{ paddingHorizontal: 20, marginBottom: 24, marginTop: 8 }}>
@@ -264,6 +265,13 @@ export default function ProfileScreen() {
                         theme={theme}
                     />
                     <MenuSection
+                        title="EDUCATION"
+                        items={[
+                            { icon: 'school-outline', label: 'Sharia Center', onPress: () => router.push('/sharia-center' as any) },
+                        ]}
+                        theme={theme}
+                    />
+                    <MenuSection
                         title="SUPPORT"
                         items={[
                             { icon: 'help-circle-outline', label: 'Help & FAQ', onPress: () => Alert.alert('Help & FAQ', 'Visit buyout.ae/help for answers to common questions.') },
@@ -328,7 +336,7 @@ export default function ProfileScreen() {
                     BuyOut v1.0.0
                 </Text>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 

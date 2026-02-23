@@ -3,18 +3,23 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, LogBox } from 'react-native';
 import 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import '@/global.css';
+
+// Ignore 3rd-party deprecation warnings
+LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -72,7 +77,7 @@ function useProtectedRoute(onboardingDone: boolean | null) {
       // Onboarding done + signed in but still on auth/onboarding → go to Dashboard
       router.replace('/(tabs)');
     }
-  }, [user, loading, segments, onboardingDone]);
+  }, [user, loading, segments, onboardingDone, router]);
 }
 
 function RootLayoutInner() {
@@ -165,14 +170,14 @@ function RootLayoutInner() {
   useProtectedRoute(onboardingDone);
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && biometricLocked !== null) {
       // Minimum splash display of 1.5s for branding impact
       const timer = setTimeout(() => {
         SplashScreen.hideAsync();
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [loading]);
+  }, [loading, biometricLocked]);
 
   return (
     <GluestackUIProvider mode={theme.isDark ? 'dark' : 'light'}>
@@ -328,10 +333,14 @@ function RootLayoutInner() {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <RootLayoutInner />
-      </AuthProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <AuthProvider>
+          <BottomSheetModalProvider>
+            <RootLayoutInner />
+          </BottomSheetModalProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

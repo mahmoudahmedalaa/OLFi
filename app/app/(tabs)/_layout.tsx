@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Platform } from 'react-native';
+import { View, Platform, StyleSheet } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { Colors } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { trackScreen } from '@/lib/analytics';
@@ -15,7 +16,8 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors.brand.emerald,
         tabBarInactiveTintColor: theme.colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: theme.colors.card,
+          position: 'absolute',
+          backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.colors.card,
           borderTopColor: theme.colors.border,
           borderTopWidth: 0.5,
           height: Platform.OS === 'ios' ? 88 : 64,
@@ -24,6 +26,13 @@ export default function TabLayout() {
           elevation: 0,
           shadowOpacity: 0,
         },
+        tabBarBackground: Platform.OS === 'ios' ? () => (
+          <BlurView
+            tint={theme.isDark ? "dark" : "light"}
+            intensity={80}
+            style={StyleSheet.absoluteFill}
+          />
+        ) : undefined,
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '600',

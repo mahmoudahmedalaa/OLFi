@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     View,
     Text,
@@ -19,12 +19,16 @@ import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { supabase } from '@/lib/supabase';
+import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [hasBiometricOption, setHasBiometricOption] = useState(false);
     const { signIn } = useAuth();
     const { theme } = useTheme();
 
@@ -43,6 +47,56 @@ export default function LoginScreen() {
             setLoading(false);
         }
     };
+
+    const handleBiometricLogin = useCallback(async (savedEmail?: string, savedPassword?: string) => {
+        try {
+            const emailToUse = savedEmail || await SecureStore.getItemAsync('saved_email');
+            const passwordToUse = savedPassword || await SecureStore.getItemAsync('saved_password');
+
+            if (!emailToUse || !passwordToUse) return;
+
+            const result = await LocalAuthentication.authenticateAsync({
+                promptMessage: 'Log in to BuyOut',
+                fallbackLabel: 'Use Passcode',
+            });
+
+            if (result.success) {
+                setLoading(true);
+                const { error } = await signIn(emailToUse, passwordToUse);
+                if (error) Alert.alert('Login Error', error.message);
+                // IF successful, _layout will transition automatically
+            }
+        } catch (e: any) {
+            console.log(e);
+        } finally {
+            setLoading(false);
+        }
+    }, [signIn]);
+
+    useEffect(() => {
+        const checkBiometricAvailability = async () => {
+            try {
+                const isEnabled = await AsyncStorage.getItem('@buyout_biometric_lock');
+                if (isEnabled !== 'true') return;
+
+                const compatible = await LocalAuthentication.hasHardwareAsync();
+                const enrolled = await LocalAuthentication.isEnrolledAsync();
+
+                if (compatible && enrolled) {
+                    const savedEmail = await SecureStore.getItemAsync('saved_email');
+                    const savedPassword = await SecureStore.getItemAsync('saved_password');
+                    if (savedEmail && savedPassword) {
+                        setHasBiometricOption(true);
+                        // Auto-prompt Face ID on mount
+                        handleBiometricLogin(savedEmail, savedPassword);
+                    }
+                }
+            } catch (e) {
+                console.log('Biometric check failed', e);
+            }
+        };
+        checkBiometricAvailability();
+    }, [handleBiometricLogin]);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -219,6 +273,31 @@ export default function LoginScreen() {
                         </LinearGradient>
                     </TouchableOpacity>
 
+                    {/* Face ID / Biometric Button */}
+                    {hasBiometricOption && (
+                        <TouchableOpacity
+                            onPress={() => handleBiometricLogin()}
+                            style={{
+                                marginTop: 16,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: theme.colors.card,
+                                borderRadius: BorderRadius.md,
+                                height: 52,
+                                borderWidth: 1,
+                                borderColor: Colors.brand.teal,
+                            }}
+                            activeOpacity={0.7}
+                            disabled={loading}
+                        >
+                            <Ionicons name="scan-outline" size={20} color={Colors.brand.teal} style={{ marginRight: 8 }} />
+                            <Text style={{ fontSize: 16, fontWeight: '600', color: Colors.brand.teal }}>
+                                Login with Face ID
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+
                     {/* Forgot Password */}
                     <TouchableOpacity
                         style={{ alignItems: 'center', marginTop: 16 }}
@@ -325,7 +404,7 @@ export default function LoginScreen() {
                         }}
                     >
                         <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-                            Don't have an account?
+                            Don&apos;t have an account?
                         </Text>
                         <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
                             <Text

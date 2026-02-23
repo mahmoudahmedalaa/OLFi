@@ -23,10 +23,6 @@ import { calculateEMI } from '@/lib/refinance-calculator';
 const LOAN_TYPES = [
     { key: 'personal', label: 'Personal', icon: 'person-outline' },
     { key: 'auto', label: 'Auto', icon: 'car-outline' },
-    { key: 'mortgage', label: 'Mortgage', icon: 'home-outline' },
-    { key: 'credit_card', label: 'Credit Card', icon: 'card-outline' },
-    { key: 'business', label: 'Business', icon: 'briefcase-outline' },
-    { key: 'other', label: 'Other', icon: 'ellipsis-horizontal-outline' },
 ];
 
 export default function EditLoanScreen() {

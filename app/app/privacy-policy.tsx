@@ -20,7 +20,6 @@ const SECTIONS = [
 
 We do NOT collect or store:
 • Bank login credentials
-• Credit card numbers
 • Biometric data stored on external servers`,
     },
     {

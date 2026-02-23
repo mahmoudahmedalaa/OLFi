@@ -70,7 +70,7 @@ export default function SuccessModal({
                 }),
             ]).start();
         }
-    }, [visible]);
+    }, [visible, scaleAnim, fadeAnim, checkScale]);
 
     const formatLoanType = (type: string) =>
         type.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) + ' Loan';

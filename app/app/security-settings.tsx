@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
@@ -27,7 +28,6 @@ export default function SecuritySettingsScreen() {
     const { user, signOut } = useAuth();
     const [biometrics, setBiometrics] = useState(false);
     const [showPasswordSection, setShowPasswordSection] = useState(false);
-    const [currentPw, setCurrentPw] = useState('');
     const [newPw, setNewPw] = useState('');
     const [confirmPw, setConfirmPw] = useState('');
     const [changingPw, setChangingPw] = useState(false);
@@ -59,6 +59,14 @@ export default function SecuritySettingsScreen() {
             if (result.success) {
                 setBiometrics(true);
                 await AsyncStorage.setItem(BIOMETRIC_KEY, 'true');
+
+                const savedPwd = await SecureStore.getItemAsync('saved_password');
+                if (!savedPwd) {
+                    Alert.alert(
+                        'Almost Done',
+                        'To use Face ID for logging in, you must manually log in with your email and password at least once. Please log out and back in to fully enable biometric login.'
+                    );
+                }
             }
             // If cancelled/failed, toggle stays OFF
         } else {
@@ -88,9 +96,14 @@ export default function SecuritySettingsScreen() {
         try {
             const { error } = await supabase.auth.updateUser({ password: newPw });
             if (error) throw error;
+
+            // Update saved credentials for FaceID if they exist
+            if (biometrics) {
+                await SecureStore.setItemAsync('saved_password', newPw);
+            }
+
             Alert.alert('Success', 'Password updated successfully.');
             setShowPasswordSection(false);
-            setCurrentPw('');
             setNewPw('');
             setConfirmPw('');
         } catch (e: any) {

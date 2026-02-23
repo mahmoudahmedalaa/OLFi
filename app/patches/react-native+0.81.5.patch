@@ -1,0 +1,125 @@
+diff --git a/node_modules/react-native/Libraries/Components/SafeAreaView/SafeAreaView.js b/node_modules/react-native/Libraries/Components/SafeAreaView/SafeAreaView.js
+index 34097b8..28ec662 100644
+--- a/node_modules/react-native/Libraries/Components/SafeAreaView/SafeAreaView.js
++++ b/node_modules/react-native/Libraries/Components/SafeAreaView/SafeAreaView.js
+@@ -8,11 +8,12 @@
+  * @format
+  */
+ 
+-import type {ViewProps} from '../View/ViewPropTypes';
++import type { ViewProps } from '../View/ViewPropTypes';
+ 
+ import Platform from '../../Utilities/Platform';
+ import View from '../View/View';
+ import * as React from 'react';
++console.trace('Who is using SafeAreaView?');
+ 
+ /**
+  * Renders nested content and automatically applies paddings reflect the portion
+diff --git a/node_modules/react-native/index.js b/node_modules/react-native/index.js
+index c737c93..2e4a772 100644
+--- a/node_modules/react-native/index.js
++++ b/node_modules/react-native/index.js
+@@ -73,8 +73,8 @@ module.exports = {
+     warnOnce(
+       'progress-bar-android-moved',
+       'ProgressBarAndroid has been extracted from react-native core and will be removed in a future release. ' +
+-        "It can now be installed and imported from '@react-native-community/progress-bar-android' instead of 'react-native'. " +
+-        'See https://github.com/react-native-progress-view/progress-bar-android',
++      "It can now be installed and imported from '@react-native-community/progress-bar-android' instead of 'react-native'. " +
++      'See https://github.com/react-native-progress-view/progress-bar-android',
+     );
+     return require('./Libraries/Components/ProgressBarAndroid/ProgressBarAndroid')
+       .default;
+@@ -89,12 +89,6 @@ module.exports = {
+    * See https://github.com/th3rdwave/react-native-safe-area-context
+    */
+   get SafeAreaView() {
+-    warnOnce(
+-      'safe-area-view-deprecated',
+-      'SafeAreaView has been deprecated and will be removed in a future release. ' +
+-        "Please use 'react-native-safe-area-context' instead. " +
+-        'See https://github.com/th3rdwave/react-native-safe-area-context',
+-    );
+     return require('./Libraries/Components/SafeAreaView/SafeAreaView').default;
+   },
+   get ScrollView() {
+@@ -181,8 +175,8 @@ module.exports = {
+     warnOnce(
+       'clipboard-moved',
+       'Clipboard has been extracted from react-native core and will be removed in a future release. ' +
+-        "It can now be installed and imported from '@react-native-clipboard/clipboard' instead of 'react-native'. " +
+-        'See https://github.com/react-native-clipboard/clipboard',
++      "It can now be installed and imported from '@react-native-clipboard/clipboard' instead of 'react-native'. " +
++      'See https://github.com/react-native-clipboard/clipboard',
+     );
+     return require('./Libraries/Components/Clipboard/Clipboard').default;
+   },
+@@ -274,8 +268,8 @@ module.exports = {
+     warnOnce(
+       'pushNotificationIOS-moved',
+       'PushNotificationIOS has been extracted from react-native core and will be removed in a future release. ' +
+-        "It can now be installed and imported from '@react-native-community/push-notification-ios' instead of 'react-native'. " +
+-        'See https://github.com/react-native-push-notification/ios',
++      "It can now be installed and imported from '@react-native-community/push-notification-ios' instead of 'react-native'. " +
++      'See https://github.com/react-native-push-notification/ios',
+     );
+     return require('./Libraries/PushNotificationIOS/PushNotificationIOS')
+       .default;
+@@ -350,8 +344,8 @@ if (__DEV__) {
+       invariant(
+         false,
+         'AsyncStorage has been removed from react-native core. ' +
+-          "It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. " +
+-          'See https://github.com/react-native-async-storage/async-storage',
++        "It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. " +
++        'See https://github.com/react-native-async-storage/async-storage',
+       );
+     },
+   });
+@@ -365,9 +359,9 @@ if (__DEV__) {
+       invariant(
+         false,
+         'ImagePickerIOS has been removed from React Native. ' +
+-          "Please upgrade to use either 'react-native-image-picker' or 'expo-image-picker'. " +
+-          "If you cannot upgrade to a different library, please install the deprecated '@react-native-community/image-picker-ios' package. " +
+-          'See https://github.com/rnc-archive/react-native-image-picker-ios',
++        "Please upgrade to use either 'react-native-image-picker' or 'expo-image-picker'. " +
++        "If you cannot upgrade to a different library, please install the deprecated '@react-native-community/image-picker-ios' package. " +
++        'See https://github.com/rnc-archive/react-native-image-picker-ios',
+       );
+     },
+   });
+@@ -381,8 +375,8 @@ if (__DEV__) {
+       invariant(
+         false,
+         'ProgressViewIOS has been removed from react-native core. ' +
+-          "It can now be installed and imported from '@react-native-community/progress-view' instead of 'react-native'. " +
+-          'See https://github.com/react-native-progress-view/progress-view',
++        "It can now be installed and imported from '@react-native-community/progress-view' instead of 'react-native'. " +
++        'See https://github.com/react-native-progress-view/progress-view',
+       );
+     },
+   });
+@@ -396,8 +390,8 @@ if (__DEV__) {
+       invariant(
+         false,
+         'DatePickerIOS has been removed from react-native core. ' +
+-          "It can now be installed and imported from '@react-native-community/datetimepicker' instead of 'react-native'. " +
+-          'See https://github.com/react-native-datetimepicker/datetimepicker',
++        "It can now be installed and imported from '@react-native-community/datetimepicker' instead of 'react-native'. " +
++        'See https://github.com/react-native-datetimepicker/datetimepicker',
+       );
+     },
+   });
+@@ -411,8 +405,8 @@ if (__DEV__) {
+       invariant(
+         false,
+         'Slider has been removed from react-native core. ' +
+-          "It can now be installed and imported from '@react-native-community/slider' instead of 'react-native'. " +
+-          'See https://github.com/callstack/react-native-slider',
++        "It can now be installed and imported from '@react-native-community/slider' instead of 'react-native'. " +
++        'See https://github.com/callstack/react-native-slider',
+       );
+     },
+   });

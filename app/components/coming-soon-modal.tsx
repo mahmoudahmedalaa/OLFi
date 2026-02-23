@@ -85,7 +85,7 @@ const FEATURES: Record<string, FeatureConfig> = {
                 iconColor: '#3B82F6',
                 iconBg: '#3B82F620',
                 title: 'Auto-Import Loans',
-                description: 'All your active loans, credit cards, and EMI commitments are automatically imported. Say goodbye to manual data entry.',
+                description: 'All your active personal loans, auto loans, and EMI commitments are automatically imported. Say goodbye to manual data entry.',
             },
             {
                 icon: 'pulse-outline',

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Dimensions } from 'react-native';
-import Svg, { Path, Circle, Line, Text as SvgText, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Text as SvgText, Defs, LinearGradient as SvgGradient, Stop, Mask, Rect } from 'react-native-svg';
+import Animated, { useSharedValue, useAnimatedProps, withTiming, Easing, withDelay } from 'react-native-reanimated';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 
@@ -18,8 +19,29 @@ interface SavingsChartProps {
     processingFee: number;
 }
 
+const AnimatedRect = Animated.createAnimatedComponent(Rect);
+
 export default function SavingsChart({ data, processingFee }: SavingsChartProps) {
     const { theme } = useTheme();
+
+    const animatedMaskWidth = useSharedValue(0);
+
+    useEffect(() => {
+        animatedMaskWidth.value = 0;
+        animatedMaskWidth.value = withDelay(
+            300,
+            withTiming(CHART_WIDTH, {
+                duration: 1500,
+                easing: Easing.out(Easing.cubic)
+            })
+        );
+    }, [data, animatedMaskWidth]);
+
+    const animatedRectProps = useAnimatedProps(() => {
+        return {
+            width: animatedMaskWidth.value
+        };
+    });
 
     if (data.length < 2) return null;
 
@@ -94,6 +116,9 @@ export default function SavingsChart({ data, processingFee }: SavingsChartProps)
                         <Stop offset="0" stopColor={Colors.brand.emerald} stopOpacity="0.3" />
                         <Stop offset="1" stopColor={Colors.brand.emerald} stopOpacity="0.02" />
                     </SvgGradient>
+                    <Mask id="revealMask">
+                        <AnimatedRect x="0" y="0" height={CHART_HEIGHT} fill="white" animatedProps={animatedRectProps} />
+                    </Mask>
                 </Defs>
 
                 {/* Grid lines */}
@@ -124,7 +149,7 @@ export default function SavingsChart({ data, processingFee }: SavingsChartProps)
                 )}
 
                 {/* Area fill */}
-                <Path d={areaPath} fill="url(#areaGradient)" />
+                <Path d={areaPath} fill="url(#areaGradient)" mask="url(#revealMask)" />
 
                 {/* Main line */}
                 <Path
@@ -134,6 +159,7 @@ export default function SavingsChart({ data, processingFee }: SavingsChartProps)
                     strokeWidth={2.5}
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    mask="url(#revealMask)"
                 />
 
                 {/* Endpoint dot */}
@@ -144,6 +170,7 @@ export default function SavingsChart({ data, processingFee }: SavingsChartProps)
                     fill={Colors.brand.emerald}
                     stroke="#fff"
                     strokeWidth={2}
+                    mask="url(#revealMask)"
                 />
 
                 {/* Break-even dot */}
@@ -155,6 +182,7 @@ export default function SavingsChart({ data, processingFee }: SavingsChartProps)
                         fill="#F59E0B"
                         stroke="#fff"
                         strokeWidth={2}
+                        mask="url(#revealMask)"
                     />
                 )}
 

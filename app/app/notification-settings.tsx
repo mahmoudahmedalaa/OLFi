@@ -80,7 +80,7 @@ export default function NotificationSettingsScreen() {
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}>
                 <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 20 }}>
-                    Choose which notifications you'd like to receive
+                    Choose which notifications you&apos;d like to receive
                 </Text>
 
                 {settings.map((setting, idx) => (
@@ -136,7 +136,7 @@ export default function NotificationSettingsScreen() {
                 }}>
                     <Ionicons name="information-circle" size={18} color={Colors.brand.teal} />
                     <Text style={{ fontSize: 12, color: theme.colors.textSecondary, flex: 1 }}>
-                        Push notification settings are also managed through your device's Settings app.
+                        Push notification settings are also managed through your device&apos;s Settings app.
                     </Text>
                 </View>
             </ScrollView>

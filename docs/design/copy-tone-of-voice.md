@@ -14,6 +14,14 @@ Because BuyOut deals with personal debt, loans, and credit scores, our tone of v
     *   *Bad:* "We'll connect to your bank."
     *   *Good:* "Connect securely using UAE Pass. We never store your credentials."
 
+## Islamic Finance Terminology (Strictly Enforced)
+
+As a Sharia-compliant platform, we must use precise terminology to maintain trust and legal transparency. Do not use conventional banking terms.
+
+*   **NEVER Use:** "Interest", "Interest Rate", "Loan", "Borrowing".
+*   **ALWAYS Use:** "Expected Profit Rate" (or "Profit Rate"), "Financing Cost", "Financing Facility", "Islamic Finance".
+*   **Refinancing Context:** When communicating paying off conventional debt, use terms like "Consolidating to a Sharia-compliant facility", "Ethical Balance Transfer", or "Transitioning your debt." Avoid "Refinancing your loan."
+
 ## Standardized Phrasing Dictionary
 
 To ensure consistency across the application, always use the agreed-upon phrasing for common actions:

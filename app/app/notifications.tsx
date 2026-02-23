@@ -6,12 +6,11 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     RefreshControl,
-    Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
@@ -168,7 +167,7 @@ export default function NotificationsScreen() {
                                 No notifications yet
                             </Text>
                             <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 4 }}>
-                                We'll notify you about better rates and offers
+                                We&apos;ll notify you about better rates and offers
                             </Text>
                         </View>
                     }

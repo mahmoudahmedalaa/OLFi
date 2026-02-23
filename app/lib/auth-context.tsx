@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
+import * as SecureStore from 'expo-secure-store';
 import { supabase } from './supabase';
 import { initAnalytics, clearAnalytics, trackSignIn, trackSignUp } from './analytics';
 
@@ -72,6 +73,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             email,
             password,
         });
+
+        if (!error) {
+            try {
+                await SecureStore.setItemAsync('saved_email', email);
+                await SecureStore.setItemAsync('saved_password', password);
+            } catch (e) {
+                console.warn('Failed to save credentials for biometric auto-login', e);
+            }
+        }
+
         return { error: error as Error | null };
     };
 

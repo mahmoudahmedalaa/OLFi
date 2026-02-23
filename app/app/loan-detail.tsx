@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
     ScrollView,
     TouchableOpacity,
     Alert,
-    ActivityIndicator,
     RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +15,9 @@ import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { formatAED, calculateEMI, estimateRemainingMonths } from '@/lib/refinance-calculator';
+import { formatAED, estimateRemainingMonths } from '@/lib/refinance-calculator';
+import CircularProgress from '@/components/ui/CircularProgress';
+import Skeleton from '@/components/ui/Skeleton';
 
 interface LoanDetail {
     id: string;
@@ -36,10 +37,6 @@ interface LoanDetail {
 const LOAN_TYPE_ICONS: Record<string, { icon: keyof typeof Ionicons.glyphMap; color: string }> = {
     personal: { icon: 'person', color: '#8B5CF6' },
     auto: { icon: 'car', color: '#3B82F6' },
-    mortgage: { icon: 'home', color: '#F59E0B' },
-    credit_card: { icon: 'card', color: '#EF4444' },
-    business: { icon: 'briefcase', color: '#10B981' },
-    other: { icon: 'ellipsis-horizontal', color: '#6B7280' },
 };
 
 export default function LoanDetailScreen() {
@@ -80,8 +77,8 @@ export default function LoanDetailScreen() {
 
     const handleDelete = () => {
         Alert.alert(
-            'Delete Loan',
-            'Are you sure you want to delete this loan? This action cannot be undone.',
+            'Delete Financing',
+            'Are you sure you want to delete this financing? This action cannot be undone.',
             [
                 { text: 'Cancel', style: 'cancel' },
                 {
@@ -97,7 +94,7 @@ export default function LoanDetailScreen() {
                             if (error) throw error;
                             router.back();
                         } catch (e: any) {
-                            Alert.alert('Error', e.message || 'Failed to delete loan.');
+                            Alert.alert('Error', e.message || 'Failed to delete financing.');
                         }
                     },
                 },
@@ -107,9 +104,20 @@ export default function LoanDetailScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color={Colors.brand.emerald} />
-                <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
+            <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
+                <View style={{ padding: 20 }}>
+                    <Skeleton height={200} borderRadius={16} style={{ marginBottom: 20 }} />
+                    <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+                        <Skeleton height={80} style={{ flex: 1 }} borderRadius={12} />
+                        <Skeleton height={80} style={{ flex: 1 }} borderRadius={12} />
+                    </View>
+                    <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+                        <Skeleton height={80} style={{ flex: 1 }} borderRadius={12} />
+                        <Skeleton height={80} style={{ flex: 1 }} borderRadius={12} />
+                    </View>
+                    <Skeleton height={200} borderRadius={12} />
+                    <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 32, textAlign: 'center', letterSpacing: 0.3 }}>Fetching facility details...</Text>
+                </View>
             </SafeAreaView>
         );
     }
@@ -117,7 +125,7 @@ export default function LoanDetailScreen() {
     if (!loan) {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ color: theme.colors.textSecondary }}>Loan not found</Text>
+                <Text style={{ color: theme.colors.textSecondary }}>Financing not found</Text>
             </SafeAreaView>
         );
     }
@@ -149,7 +157,7 @@ export default function LoanDetailScreen() {
                     <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
                 </TouchableOpacity>
                 <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.textPrimary }}>
-                    Loan Details
+                    Financing Details
                 </Text>
                 <View style={{ flexDirection: 'row', gap: 12 }}>
                     <TouchableOpacity
@@ -205,7 +213,7 @@ export default function LoanDetailScreen() {
                                     {loan.bank_name || 'Unknown Bank'}
                                 </Text>
                                 <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginTop: 2 }}>
-                                    {formatType(loan.loan_type)} Loan • {loan.interest_rate}% APR
+                                    {formatType(loan.loan_type)} Finance • {loan.interest_rate}% APR
                                 </Text>
                             </View>
                             <View style={{
@@ -225,38 +233,25 @@ export default function LoanDetailScreen() {
                             </View>
                         </View>
 
-                        {/* Main amount display */}
-                        <View style={{ alignItems: 'center', marginBottom: 20 }}>
-                            <Text style={{ fontSize: 12, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                Remaining Balance
-                            </Text>
-                            <Text style={{ fontSize: 32, fontWeight: '800', color: theme.colors.textPrimary, marginTop: 4 }}>
-                                {formatAED(loan.remaining_amount)}
-                            </Text>
-                        </View>
-
-                        {/* Progress */}
-                        <View style={{
-                            height: 6,
-                            backgroundColor: theme.colors.border,
-                            borderRadius: 3,
-                            overflow: 'hidden',
-                            marginBottom: 8,
-                        }}>
-                            <View style={{
-                                width: `${Math.min(progress * 100, 100)}%`,
-                                height: '100%',
-                                backgroundColor: Colors.brand.emerald,
-                                borderRadius: 3,
-                            }} />
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={{ fontSize: 12, color: theme.colors.textTertiary }}>
-                                {Math.round(progress * 100)}% paid
-                            </Text>
-                            <Text style={{ fontSize: 12, color: theme.colors.textTertiary }}>
-                                {formatAED(loan.original_amount)} total
-                            </Text>
+                        {/* Main amount display & Progress */}
+                        <View style={{ alignItems: 'center', marginBottom: 16, flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+                            <CircularProgress
+                                progress={progress}
+                                size={96}
+                                strokeWidth={8}
+                                color={Colors.brand.emerald}
+                            />
+                            <View>
+                                <Text style={{ fontSize: 12, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                    Remaining Balance
+                                </Text>
+                                <Text style={{ fontSize: 28, fontWeight: '800', color: theme.colors.textPrimary, marginTop: 4 }}>
+                                    {formatAED(loan.remaining_amount)}
+                                </Text>
+                                <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 4 }}>
+                                    of {formatAED(loan.original_amount)} total
+                                </Text>
+                            </View>
                         </View>
                     </LinearGradient>
                 </View>
@@ -282,7 +277,7 @@ export default function LoanDetailScreen() {
                     <View style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
                         <StatCard
                             icon="trending-up-outline"
-                            label="Interest Rate"
+                            label="Profit Rate"
                             value={`${loan.interest_rate}%`}
                             color="#F59E0B"
                             theme={theme}
@@ -305,7 +300,7 @@ export default function LoanDetailScreen() {
                         color: theme.colors.textPrimary,
                         marginBottom: 12,
                     }}>
-                        Loan Breakdown
+                        Financing Breakdown
                     </Text>
                     <View style={{
                         backgroundColor: theme.colors.card,
@@ -317,7 +312,7 @@ export default function LoanDetailScreen() {
                         <DetailRow label="Original Amount" value={formatAED(loan.original_amount)} theme={theme} />
                         <DetailRow label="Amount Paid" value={formatAED(paidAmount)} theme={theme} />
                         <DetailRow label="Remaining Balance" value={formatAED(loan.remaining_amount)} theme={theme} />
-                        <DetailRow label="Total Interest" value={totalInterest > 0 ? formatAED(totalInterest) : '—'} theme={theme} />
+                        <DetailRow label="Total Profit" value={totalInterest > 0 ? formatAED(totalInterest) : '—'} theme={theme} />
                         <DetailRow label="Tenure" value={`${loan.tenure_months} months`} theme={theme} />
                         <DetailRow label="Added" value={new Date(loan.created_at).toLocaleDateString('en-AE', { month: 'short', day: 'numeric', year: 'numeric' })} theme={theme} last />
                     </View>
@@ -356,7 +351,7 @@ export default function LoanDetailScreen() {
                                     Find Better Rates
                                 </Text>
                                 <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>
-                                    Compare refinance offers for this loan
+                                    Compare transfer offers for this facility
                                 </Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.8)" />

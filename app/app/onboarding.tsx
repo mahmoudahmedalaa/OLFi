@@ -35,7 +35,7 @@ const slides: Slide[] = [
         id: '1',
         icon: 'wallet-outline',
         title: 'Track All Your Loans',
-        description: 'Add your personal, auto, mortgage, and credit card loans in one place. See your total debt and monthly payments at a glance.',
+        description: 'Add your personal and auto loans in one place. See your total debt and monthly payments at a glance.',
         gradient: ['#10B981', '#059669'],
     },
     {
@@ -54,6 +54,13 @@ const slides: Slide[] = [
     },
     {
         id: '4',
+        icon: 'book-outline',
+        title: 'Zero Compromise',
+        description: 'Our refinancing solutions are 100% Sharia-compliant, based on transparent Murabaha and Tawarruq principles.',
+        gradient: ['#F59E0B', '#D97706'], // Gold/Amber to signify premium/trusted
+    },
+    {
+        id: '5',
         icon: 'shield-checkmark-outline',
         title: 'Bank-Grade Security',
         description: 'Your financial data is encrypted and never shared. We only show you offers — you decide when to apply.',

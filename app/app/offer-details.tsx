@@ -11,15 +11,17 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
-import { trackOfferViewed, trackApplicationStarted } from '@/lib/analytics';
+import { trackOfferViewed } from '@/lib/analytics';
 import SavingsChart from '@/components/SavingsChart';
+import ShariaBadge from '@/components/ui/ShariaBadge';
+import InfoBottomSheet from '@/components/ui/InfoBottomSheet';
 import {
-    calculateEMI,
     calculateRefinanceOffer,
     generateSavingsTimeline,
     estimateRemainingMonths,
@@ -42,8 +44,11 @@ export default function OfferDetailsScreen() {
     const [userLoans, setUserLoans] = useState<any[]>([]);
     const [refinanceResults, setRefinanceResults] = useState<RefinanceResult[]>([]);
     const [selectedLoanId, setSelectedLoanId] = useState<string | null>(null);
-    const [submitting, setSubmitting] = useState(false);
+    const submitting = false;
     const fadeAnim = useState(new Animated.Value(0))[0];
+
+    const profitRateSheetRef = React.useRef<any>(null);
+    const feeSheetRef = React.useRef<any>(null);
 
     const fetchData = useCallback(async () => {
         if (!user || !params.productId) return;
@@ -132,7 +137,7 @@ export default function OfferDetailsScreen() {
                 useNativeDriver: true,
             }).start();
         }
-    }, [user, params.productId]);
+    }, [user, params.productId, params.loanId, fadeAnim]);
 
     useEffect(() => {
         fetchData();
@@ -152,8 +157,8 @@ export default function OfferDetailsScreen() {
     const handleApply = () => {
         if (!selectedResult || !selectedLoan || !product || !user) {
             Alert.alert(
-                'Select a Loan',
-                'Please add and select a loan to compare savings before applying.'
+                'Select a Facility',
+                'Please add and select a facility to compare savings before applying.'
             );
             return;
         }
@@ -212,10 +217,12 @@ export default function OfferDetailsScreen() {
                     <Text style={{ fontSize: 18, fontWeight: '700', color: theme.colors.textPrimary }}>
                         {product.name}
                     </Text>
-                    <Text style={{ fontSize: 13, color: theme.colors.textSecondary }}>
-                        {product.bank?.name}
-                        {product.bank?.is_islamic && ' • Islamic'}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                        <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginRight: 8 }}>
+                            {product.bank?.name}
+                        </Text>
+                        {product.bank?.is_islamic && <ShariaBadge size="small" variant="glass" />}
+                    </View>
                 </View>
             </View>
 
@@ -238,10 +245,22 @@ export default function OfferDetailsScreen() {
                                 padding: 24,
                             }}
                         >
-                            <Text style={{ fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                Starting From
-                            </Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 4 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{ fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                        Starting Profit Rate
+                                    </Text>
+                                    <TouchableOpacity onPress={() => profitRateSheetRef.current?.present()} style={{ marginLeft: 6 }}>
+                                        <Ionicons name="information-circle-outline" size={16} color="rgba(255,255,255,0.8)" />
+                                    </TouchableOpacity>
+                                </View>
+                                {product.bank?.is_islamic && (
+                                    <View style={{ backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
+                                        <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff', textTransform: 'uppercase' }}>Islamic Finance</Text>
+                                    </View>
+                                )}
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 8 }}>
                                 <Text style={{ fontSize: 42, fontWeight: '800', color: '#fff', letterSpacing: -1 }}>
                                     {product.interest_rate_min}%
                                 </Text>
@@ -270,7 +289,7 @@ export default function OfferDetailsScreen() {
                                 Product Details
                             </Text>
 
-                            <DetailRow label="Loan Type" value={product.product_type?.replace(/_/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())} theme={theme} icon="document-text-outline" />
+                            <DetailRow label="Financing Type" value={product.product_type?.replace(/_/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())} theme={theme} icon="document-text-outline" />
                             {product.min_amount && (
                                 <DetailRow label="Min Amount" value={formatAED(product.min_amount)} theme={theme} icon="remove-circle-outline" />
                             )}
@@ -281,10 +300,10 @@ export default function OfferDetailsScreen() {
                                 <DetailRow label="Max Tenure" value={`${product.max_tenure_months} months`} theme={theme} icon="calendar-outline" />
                             )}
                             {product.processing_fee_pct != null && (
-                                <DetailRow label="Processing Fee" value={`${product.processing_fee_pct}%`} theme={theme} icon="receipt-outline" />
+                                <DetailRow label="Processing Fee" value={`${product.processing_fee_pct}%`} theme={theme} icon="receipt-outline" onInfoPress={() => feeSheetRef.current?.present()} />
                             )}
                             {product.early_settlement_fee_pct != null && (
-                                <DetailRow label="Early Settlement" value={`${product.early_settlement_fee_pct}%`} theme={theme} icon="flash-outline" />
+                                <DetailRow label="Early Settlement" value={`${product.early_settlement_fee_pct}%`} theme={theme} icon="flash-outline" onInfoPress={() => feeSheetRef.current?.present()} />
                             )}
                             {product.bank?.min_salary && (
                                 <DetailRow label="Min Salary" value={formatAED(product.bank.min_salary)} theme={theme} icon="wallet-outline" isLast />
@@ -348,7 +367,7 @@ export default function OfferDetailsScreen() {
                                                         fontWeight: '600',
                                                         color: isSelected ? '#fff' : theme.colors.textSecondary,
                                                     }}>
-                                                        {loan.bank_name || 'Loan'} • {formatAED(loan.remaining_amount)}
+                                                        {loan.bank_name || 'Facility'} • {formatAED(loan.remaining_amount)}
                                                     </Text>
                                                 </TouchableOpacity>
                                             );
@@ -392,7 +411,7 @@ export default function OfferDetailsScreen() {
 
                                             <View style={{ flexDirection: 'row', gap: 12 }}>
                                                 <SavingsPill label="New EMI" value={formatAED(selectedResult.newEmi)} theme={theme} />
-                                                <SavingsPill label="New Rate" value={`${selectedResult.newRate}%`} theme={theme} />
+                                                <SavingsPill label="New Profit Rate" value={`${selectedResult.newRate}%`} theme={theme} />
                                                 {selectedResult.breakEvenMonths > 0 && (
                                                     <SavingsPill label="Break-Even" value={`${selectedResult.breakEvenMonths}mo`} theme={theme} />
                                                 )}
@@ -432,7 +451,7 @@ export default function OfferDetailsScreen() {
                                             Current vs New
                                         </Text>
 
-                                        <CompareRow label="Interest Rate" current={`${selectedLoan.interest_rate}%`} newVal={`${selectedResult.newRate}%`} theme={theme} improved />
+                                        <CompareRow label="Profit Rate" current={`${selectedLoan.interest_rate}%`} newVal={`${selectedResult.newRate}%`} theme={theme} improved />
                                         <CompareRow label="Monthly EMI" current={formatAED(selectedLoan.monthly_emi)} newVal={formatAED(selectedResult.newEmi)} theme={theme} improved />
                                         <CompareRow label="Remaining" current={`${estimateRemainingMonths(selectedLoan.remaining_amount, selectedLoan.monthly_emi, selectedLoan.interest_rate)}mo`} newVal={`${selectedResult.newTenureMonths}mo`} theme={theme} isLast />
                                     </View>
@@ -454,10 +473,10 @@ export default function OfferDetailsScreen() {
                             }}>
                                 <Ionicons name="calculator-outline" size={40} color={theme.colors.textTertiary} />
                                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textPrimary, marginTop: 12 }}>
-                                    Add a loan to see savings
+                                    Add a facility to see savings
                                 </Text>
                                 <Text style={{ fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 4 }}>
-                                    Track your current loan to see how much you could save by switching to this offer
+                                    Track your current facility to see how much you could save by switching to this offer
                                 </Text>
                                 <TouchableOpacity
                                     onPress={() => router.push('/add-loan')}
@@ -474,7 +493,7 @@ export default function OfferDetailsScreen() {
                                         }}
                                     >
                                         <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>
-                                            Add Your Loan
+                                            Add Your Facility
                                         </Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
@@ -498,7 +517,7 @@ export default function OfferDetailsScreen() {
                                     No savings available
                                 </Text>
                                 <Text style={{ fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 4 }}>
-                                    Your current rates are already competitive! This offer doesn't provide meaningful savings for your loans.
+                                    Your current rates are already competitive! This offer doesn&apos;t provide meaningful savings for your loans.
                                 </Text>
                             </View>
                         </View>
@@ -512,52 +531,77 @@ export default function OfferDetailsScreen() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                paddingHorizontal: 20,
-                paddingBottom: 34,
-                paddingTop: 12,
-                backgroundColor: theme.colors.bg,
-                borderTopWidth: 1,
-                borderTopColor: theme.colors.border,
             }}>
-                <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting}>
-                    <LinearGradient
-                        colors={submitting ? ['#94A3B8', '#64748B'] : ['#10B981', '#059669']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        style={{
-                            borderRadius: BorderRadius.md,
-                            height: 56,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexDirection: 'row',
-                            gap: 8,
-                        }}
-                    >
-                        {submitting ? (
-                            <ActivityIndicator color="#fff" size="small" />
-                        ) : (
-                            <>
-                                <Ionicons name="checkmark-circle" size={20} color="#fff" />
-                                <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>
-                                    Apply for Refinance
-                                </Text>
-                            </>
-                        )}
-                    </LinearGradient>
-                </TouchableOpacity>
+                <BlurView
+                    tint={theme.isDark ? "dark" : "light"}
+                    intensity={80}
+                    style={{
+                        paddingHorizontal: 20,
+                        paddingBottom: 34,
+                        paddingTop: 12,
+                        backgroundColor: theme.isDark ? 'rgba(26, 29, 33, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+                        borderTopWidth: 1,
+                        borderTopColor: theme.colors.border,
+                    }}
+                >
+                    <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting}>
+                        <LinearGradient
+                            colors={submitting ? ['#94A3B8', '#64748B'] : ['#10B981', '#059669']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={{
+                                borderRadius: BorderRadius.md,
+                                height: 56,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'row',
+                                gap: 8,
+                            }}
+                        >
+                            {submitting ? (
+                                <ActivityIndicator color="#fff" size="small" />
+                            ) : (
+                                <>
+                                    <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                                    <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>
+                                        Apply for Finance
+                                    </Text>
+                                </>
+                            )}
+                        </LinearGradient>
+                    </TouchableOpacity>
+                </BlurView>
             </View>
+
+            {/* Bottom Sheets */}
+            <InfoBottomSheet
+                bottomSheetRef={profitRateSheetRef}
+                title="What is a Profit Rate?"
+                description="Unlike conventional interest (Riba), a Profit Rate is a fixed, pre-agreed markup on an asset the bank buys and sells to you."
+                insightTitle="Why is it Sharia-Compliant?"
+                insightText="In Islamic trading (Murabaha), profit is generated from a valid trade of actual assets, rather than lending money to make more money. The rate is fixed upfront and cannot jump unexpectedly."
+                footerText="This makes the arrangement transparent and mutually beneficial."
+            />
+            <InfoBottomSheet
+                bottomSheetRef={feeSheetRef}
+                title="Understanding Fees"
+                description="Banks charge administrative fees to cover the cost of processing your application and creating the contracts."
+                insightTitle="Sharia Perspective on Fees"
+                insightText="Processing and settlement fees are permissible as long as they represent the actual cost of the service provided by the bank, and are not disguised interest."
+            />
         </SafeAreaView>
     );
 }
 
 // ─── Helper Components ─────────────────────────────────────────────────────
 
-function DetailRow({ label, value, theme, icon, isLast = false }: {
+function DetailRow({ label, value, theme, icon, isLast = false, onInfoPress }: {
     label: string;
     value: string;
     theme: any;
     icon: string;
     isLast?: boolean;
+    onInfoPress?: () => void;
 }) {
     return (
         <View style={{
@@ -571,6 +615,11 @@ function DetailRow({ label, value, theme, icon, isLast = false }: {
             <Text style={{ fontSize: 14, color: theme.colors.textSecondary, flex: 1 }}>
                 {label}
             </Text>
+            {onInfoPress && (
+                <TouchableOpacity onPress={onInfoPress} style={{ marginRight: 8, padding: 2 }}>
+                    <Ionicons name="information-circle-outline" size={16} color={theme.colors.textTertiary} />
+                </TouchableOpacity>
+            )}
             <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.textPrimary }}>
                 {value}
             </Text>

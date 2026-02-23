@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
     View,
     Text,
@@ -15,6 +15,10 @@ import { router } from 'expo-router';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { calculateEMI, totalLoanCost } from '@/lib/refinance-calculator';
+import {
+    BottomSheetModal,
+} from '@gorhom/bottom-sheet';
+import InfoBottomSheet from '@/components/ui/InfoBottomSheet';
 
 type CalcMode = 'emi' | 'affordability' | 'comparison';
 
@@ -44,21 +48,24 @@ function stripFormatting(val: string): string {
 const TAB_GUIDANCE: Record<CalcMode, { title: string; description: string }> = {
     emi: {
         title: '💰 EMI Calculator',
-        description: 'Enter your loan details to see your exact monthly payment (EMI), how much you\'ll pay in total, and how much of that goes to interest.',
+        description: 'Enter your financing details to see your exact monthly payment (EMI), how much you\'ll pay in total, and how much of that goes to profit.',
     },
     affordability: {
         title: '🏦 Affordability Check',
-        description: 'Find out the maximum loan you can get based on your salary. UAE banks limit your total monthly debt payments (including existing loans) to 50% of your salary — this is called the Debt Burden Ratio (DBR).',
+        description: 'Find out the maximum financing you can get based on your salary. UAE banks limit your total monthly debt payments (including existing facilities) to 50% of your salary — this is called the Debt Burden Ratio (DBR).',
     },
     comparison: {
         title: '⚖️ Rate Comparison',
-        description: 'Compare two interest rates side by side for the same loan amount to see exactly how much you save with the lower rate — both monthly and over the full loan term.',
+        description: 'Compare two profit rates side by side for the same financing amount to see exactly how much you save with the lower rate — both monthly and over the full financing term.',
     },
 };
 
 export default function CalculatorScreen() {
     const { theme } = useTheme();
     const [mode, setMode] = useState<CalcMode>('emi');
+
+    const dbrSheetRef = useRef<BottomSheetModal>(null);
+    const profitRateSheetRef = useRef<BottomSheetModal>(null);
 
     // EMI Calculator state
     const [principal, setPrincipal] = useState('');
@@ -214,7 +221,7 @@ export default function CalculatorScreen() {
                     {mode === 'emi' && (
                         <>
                             <CalcInput
-                                label="Loan Amount (AED)"
+                                label="Financing Amount (AED)"
                                 value={addThousandSeparators(principal)}
                                 onChangeText={(t) => setPrincipal(stripFormatting(t))}
                                 icon="cash-outline"
@@ -222,12 +229,13 @@ export default function CalculatorScreen() {
                                 prefix="AED"
                             />
                             <CalcInput
-                                label="Interest Rate"
+                                label="Profit Rate"
                                 value={rate}
                                 onChangeText={setRate}
                                 icon="trending-up-outline"
                                 theme={theme}
                                 suffix="%"
+                                onInfoPress={() => profitRateSheetRef.current?.present()}
                             />
                             <CalcInput
                                 label="Tenure"
@@ -254,8 +262,8 @@ export default function CalculatorScreen() {
                                         </Text>
                                         <View style={{ flexDirection: 'row', gap: 20, marginTop: 16 }}>
                                             <ResultItem label="Total Payable" value={formatAEDFull(emiResult.total)} />
-                                            <ResultItem label="Total Interest" value={formatAEDFull(emiResult.interest)} />
-                                            <ResultItem label="Interest Share" value={`${emiResult.interestPct.toFixed(1)}%`} />
+                                            <ResultItem label="Total Profit" value={formatAEDFull(emiResult.interest)} />
+                                            <ResultItem label="Profit Share" value={`${emiResult.interestPct.toFixed(1)}%`} />
                                         </View>
                                     </LinearGradient>
 
@@ -269,7 +277,7 @@ export default function CalculatorScreen() {
                                         borderColor: theme.colors.border,
                                     }}>
                                         <Text style={{ fontSize: 12, color: theme.colors.textSecondary, lineHeight: 18 }}>
-                                            💡 <Text style={{ fontWeight: '600' }}>Interest Share</Text> means {emiResult.interestPct.toFixed(1)}% of your total repayment goes to interest, and {(100 - emiResult.interestPct).toFixed(1)}% pays off your actual loan.
+                                            💡 <Text style={{ fontWeight: '600' }}>Profit Share</Text> means {emiResult.interestPct.toFixed(1)}% of your total repayment goes to profit, and {(100 - emiResult.interestPct).toFixed(1)}% pays off your actual financing.
                                         </Text>
                                     </View>
 
@@ -277,11 +285,11 @@ export default function CalculatorScreen() {
                                     <View style={{ marginTop: 12 }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
                                             <Text style={{ fontSize: 12, color: theme.colors.textSecondary }}>Principal ({(100 - emiResult.interestPct).toFixed(0)}%)</Text>
-                                            <Text style={{ fontSize: 12, color: theme.colors.textSecondary }}>Interest ({emiResult.interestPct.toFixed(0)}%)</Text>
+                                            <Text style={{ fontSize: 12, color: theme.colors.textSecondary }}>Profit ({emiResult.interestPct.toFixed(0)}%)</Text>
                                         </View>
                                         <View style={{ flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden' }}>
                                             <View style={{ flex: 100 - emiResult.interestPct, backgroundColor: Colors.brand.emerald }} />
-                                            <View style={{ flex: emiResult.interestPct, backgroundColor: Colors.warning }} />
+                                            <View style={{ flex: emiResult.interestPct, backgroundColor: Colors.brand.teal }} />
                                         </View>
                                     </View>
                                 </View>
@@ -301,24 +309,25 @@ export default function CalculatorScreen() {
                                 prefix="AED"
                             />
                             <CalcInput
-                                label="Existing Monthly Loan Payments (AED)"
+                                label="Existing Monthly Payments (AED)"
                                 value={addThousandSeparators(existingEmi)}
                                 onChangeText={(t) => setExistingEmi(stripFormatting(t))}
                                 icon="remove-circle-outline"
                                 theme={theme}
                                 prefix="AED"
-                                placeholder="0 if no existing loans"
+                                placeholder="0 if no existing financing"
                             />
                             <CalcInput
-                                label="Expected Interest Rate"
+                                label="Expected Profit Rate"
                                 value={desiredRate}
                                 onChangeText={setDesiredRate}
                                 icon="trending-up-outline"
                                 theme={theme}
                                 suffix="%"
+                                onInfoPress={() => profitRateSheetRef.current?.present()}
                             />
                             <CalcInput
-                                label="Desired Loan Term"
+                                label="Desired Financing Term"
                                 value={desiredTenure}
                                 onChangeText={setDesiredTenure}
                                 icon="calendar-outline"
@@ -335,7 +344,7 @@ export default function CalculatorScreen() {
                                         style={{ borderRadius: BorderRadius.xl, padding: 24 }}
                                     >
                                         <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                            Maximum Loan You Can Get
+                                            Maximum Financing You Can Get
                                         </Text>
                                         <Text style={{ fontSize: 34, fontWeight: '800', color: '#fff', marginTop: 4 }}>
                                             {formatAEDFull(affordResult.maxLoan)}
@@ -345,6 +354,31 @@ export default function CalculatorScreen() {
                                             <ResultItem label="Your DBR" value={`${affordResult.dbrUsed.toFixed(1)}%`} />
                                         </View>
                                     </LinearGradient>
+
+                                    {/* Explanation */}
+                                    <View style={{
+                                        backgroundColor: theme.colors.card,
+                                        borderRadius: BorderRadius.lg,
+                                        padding: 14,
+                                        marginTop: 12,
+                                        borderWidth: 1,
+                                        borderColor: theme.colors.border,
+                                    }}>
+                                        <Text style={{ fontSize: 13, color: theme.colors.textPrimary, marginBottom: 8 }}>
+                                            What is <Text style={{ fontWeight: '700' }}>DBR (Debt Burden Ratio)?</Text>
+                                        </Text>
+                                        <Text style={{ fontSize: 13, color: theme.colors.textSecondary, lineHeight: 19 }}>
+                                            UAE Central Bank regulations require that your total monthly loan installments do not exceed 50% of your regular income.
+                                        </Text>
+                                        <TouchableOpacity
+                                            style={{ marginTop: 10, alignSelf: 'flex-start' }}
+                                            onPress={() => dbrSheetRef.current?.present()}
+                                        >
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>
+                                                Learn more about DBR
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
 
                                     {/* Breakdown explanation */}
                                     <View style={{
@@ -370,14 +404,14 @@ export default function CalculatorScreen() {
                                                 theme={theme}
                                             />
                                             <ExplainRow
-                                                label="Your existing loan payments"
+                                                label="Your existing payments"
                                                 value={`- ${formatAEDFull(parseFloat(stripFormatting(existingEmi)) || 0)}`}
                                                 theme={theme}
                                                 negative
                                             />
                                             <View style={{ height: 1, backgroundColor: theme.colors.border, marginVertical: 4 }} />
                                             <ExplainRow
-                                                label="Available for new loan"
+                                                label="Available for new financing"
                                                 value={`${formatAEDFull(affordResult.availableEmi)}/mo`}
                                                 theme={theme}
                                                 bold
@@ -396,11 +430,11 @@ export default function CalculatorScreen() {
                                             borderColor: theme.colors.border,
                                         }}>
                                             <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: 8 }}>
-                                                💰 Loan Cost Breakdown
+                                                💰 Financing Cost Breakdown
                                             </Text>
                                             <View style={{ gap: 6 }}>
                                                 <ExplainRow label="Total you'd repay" value={formatAEDFull(affordResult.totalPayable)} theme={theme} />
-                                                <ExplainRow label="Of which is interest" value={formatAEDFull(affordResult.totalInterest)} theme={theme} />
+                                                <ExplainRow label="Of which is profit" value={formatAEDFull(affordResult.totalInterest)} theme={theme} />
                                             </View>
                                         </View>
                                     )}
@@ -414,12 +448,14 @@ export default function CalculatorScreen() {
                                         borderWidth: 1,
                                         borderColor: theme.colors.border,
                                     }}>
-                                        <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: 4 }}>
-                                            📏 Debt Burden Ratio (DBR)
-                                        </Text>
-                                        <Text style={{ fontSize: 12, color: theme.colors.textSecondary, marginBottom: 10, lineHeight: 17 }}>
-                                            UAE Central Bank requires that your total monthly debt payments don't exceed 50% of your salary.
-                                        </Text>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                                            <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.textPrimary }}>
+                                                📏 Debt Burden Ratio (DBR)
+                                            </Text>
+                                            <TouchableOpacity onPress={() => dbrSheetRef.current?.present()}>
+                                                <Ionicons name="information-circle-outline" size={20} color={theme.colors.textSecondary} />
+                                            </TouchableOpacity>
+                                        </View>
                                         <View style={{ height: 10, borderRadius: 5, backgroundColor: theme.colors.border, overflow: 'hidden' }}>
                                             <View style={{
                                                 width: `${Math.min(affordResult.dbrUsed, 100)}%`,
@@ -446,7 +482,7 @@ export default function CalculatorScreen() {
                     {mode === 'comparison' && (
                         <>
                             <CalcInput
-                                label="Loan Amount (AED)"
+                                label="Financing Amount (AED)"
                                 value={addThousandSeparators(compPrincipal)}
                                 onChangeText={(t) => setCompPrincipal(stripFormatting(t))}
                                 icon="cash-outline"
@@ -454,7 +490,7 @@ export default function CalculatorScreen() {
                                 prefix="AED"
                             />
                             <CalcInput
-                                label="Loan Term"
+                                label="Financing Term"
                                 value={compTenure}
                                 onChangeText={setCompTenure}
                                 icon="calendar-outline"
@@ -467,7 +503,7 @@ export default function CalculatorScreen() {
                                     <CalcInput label="Rate A" value={rateA} onChangeText={setRateA} icon="analytics-outline" theme={theme} color="#3B82F6" suffix="%" />
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <CalcInput label="Rate B" value={rateB} onChangeText={setRateB} icon="analytics-outline" theme={theme} color="#EF4444" suffix="%" />
+                                    <CalcInput label="Rate B" value={rateB} onChangeText={setRateB} icon="analytics-outline" theme={theme} color={Colors.brand.teal} suffix="%" />
                                 </View>
                             </View>
 
@@ -502,7 +538,7 @@ export default function CalculatorScreen() {
                                                 <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.totalA)}</Text>
                                             </View>
                                             <View>
-                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Interest</Text>
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Profit</Text>
                                                 <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.interestA)}</Text>
                                             </View>
                                         </View>
@@ -518,7 +554,7 @@ export default function CalculatorScreen() {
                                     }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                                                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: '#EF4444' }} />
+                                                <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: Colors.brand.teal }} />
                                                 <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textPrimary }}>Rate B ({rateB}%)</Text>
                                             </View>
                                             {compResult.winner === 'B' && (
@@ -537,7 +573,7 @@ export default function CalculatorScreen() {
                                                 <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.totalB)}</Text>
                                             </View>
                                             <View>
-                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Interest</Text>
+                                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Profit</Text>
                                                 <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.interestB)}</Text>
                                             </View>
                                         </View>
@@ -563,7 +599,7 @@ export default function CalculatorScreen() {
                                             </Text>
                                             {compResult.winner !== 'tie' && (
                                                 <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 2 }}>
-                                                    That's {formatAEDFull(compResult.totalDiff)} less over {compTenure} months
+                                                    That&apos;s {formatAEDFull(compResult.totalDiff)} less over {compTenure} months
                                                 </Text>
                                             )}
                                         </View>
@@ -574,6 +610,24 @@ export default function CalculatorScreen() {
                     )}
                 </ScrollView>
             </KeyboardAvoidingView>
+
+            <InfoBottomSheet
+                bottomSheetRef={dbrSheetRef}
+                title="Understanding DBR"
+                description="The Debt Burden Ratio (DBR) is the percentage of your monthly salary that goes towards paying debts."
+                insightTitle="UAE Central Bank Guidelines"
+                insightText="By law, your total monthly debt payments (including auto financing and personal financing) cannot exceed 50% of your regular income."
+                footerText="A lower DBR increases your chances of approval for new financing."
+            />
+
+            <InfoBottomSheet
+                bottomSheetRef={profitRateSheetRef}
+                title="What is a Profit Rate?"
+                description="Unlike conventional interest (Riba), a Profit Rate is a fixed, pre-agreed markup on an asset the bank buys and sells to you."
+                insightTitle="Why is it Sharia-Compliant?"
+                insightText="In Islamic trading (Murabaha), profit is generated from a valid trade of actual assets, rather than lending money to make more money. The rate is fixed upfront and cannot increase if you are late on a payment."
+                footerText="The calculation behaves similarly to conventional EMI, but the underlying legal and theological structure is completely different."
+            />
         </SafeAreaView>
     );
 }
@@ -590,6 +644,7 @@ function CalcInput({
     prefix,
     suffix,
     placeholder,
+    onInfoPress,
 }: {
     label: string;
     value: string;
@@ -600,12 +655,20 @@ function CalcInput({
     prefix?: string;
     suffix?: string;
     placeholder?: string;
+    onInfoPress?: () => void;
 }) {
     return (
         <View style={{ marginBottom: 14 }}>
-            <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textSecondary, marginBottom: 6 }}>
-                {label}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textSecondary }}>
+                    {label}
+                </Text>
+                {onInfoPress && (
+                    <TouchableOpacity onPress={onInfoPress} style={{ paddingHorizontal: 6, paddingVertical: 2 }}>
+                        <Ionicons name="information-circle-outline" size={16} color={theme.colors.textTertiary} />
+                    </TouchableOpacity>
+                )}
+            </View>
             <View style={{
                 flexDirection: 'row',
                 alignItems: 'center',
