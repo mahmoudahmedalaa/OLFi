@@ -1,0 +1,331 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KYC, license, open banking TDLR.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+KYC Requirements – Phase 1 Marketplace Model
+Table: Minimum KYC & AML Stack
+Component
+Required?
+What to Implement
+Vendor/API?
+Owner
+Notes
+Mobile OTP Verification
+✅ Mandatory
+SMS OTP during signup
+SMS gateway
+Dev
+First identity anchor
+Email Verification
+✅ Mandatory
+Email confirmation link
+Email service
+Dev
+Required for consent logs
+Emirates ID Scan (OCR)
+✅ Mandatory
+Front + back scan + OCR extraction
+KYC vendor
+Dev
+Store structured fields
+Passport Copy (Expats)
+✅ Mandatory
+Upload + OCR
+KYC vendor
+Dev
+Required for non-UAE nationals
+Facial Liveness Check
+✅ Strongly Recommended
+Selfie + face match
+KYC vendor
+Dev
+Prevents identity fraud
+PEP Screening
+✅ Mandatory
+API check against PEP database
+AML provider
+Compliance
+Real-time check
+Sanctions Screening
+✅ Mandatory
+UAE + UN sanctions list screening
+AML provider
+Compliance
+Must block if match
+Basic Risk Scoring
+✅ Mandatory
+Income + DTI + employer scoring logic
+Internal logic
+Risk
+Soft scoring only
+Credit Score Pull
+🔶 Optional but Strong
+Bureau integration (with consent)
+Bureau API
+Dev
+Improves matching
+Device Fingerprinting
+🔶 Optional
+Fraud detection SDK
+Fraud vendor
+Dev
+Reduces fake accounts
+MLRO Appointment
+✅ Mandatory
+Assign compliance officer
+Internal
+Founders
+Required legally
+Record Keeping 
+(5 yrs)
+✅ Mandatory
+Store logs & screening results
+Secure DB
+Dev
+Encrypt at rest
+
+Developer Execution Summary – KYC
+Goal: Keep onboarding under 2–3 minutes.
+Build Flow:
+	•	Account creation (OTP + email)
+	•	ID scan + liveness
+	•	Backend sanctions + PEP screening
+	•	Risk score calculation
+	•	Unlock dashboard + offers
+Critical Engineering Requirements:
+	•	Encrypted storage (AES-256 at rest)
+	•	TLS 1.2+ in transit
+	•	Consent logs timestamped
+	•	Audit trail for screenings
+	•	Role-based access control
+Do NOT build:
+	•	Full AML transaction monitoring engine
+	•	Deep forensic review system
+	•	Continuous behavioral AML monitoring
+
+
+
+
+
+
+
+
+UAE Regulatory License Path
+Regulated by the Central Bank of the United Arab Emirates (CBUAE).
+License Options
+Phase
+Activity
+License Type
+Regulator
+Complexity
+Recommendation
+Phase 1
+Debt aggregation + referral
+Commercial Credit Brokerage
+DED (Mainland)
+Low
+✅ Recommended
+Phase 1
+Use Open Banking via licensed provider
+No separate TPP license
+Covered by provider
+Low
+✅ Recommended
+Phase 2
+Handle repayments
+Payment Services License
+CBUAE
+High
+❌ Avoid early
+Phase 2
+Initiate payments
+Payment Initiation License
+CBUAE
+High
+❌ Avoid early
+Phase 3
+Direct Open Finance access
+TPP Authorization
+CBUAE
+Very High
+Later only
+Any Phase
+Lend directly
+Lending License
+CBUAE
+Very High
+Not MVP
+
+Developer / Founder Execution Summary – Licensing
+For MVP:
+	•	Register mainland LLC with activity: Credit Brokerage
+	•	Draft AML policy
+	•	Appoint MLRO
+	•	Avoid touching funds
+	•	Do NOT intermediate repayments
+Engineering rule: System must never hold or route customer funds.
+Revenue should be:
+	•	Referral fee
+	•	Success commission from bank
+	•	Platform fee (not transaction custody)
+
+Compliance & KYC Cost Estimates
+Table: Per User Cost Estimate
+Component
+Estimated Cost (AED)
+ID Verification + Liveness
+10
+PEP & Sanctions Screening
+5
+Device Fingerprinting
+3
+Estimated Total per User
+15–25 AED
+
+Table: First-Year Compliance Budget
+Category
+Estimated Annual Cost (AED)
+KYC/AML Systems
+240K – 360K
+Legal Setup & AML Framework
+150K – 250K
+Compliance Overhead (MLRO + reporting)
+300K – 500K
+Total Expected Year 1
+~700K – 1.1M AED
+Open Banking (Open Finance) Structure
+If integrating through:
+	•	Lean Technologies
+	•	Tarabut
+You operate under their licensed infrastructure.
+
+Table: Open Finance Model Comparison
+Model
+License Needed?
+Risk Level
+Dev Complexity
+Recommended?
+Integrate via Lean/Tarabut
+❌ No TPP license
+Low
+Medium
+✅ YES
+Direct bank API as TPP
+✅ Yes (CBUAE approval)
+Very High
+High
+❌ No
+Store minimal derived data
+Allowed
+Low
+Low
+✅ Yes
+Store raw transaction history long-term
+May trigger regulation
+High
+Medium
+Avoid
+
+Table: Open Finance Compliance Requirements
+Requirement
+Required?
+Implementation
+Explicit Consent
+✅
+Checkbox + timestamp + logs
+Data Usage Disclosure
+✅
+Privacy policy
+Data Deletion Option
+✅
+Account delete flow
+Secure Storage
+✅
+Encryption + access control
+Payment Initiation
+❌ Avoid
+Do not implement
+Fund Custody
+❌ Avoid
+No wallet logic
+
+Developer Execution Summary – Open Banking
+Rules:
+	•	Always obtain explicit consent before connecting accounts
+	•	Use provider SDK securely
+	•	Store only what is necessary (derived metrics > raw transactions)
+	•	Build data deletion endpoint
+	•	Never initiate payments
+Architecture Tip: Store:
+	•	Income average
+	•	DTI ratio
+	•	Cashflow stability score
+Avoid storing:
+	•	Full transaction histories
+	•	Merchant-level raw data long term
+Risk Matrix for Engineering
+Risk
+Severity
+Mitigation
+Owner
+Identity Fraud
+High
+Liveness + OCR + device fingerprint
+Dev
+Fake Debt Data
+Medium
+Credit bureau validation
+Risk
+Sanctioned User
+Very High
+Real-time AML screening
+Compliance
+Data Breach
+Critical
+Encryption + IAM + logging
+DevOps
+
+
+
