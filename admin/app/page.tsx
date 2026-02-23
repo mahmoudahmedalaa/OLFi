@@ -90,14 +90,14 @@ export default async function Dashboard() {
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-xl">📈</div>
           <div>
-            <p className="text-sm text-gray-400">Events Today</p>
+            <p className="text-sm text-gray-400">Activity Today</p>
             <p className="text-2xl font-bold text-emerald-400">{analytics.events24h}</p>
           </div>
         </div>
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center text-xl">🔥</div>
           <div>
-            <p className="text-sm text-gray-400">Events (7d)</p>
+            <p className="text-sm text-gray-400">Activity (7d)</p>
             <p className="text-2xl font-bold text-purple-400">{analytics.events7d}</p>
           </div>
         </div>

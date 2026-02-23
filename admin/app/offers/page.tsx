@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
-import { fetchApplications, fetchBanks } from '@/lib/actions';
+import { fetchApplications, fetchBanks, fetchRecentManualOffers, createManualOffer } from '@/lib/actions';
 
 export default function ManualOffersPage() {
     const [applications, setApplications] = useState<any[]>([]);
@@ -37,12 +36,7 @@ export default function ManualOffersPage() {
                 setBanks(banksData);
 
                 // Load recent manual offers
-                const { data: offers } = await supabase
-                    .from('refinance_offers')
-                    .select('*, bank:banks(name), application:applications(id, profile:profiles(first_name, last_name))')
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-
+                const offers = await fetchRecentManualOffers();
                 setRecentOffers(offers || []);
             } catch (error) {
                 console.error("Failed to load data", error);
@@ -92,13 +86,7 @@ export default function ManualOffersPage() {
                 is_manual_override: true
             };
 
-            const { data, error } = await supabase
-                .from('refinance_offers')
-                .insert(offerData)
-                .select('*, bank:banks(name), application:applications(id, profile:profiles(first_name, last_name))')
-                .single();
-
-            if (error) throw error;
+            const data = await createManualOffer(offerData);
 
             alert('Manual offer created successfully!');
 
@@ -244,8 +232,8 @@ export default function ManualOffersPage() {
                                 type="submit"
                                 disabled={isSubmitting}
                                 className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${isSubmitting
-                                        ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
-                                        : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed'
+                                    : 'bg-emerald-600 hover:bg-emerald-500 text-white'
                                     }`}
                             >
                                 {isSubmitting ? 'Pushing Offer...' : 'Create & Send Offer'}

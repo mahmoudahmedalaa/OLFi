@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { fetchApplications } from '@/lib/actions';
-import { supabase } from '@/lib/supabase';
+import { fetchApplications, fetchUserDocuments, getDocumentSignedUrl } from '@/lib/actions';
 
 export default function DocumentVaultPage() {
     const [applications, setApplications] = useState<any[]>([]);
@@ -34,17 +33,9 @@ export default function DocumentVaultPage() {
         setDocsLoading(true);
         setActiveDocUrl(null);
         try {
-            // In a real app we would list from a specific bucket path e.g. user_documents/{userId}/{appId}
-            // For this demo, let's assume we have a table tracking uploads or we use Storage API.
-            // Placeholder: Assume an empty array if no bucket exists yet for the user
-            const { data, error } = await supabase.storage.from('user_documents').list(`${userId}/${appId}`);
-
-            if (error) {
-                console.log('No documents found or bucket missing:', error.message);
-                setDocuments([]);
-            } else {
-                setDocuments(data || []);
-            }
+            // Fetch documents through server action to bypass client-side env variable issues
+            const data = await fetchUserDocuments(appId, userId);
+            setDocuments(data || []);
         } catch (e) {
             console.error('Failed to load documents:', e);
             setDocuments([]);
@@ -61,12 +52,8 @@ export default function DocumentVaultPage() {
     const getDocUrl = async (filepath: string) => {
         if (!selectedApp) return;
         try {
-            const { data, error } = await supabase.storage
-                .from('user_documents')
-                .createSignedUrl(`${selectedApp.user_id}/${selectedApp.id}/${filepath}`, 3600); // 1 hour expiry
-
-            if (error) throw error;
-            setActiveDocUrl(data.signedUrl);
+            const signedUrl = await getDocumentSignedUrl(filepath, selectedApp.id, selectedApp.user_id);
+            setActiveDocUrl(signedUrl);
         } catch (e) {
             console.error('Failed to get signed URL:', e);
             alert('Could not load document preview.');
@@ -95,8 +82,8 @@ export default function DocumentVaultPage() {
                             key={app.id}
                             onClick={() => handleSelectApp(app)}
                             className={`w-full text-left p-4 rounded-lg border transition-colors ${selectedApp?.id === app.id
-                                    ? 'bg-emerald-500/10 border-emerald-500/30'
-                                    : 'bg-gray-800/50 border-gray-700 hover:bg-gray-800'
+                                ? 'bg-emerald-500/10 border-emerald-500/30'
+                                : 'bg-gray-800/50 border-gray-700 hover:bg-gray-800'
                                 }`}
                         >
                             <div className="flex justify-between items-start mb-2">

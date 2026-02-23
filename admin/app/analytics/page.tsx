@@ -28,15 +28,15 @@ export default async function AnalyticsPage() {
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-10">
                 <div className="bg-blue-500/10 border border-gray-800 rounded-xl p-5">
-                    <p className="text-sm text-gray-400 mb-1">Events (24h)</p>
+                    <p className="text-sm text-gray-400 mb-1">Platform Activity (24h)</p>
                     <p className="text-3xl font-bold text-blue-400">{summary.events24h}</p>
                 </div>
                 <div className="bg-purple-500/10 border border-gray-800 rounded-xl p-5">
-                    <p className="text-sm text-gray-400 mb-1">Events (7d)</p>
+                    <p className="text-sm text-gray-400 mb-1">Platform Activity (7d)</p>
                     <p className="text-3xl font-bold text-purple-400">{summary.events7d}</p>
                 </div>
                 <div className="bg-cyan-500/10 border border-gray-800 rounded-xl p-5">
-                    <p className="text-sm text-gray-400 mb-1">Events (30d)</p>
+                    <p className="text-sm text-gray-400 mb-1">Platform Activity (30d)</p>
                     <p className="text-3xl font-bold text-cyan-400">{summary.events30d}</p>
                 </div>
                 <div className="bg-emerald-500/10 border border-gray-800 rounded-xl p-5">
@@ -123,12 +123,12 @@ export default async function AnalyticsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
                     <div className="px-6 py-4 border-b border-gray-800">
-                        <h2 className="text-lg font-semibold">Top Events (7d)</h2>
+                        <h2 className="text-lg font-semibold">Top Actions (7d)</h2>
                     </div>
                     <table className="w-full text-sm">
                         <thead className="bg-gray-800/50">
                             <tr>
-                                <th className="text-left px-6 py-3 text-gray-400 font-medium">Event</th>
+                                <th className="text-left px-6 py-3 text-gray-400 font-medium">Action</th>
                                 <th className="text-right px-6 py-3 text-gray-400 font-medium">Count</th>
                             </tr>
                         </thead>
@@ -144,7 +144,7 @@ export default async function AnalyticsPage() {
                                 </tr>
                             ))}
                             {topEvents.length === 0 && (
-                                <tr><td colSpan={2} className="px-6 py-8 text-center text-gray-500">No events yet</td></tr>
+                                <tr><td colSpan={2} className="px-6 py-8 text-center text-gray-500">No activity yet</td></tr>
                             )}
                         </tbody>
                     </table>
@@ -153,13 +153,13 @@ export default async function AnalyticsPage() {
                 {/* Recent Events */}
                 <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
                     <div className="px-6 py-4 border-b border-gray-800">
-                        <h2 className="text-lg font-semibold">Recent Events</h2>
+                        <h2 className="text-lg font-semibold">Recent Activity Log</h2>
                     </div>
                     <div className="max-h-96 overflow-y-auto">
                         <table className="w-full text-sm">
                             <thead className="bg-gray-800/50 sticky top-0">
                                 <tr>
-                                    <th className="text-left px-6 py-3 text-gray-400 font-medium">Event</th>
+                                    <th className="text-left px-6 py-3 text-gray-400 font-medium">Action</th>
                                     <th className="text-left px-6 py-3 text-gray-400 font-medium">Screen</th>
                                     <th className="text-right px-6 py-3 text-gray-400 font-medium">Time</th>
                                 </tr>
@@ -179,7 +179,7 @@ export default async function AnalyticsPage() {
                                     </tr>
                                 ))}
                                 {recentEvents.length === 0 && (
-                                    <tr><td colSpan={3} className="px-6 py-8 text-center text-gray-500">No events yet</td></tr>
+                                    <tr><td colSpan={3} className="px-6 py-8 text-center text-gray-500">No activity yet</td></tr>
                                 )}
                             </tbody>
                         </table>

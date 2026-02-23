@@ -358,3 +358,41 @@ export async function fetchUserDetail(userId: string) {
     };
 }
 
+// ── Document Vault ──────────────────────────────────
+export async function fetchUserDocuments(appId: string, userId: string) {
+    const { data, error } = await supabase.storage.from('user_documents').list(`${userId}/${appId}`);
+    if (error) {
+        console.error('No documents found or bucket missing:', error.message);
+        return [];
+    }
+    return data || [];
+}
+
+export async function getDocumentSignedUrl(filepath: string, appId: string, userId: string) {
+    const { data, error } = await supabase.storage
+        .from('user_documents')
+        .createSignedUrl(`${userId}/${appId}/${filepath}`, 3600); // 1 hour expiry
+    if (error) throw error;
+    return data.signedUrl;
+}
+
+// ── Manual Offers ───────────────────────────────────
+export async function fetchRecentManualOffers() {
+    const { data, error } = await supabase
+        .from('refinance_offers')
+        .select('*, bank:banks(name), application:applications(id, profile:profiles(first_name, last_name))')
+        .order('created_at', { ascending: false })
+        .limit(10);
+    if (error) throw error;
+    return data || [];
+}
+
+export async function createManualOffer(offerData: Record<string, unknown>) {
+    const { data, error } = await supabase
+        .from('refinance_offers')
+        .insert(offerData)
+        .select('*, bank:banks(name), application:applications(id, profile:profiles(first_name, last_name))')
+        .single();
+    if (error) throw error;
+    return data;
+}
