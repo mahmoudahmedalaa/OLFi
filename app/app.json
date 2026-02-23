@@ -4,7 +4,7 @@
     "slug": "buyout",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon-solid.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "buyout",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -38,7 +38,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo-solid.png",
+          "image": "./assets/images/logo-transparent.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#0F172A",

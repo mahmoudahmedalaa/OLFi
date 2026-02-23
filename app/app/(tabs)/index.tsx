@@ -136,11 +136,11 @@ export default function DashboardScreen() {
               onPress={() => router.push('/(tabs)/offers')}
             />
             <QuickActionCard
-              icon="briefcase"
-              label="Applications"
-              color={Colors.brand.teal}
+              icon="school-outline"
+              label="Sharia Center"
+              color={Colors.brand.emerald}
               theme={theme}
-              onPress={() => router.push('/my-applications' as any)}
+              onPress={() => router.push('/sharia-center' as any)}
             />
           </View>
         </View>

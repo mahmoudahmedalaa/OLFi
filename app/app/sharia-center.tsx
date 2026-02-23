@@ -10,24 +10,52 @@ import ShariaBadge from '@/components/ui/ShariaBadge';
 
 const KNOWLEDGE_ARTICLES = [
     {
+        id: 'murabaha',
         title: 'Understanding Murabaha',
         description: 'How Islamic banks buy and sell assets to generate profit without charging interest.',
         icon: 'cube-outline',
     },
     {
+        id: 'tawarruq',
         title: 'Tawarruq (Commodity Murabaha)',
         description: 'The structure used for personal finance where commodities are traded to provide liquid cash.',
         icon: 'cash-outline',
     },
     {
-        title: 'How DBR works in the UAE',
-        description: 'Understanding the Central Bank rules that limit your debt to 50% of your salary.',
-        icon: 'pie-chart-outline',
+        id: 'wakalah',
+        title: 'Wakalah (Agency Structure)',
+        description: 'How agency fees operate when an institution acts on your behalf to secure financing.',
+        icon: 'briefcase-outline',
     },
     {
-        title: 'Why Processing Fees are Permitted',
-        description: 'The difference between actual administrative costs and disguised interest (Riba).',
+        id: 'ijarah',
+        title: 'Ijarah (Islamic Leasing)',
+        description: 'The common structure for auto financing where the bank leases the vehicle to you.',
+        icon: 'car-outline',
+    },
+    {
+        id: 'gharar-maysir',
+        title: 'Gharar & Maysir Explained',
+        description: 'Why extreme uncertainty, hidden clauses, and speculative penalties are forbidden.',
+        icon: 'shield-checkmark-outline',
+    },
+    {
+        id: 'qard-hasan',
+        title: 'Qard Hasan vs. Commercial Finance',
+        description: 'Understanding the difference between a benevolent loan and structured Islamic banking.',
+        icon: 'heart-outline',
+    },
+    {
+        id: 'fees-vs-interest',
+        title: 'Processing Fees vs. Riba',
+        description: 'The difference between actual administrative costs and disguised compound interest.',
         icon: 'receipt-outline',
+    },
+    {
+        id: 'dbr-uae',
+        title: 'Understanding DBR in the UAE',
+        description: 'How Central Bank rules limit your debt obligations to 50% of your salary.',
+        icon: 'pie-chart-outline',
     }
 ];
 
@@ -77,9 +105,9 @@ export default function ShariaCenterScreen() {
                 </Text>
 
                 <View style={{ gap: 12 }}>
-                    {KNOWLEDGE_ARTICLES.map((article, index) => (
+                    {KNOWLEDGE_ARTICLES.map((article) => (
                         <TouchableOpacity
-                            key={index}
+                            key={article.id}
                             style={{
                                 flexDirection: 'row',
                                 backgroundColor: theme.colors.card,
@@ -90,6 +118,7 @@ export default function ShariaCenterScreen() {
                                 alignItems: 'center'
                             }}
                             activeOpacity={0.7}
+                            onPress={() => router.push(`/article/${article.id}` as any)}
                         >
                             <View style={{
                                 width: 48,
