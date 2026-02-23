@@ -34,7 +34,7 @@ export default function ConsolidationOffers({ consolidationOffers }: Consolidati
                     </Text>
                 </View>
                 <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 4 }}>
-                    Combine your selected loans into one easy payment
+                    Combine your selected financing into one easy payment
                 </Text>
             </View>
 
@@ -122,7 +122,7 @@ export default function ConsolidationOffers({ consolidationOffers }: Consolidati
                                         fontSize: 11,
                                         color: idx === 0 ? 'rgba(255,255,255,0.8)' : theme.colors.textTertiary
                                     }}>
-                                        APR
+                                        Profit Rate
                                     </Text>
                                 </View>
                             </View>

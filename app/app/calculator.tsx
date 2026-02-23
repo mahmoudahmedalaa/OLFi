@@ -623,10 +623,10 @@ export default function CalculatorScreen() {
             <InfoBottomSheet
                 bottomSheetRef={profitRateSheetRef}
                 title="What is a Profit Rate?"
-                description="Unlike conventional interest (Riba), a Profit Rate is a fixed, pre-agreed markup on an asset the bank buys and sells to you."
-                insightTitle="Why is it Sharia-Compliant?"
-                insightText="In Islamic trading (Murabaha), profit is generated from a valid trade of actual assets, rather than lending money to make more money. The rate is fixed upfront and cannot increase if you are late on a payment."
-                footerText="The calculation behaves similarly to conventional EMI, but the underlying legal and theological structure is completely different."
+                description="Unlike conventional interest, a Profit Rate is a fixed, pre-agreed markup based on an underlying asset transaction."
+                insightTitle="Islamic Finance Framework"
+                insightText="Under the Murabaha or Wakalah structure, profit is generated from actual trade rather than lending money. The rate is fixed upfront and cannot increase if you are late on a payment."
+                footerText="The monthly calculation is similar to conventional EMI, but the underlying structure is based on ethical trade."
             />
         </SafeAreaView>
     );

@@ -28,10 +28,10 @@ export default function LoanSelection({
             <View style={{ paddingHorizontal: 20, marginBottom: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <View>
                     <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textPrimary }}>
-                        Select loans to consolidate
+                        Select financing to consolidate
                     </Text>
                     <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 2 }}>
-                        Choose 2 or more loans to see consolidation offers
+                        Choose 2 or more financing options to see consolidation offers
                     </Text>
                 </View>
                 <TouchableOpacity onPress={selectAllLoans}>
@@ -79,13 +79,13 @@ export default function LoanSelection({
                                 </View>
                             </View>
                             <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.textPrimary, marginBottom: 4 }} numberOfLines={1}>
-                                {loan.bank_name || 'Bank'} {loan.loan_type}
+                                {loan.bank_name || 'Bank'} {loan.loan_type.replace(/_/g, ' ')}
                             </Text>
                             <Text style={{ fontSize: 13, color: theme.colors.textSecondary }}>
                                 {formatAED(loan.remaining_amount)}
                             </Text>
                             <Text style={{ fontSize: 11, color: theme.colors.textTertiary, marginTop: 2 }}>
-                                @ {loan.interest_rate}% APR
+                                @ {loan.interest_rate}% Profit Rate
                             </Text>
                         </TouchableOpacity>
                     );

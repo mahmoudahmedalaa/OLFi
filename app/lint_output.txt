@@ -1,0 +1,29 @@
+
+> app@1.0.0 lint
+> expo lint
+
+
+/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/components/coming-soon-modal.tsx
+    9:5   warning  'Alert' is defined but never used                  @typescript-eslint/no-unused-vars
+   13:44  warning  'Spacing' is defined but never used                @typescript-eslint/no-unused-vars
+   18:16  warning  'SCREEN_WIDTH' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  146:11  warning  'slideAnim' is assigned a value but never used     @typescript-eslint/no-unused-vars
+
+/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/components/dashboard/DebtSummaryCard.tsx
+  4:30  warning  '/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/lib/constants.ts' imported multiple times  import/no-duplicates
+  7:24  warning  '/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/lib/constants.ts' imported multiple times  import/no-duplicates
+
+/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/components/offers/OfferList.tsx
+  7:10  warning  'formatAED' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/components/ui/InfoBottomSheet.tsx
+  2:40  warning  '/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/node_modules/react-native/index.js' imported multiple times  import/no-duplicates
+  5:10  warning  'Colors' is defined but never used                                                                                                      @typescript-eslint/no-unused-vars
+  7:26  warning  '/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/node_modules/react-native/index.js' imported multiple times  import/no-duplicates
+
+/Users/mahmoudalaaeldin/Documents/Projects/VibeCoding/Projects/BuyOut/app/components/ui/ShariaBadge.tsx
+  76:7  warning  'styles' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 11 problems (0 errors, 11 warnings)
+  0 errors and 2 warnings potentially fixable with the `--fix` option.
+

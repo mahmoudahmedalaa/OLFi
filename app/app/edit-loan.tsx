@@ -187,7 +187,7 @@ export default function EditLoanScreen() {
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                         <View style={{ flex: 1 }}>
                             <FormField
-                                label="Interest Rate"
+                                label="Profit Rate"
                                 value={interestRate}
                                 onChangeText={setInterestRate}
                                 placeholder="5.99"

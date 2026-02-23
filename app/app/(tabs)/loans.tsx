@@ -357,7 +357,7 @@ export default function LoansScreen() {
                                                         marginTop: 2,
                                                     }}
                                                 >
-                                                    {formatType(item.loan_type)} • {item.interest_rate}% APR
+                                                    {formatType(item.loan_type)} • {item.interest_rate}% Profit Rate
                                                 </Text>
                                             </View>
                                             <StatusBadge status={item.status} />

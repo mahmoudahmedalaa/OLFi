@@ -65,7 +65,7 @@ export function LoanPreviewCard({
                             marginTop: 2,
                         }}
                     >
-                        {type} • {rate}% APR
+                        {type} • {rate}% Profit Rate
                     </Text>
                 </View>
                 <View

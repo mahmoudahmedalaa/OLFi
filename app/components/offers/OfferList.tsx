@@ -77,7 +77,7 @@ export default function OfferList({
                             </Text>
                         </View>
                         <Text style={{ fontSize: 36, fontWeight: '700', color: '#fff', letterSpacing: -1 }}>
-                            {bestRate}% APR
+                            {bestRate}% Profit Rate
                         </Text>
                         <Text style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
                             {bestProduct.name} from {bestProduct.bank?.name}
@@ -215,7 +215,7 @@ export default function OfferList({
                                     >
                                         {product.interest_rate_max
                                             ? `to ${product.interest_rate_max}%`
-                                            : 'APR'}
+                                            : 'Profit Rate'}
                                     </Text>
                                 </View>
                             </View>

@@ -389,7 +389,7 @@ export function ComingSoonModal({
                         }}>
                             <Ionicons name="checkmark-circle" size={20} color={Colors.brand.emerald} />
                             <Text style={{ ...Typography.bodyBold, color: Colors.brand.emerald }}>
-                                We'll notify you when it's ready!
+                                We&apos;ll notify you when it&apos;s ready!
                             </Text>
                         </View>
                     ) : (

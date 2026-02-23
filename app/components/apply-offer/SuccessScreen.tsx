@@ -77,7 +77,7 @@ export function SuccessScreen({
                     <Text style={{ fontWeight: '600', color: Colors.brand.emerald }}>
                         {params.bankName}
                     </Text>
-                    {' '}has been submitted. We'll review it and get back to you
+                    {' '}has been submitted. We&apos;ll review it and get back to you
                     {formData.callbackTime ? ` in the ${formData.callbackTime}` : ' shortly'}.
                 </Text>
 

@@ -116,7 +116,7 @@ export default function DashboardScreen() {
           <View style={{ flexDirection: 'row', gap: 12 }}>
             <QuickActionCard
               icon="add-circle"
-              label="Add Loan"
+              label="Add Finance"
               color={Colors.brand.emerald}
               theme={theme}
               onPress={() => router.push('/add-loan' as any)}
@@ -162,7 +162,7 @@ export default function DashboardScreen() {
                 color: theme.colors.textPrimary,
               }}
             >
-              Active Loans
+              Active Financing
             </Text>
             {activeLoans.length > 0 && (
               <TouchableOpacity onPress={() => router.push('/(tabs)/loans')}>
@@ -181,7 +181,7 @@ export default function DashboardScreen() {
 
           {loading ? (
             <View style={{ backgroundColor: theme.colors.card, borderRadius: BorderRadius.lg, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: theme.colors.border }}>
-              <Text style={{ color: theme.colors.textSecondary }}>Loading loans...</Text>
+              <Text style={{ color: theme.colors.textSecondary }}>Loading financing...</Text>
             </View>
           ) : activeLoans.length === 0 ? (
             <TouchableOpacity
@@ -206,7 +206,7 @@ export default function DashboardScreen() {
                   marginTop: 12,
                 }}
               >
-                Add your first loan
+                Add your first finance
               </Text>
               <Text
                 style={{
@@ -298,7 +298,7 @@ export default function DashboardScreen() {
                       marginBottom: 4,
                     }}
                   >
-                    Compare Refinance Offers
+                    Compare BuyOut Offers
                   </Text>
                   <Text
                     style={{
@@ -306,7 +306,7 @@ export default function DashboardScreen() {
                       color: 'rgba(255,255,255,0.8)',
                     }}
                   >
-                    Personalized recommendations for your loans
+                    Personalized recommendations for your financing
                   </Text>
                 </View>
                 <Ionicons name="arrow-forward-circle" size={32} color="#fff" />
@@ -329,5 +329,5 @@ function getGreeting() {
 }
 
 function formatLoanType(type: string) {
-  return type.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) + ' Loan';
+  return type.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) + ' Finance';
 }

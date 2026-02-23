@@ -55,7 +55,7 @@ export default function AddLoanBanner({ userLoans, loading }: AddLoanBannerProps
                                 color: Colors.brand.emerald,
                             }}
                         >
-                            Add a loan to see personalized offers
+                            Add financing to see personalized offers
                         </Text>
                         <Text
                             style={{
@@ -64,7 +64,7 @@ export default function AddLoanBanner({ userLoans, loading }: AddLoanBannerProps
                                 marginTop: 2,
                             }}
                         >
-                            We'll find the best refinance deals for you
+                            We&apos;ll find the best refinance deals for you
                         </Text>
                     </View>
                     <Ionicons name="chevron-forward" size={18} color={Colors.brand.emerald} />

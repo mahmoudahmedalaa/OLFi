@@ -56,7 +56,7 @@ export default function PersonalizedRecommendations({ recommendations }: Persona
                                 color: theme.colors.textSecondary,
                             }}
                         >
-                            {rec.loan.bank_name || 'Your'} {rec.loan.loan_type} loan
+                            {rec.loan.bank_name || 'Your'} {rec.loan.loan_type.replace(/_/g, ' ')} finance
                             ({formatAED(rec.loan.remaining_amount)} at {rec.loan.interest_rate}%)
                         </Text>
                     </View>

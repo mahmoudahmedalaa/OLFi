@@ -26,7 +26,7 @@ export default function NotificationSettingsScreen() {
         {
             key: 'rate_alerts',
             title: 'Rate Drop Alerts',
-            description: 'Get notified when interest rates drop below your current rate',
+            description: 'Get notified when profit rates drop below your current rate',
             icon: 'trending-down',
             enabled: true,
         },

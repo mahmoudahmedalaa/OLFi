@@ -213,7 +213,7 @@ export default function LoanDetailScreen() {
                                     {loan.bank_name || 'Unknown Bank'}
                                 </Text>
                                 <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginTop: 2 }}>
-                                    {formatType(loan.loan_type)} Finance • {loan.interest_rate}% APR
+                                    {formatType(loan.loan_type)} Finance • {loan.interest_rate}% Profit Rate
                                 </Text>
                             </View>
                             <View style={{

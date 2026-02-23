@@ -149,11 +149,17 @@ export function FinancialHealthCard({
                         }}
                     >
                         <View style={{ flex: 1 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                                <Ionicons name="shield-checkmark" size={14} color={Colors.brand.emerald} />
+                                <Text style={{ fontSize: 11, fontWeight: '600', color: Colors.brand.emerald, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                    100% Sharia-Compliant
+                                </Text>
+                            </View>
                             <Text style={{ fontSize: 14, fontWeight: '600', color: Colors.brand.emerald }}>
                                 💰 You could save ~AED {potentialMonthlySavings.toLocaleString()}/month
                             </Text>
                             <Text style={{ fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 }}>
-                                Check personalized refinance offers →
+                                Check personalized BuyOut offers →
                             </Text>
                         </View>
                     </LinearGradient>

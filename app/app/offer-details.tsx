@@ -265,12 +265,12 @@ export default function OfferDetailsScreen() {
                                     {product.interest_rate_min}%
                                 </Text>
                                 <Text style={{ fontSize: 16, fontWeight: '500', color: 'rgba(255,255,255,0.8)', marginLeft: 4 }}>
-                                    APR
+                                    Profit Rate
                                 </Text>
                             </View>
                             {product.interest_rate_max && product.interest_rate_max !== product.interest_rate_min && (
                                 <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>
-                                    Up to {product.interest_rate_max}% APR
+                                    Up to {product.interest_rate_max}% Profit Rate
                                 </Text>
                             )}
                         </LinearGradient>
@@ -577,17 +577,17 @@ export default function OfferDetailsScreen() {
             <InfoBottomSheet
                 bottomSheetRef={profitRateSheetRef}
                 title="What is a Profit Rate?"
-                description="Unlike conventional interest (Riba), a Profit Rate is a fixed, pre-agreed markup on an asset the bank buys and sells to you."
-                insightTitle="Why is it Sharia-Compliant?"
-                insightText="In Islamic trading (Murabaha), profit is generated from a valid trade of actual assets, rather than lending money to make more money. The rate is fixed upfront and cannot jump unexpectedly."
-                footerText="This makes the arrangement transparent and mutually beneficial."
+                description="Unlike conventional interest, a Profit Rate is a fixed, pre-agreed markup based on an underlying asset transaction."
+                insightTitle="Islamic Finance Framework"
+                insightText="Under the Murabaha or Wakalah structure, financing is provided through the sale and purchase of tangible assets. The profit is fixed upfront and cannot jump unexpectedly."
+                footerText="This ensures full transparency and compliance with ethical Sharia principles."
             />
             <InfoBottomSheet
                 bottomSheetRef={feeSheetRef}
                 title="Understanding Fees"
-                description="Banks charge administrative fees to cover the cost of processing your application and creating the contracts."
-                insightTitle="Sharia Perspective on Fees"
-                insightText="Processing and settlement fees are permissible as long as they represent the actual cost of the service provided by the bank, and are not disguised interest."
+                description="Banks charge administrative fees to cover the actual cost of processing your application and structuring the Sharia-compliant contracts."
+                insightTitle="Ethical Fee Structure"
+                insightText="Processing and settlement fees are permissible as long as they represent the actual operational cost of the service provided by the institution, rather than a hidden cost of borrowing."
             />
         </SafeAreaView>
     );
