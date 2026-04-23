@@ -14,9 +14,8 @@ export function Navigation() {
             className="absolute top-0 left-0 right-0 z-50 py-6"
         >
             <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-3 text-3xl font-bold tracking-tighter text-base-beige">
-                    <Image src="/assets/olfi-logo.jpeg" alt="OLFi Logo" width={48} height={48} className="rounded-xl" />
-                    OLFi
+                <Link href="/" className="flex items-center">
+                    <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={100} height={40} className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">

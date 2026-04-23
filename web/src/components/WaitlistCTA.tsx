@@ -81,7 +81,7 @@ export function WaitlistCTA() {
                     <div className="relative z-10">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-8 mx-auto">
                             <span className="w-2 h-2 rounded-full bg-brand-teal animate-pulse" />
-                            <span className="text-xs font-bold tracking-wide uppercase text-brand-teal">Waitlist open · Pre-launch</span>
+                            <span className="text-xs font-bold tracking-wide uppercase text-white">Waitlist open · Pre-launch</span>
                         </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-base-beige mb-6">
@@ -110,7 +110,7 @@ export function WaitlistCTA() {
                                         className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
                                         disabled={loading}
                                     />
-                                    <button type="submit" disabled={loading} className="bg-transparent text-base-beige border border-white/10 font-bold px-8 py-4 rounded-xl hover:bg-white hover:text-base-dark transition-all duration-300 disabled:opacity-50">
+                                    <button type="submit" disabled={loading} className="cursor-pointer bg-transparent text-base-beige border border-white/10 font-bold px-8 py-4 rounded-xl hover:bg-white hover:text-base-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                                         {loading ? 'Joining...' : 'Join waitlist →'}
                                     </button>
                                 </form>

@@ -14,14 +14,14 @@ export function Hero() {
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative flex flex-col gap-8 max-w-xl bg-white/5 border border-white/10 rounded-3xl p-8 sm:p-12"
+                        className="relative flex flex-col gap-8 max-w-xl border border-white/10 rounded-3xl p-8 sm:p-12"
                     >
                         {/* User requested to drop the animated border box for now. */}
 
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-teal/20 bg-brand-teal/5 hover:bg-brand-teal/10 transition-all cursor-default">
-                                <span className="w-2 h-2 rounded-full bg-brand-teal" />
-                                <span className="text-[11px] font-bold tracking-wider text-base-beige uppercase">Early Access · UAE</span>
+                                <span className="w-2 h-2 rounded-full bg-brand-teal animate-pulse" />
+                                <span className="text-[11px] font-bold tracking-wider text-white uppercase">Early Access · UAE</span>
                             </div>
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all cursor-default text-amber-500">
                                 <span className="text-[11px] font-bold tracking-wider uppercase">Sharia Compliant ✦</span>

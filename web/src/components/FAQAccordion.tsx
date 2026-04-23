@@ -10,8 +10,8 @@ const faqs = [
         a: "Our algorithm assesses your total outstanding liabilities, calculates your Debt Burden Ratio (DBR), and cross-references it with live banking products to find optimizations. All without any human bias."
     },
     {
-        q: "Is BuyOut a bank?",
-        a: "No, BuyOut is an aggregator and intelligent orchestration platform. We map the market to find you the best refinance opportunities, but the actual loans are provided by UAE Central Bank regulated institutions."
+        q: "Is OLFi a bank?",
+        a: "No, OLFi is an aggregator and intelligent orchestration platform. We map the market to find you the best refinance opportunities, but the actual loans are provided by UAE Central Bank regulated institutions."
     },
     {
         q: "Do you offer Islamic solutions?",
