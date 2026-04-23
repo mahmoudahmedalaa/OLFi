@@ -124,7 +124,7 @@ export function SavingsChart() {
                         </h1>
 
                         <p className="text-lg sm:text-xl font-light text-white/50 max-w-md">
-                            See how much you save by refinancing through Sharia-compliant products — Murābaḥa, Ijāra, Tawarruq — powered by unbiased AI.
+                            See how much you save by refinancing through Sharia-compliant products (Murābaḥa, Ijāra, Tawarruq) powered by unbiased AI.
                         </p>
 
                         <div className="flex items-center gap-4 pt-2">
@@ -141,7 +141,7 @@ export function SavingsChart() {
                     {/* Divider */}
                     <div className="hidden lg:block w-px bg-white/[0.08] mx-3" />
 
-                    {/* RIGHT — Chart */}
+                    {/* RIGHT Chart */}
                     <div className="flex-1 mt-4 lg:mt-0">
                         <div className="relative w-full h-full min-h-[400px] sm:min-h-[500px]">
                             <div className="absolute inset-0 border border-white/[0.06] rounded-xl overflow-hidden">

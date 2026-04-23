@@ -396,3 +396,10 @@ export async function createManualOffer(offerData: Record<string, unknown>) {
     if (error) throw error;
     return data;
 }
+
+// ── Waitlist ────────────────────────────────────────
+export async function fetchWaitlist() {
+    const { data, error } = await supabase.from('waitlist').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+}

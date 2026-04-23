@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-base-dark: #020B11;
-  --color-base-beige: #F2F1EA;
-  --color-brand-teal: #0D9488;
+  --color-base-dark: #011819;
+  --color-base-beige: #E1DED1;
+  --color-brand-teal: #074A4C;
   --font-sans: var(--font-inter);
 }
 

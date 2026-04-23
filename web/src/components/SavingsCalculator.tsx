@@ -34,8 +34,7 @@ export function SavingsCalculator() {
         <section className="py-24 bg-base-dark relative border-t border-white/5" id="savings">
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center bg-white/[0.02] border border-white/5 rounded-3xl p-8 lg:p-16 relative overflow-hidden">
-                    {/* Background glow */}
-                    <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[600px] h-[600px] bg-brand-teal/10 blur-[120px] rounded-full pointer-events-none" />
+
 
                     <div className="relative z-10 flex flex-col gap-10">
                         <div>
@@ -61,7 +60,7 @@ export function SavingsCalculator() {
                                     step="5000"
                                     value={balance}
                                     onChange={(e) => setBalance(Number(e.target.value))}
-                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(13,148,136,0.6)]"
+                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full"
                                     id="slBalance"
                                 />
                             </div>
@@ -79,7 +78,7 @@ export function SavingsCalculator() {
                                     step="0.5"
                                     value={rate}
                                     onChange={(e) => setRate(Number(e.target.value))}
-                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(13,148,136,0.6)]"
+                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full"
                                     id="slRate"
                                 />
                             </div>
@@ -97,7 +96,7 @@ export function SavingsCalculator() {
                                     step="1"
                                     value={term}
                                     onChange={(e) => setTerm(Number(e.target.value))}
-                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(13,148,136,0.6)]"
+                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full"
                                     id="slTerm"
                                 />
                             </div>
@@ -124,7 +123,7 @@ export function SavingsCalculator() {
 
                         <a
                             href="#waitlist"
-                            className="mt-10 px-8 py-4 w-full text-center bg-brand-teal text-base-beige hover:bg-brand-teal/90 rounded-full font-bold transition-all shadow-[0_0_15px_rgba(13,148,136,0.3)] hover:shadow-[0_0_25px_rgba(13,148,136,0.5)] transform hover:-translate-y-1"
+                            className="mt-10 px-8 py-4 w-full text-center bg-brand-teal text-white hover:opacity-90 rounded-full font-bold transition-all"
                         >
                             Get my real offer →
                         </a>

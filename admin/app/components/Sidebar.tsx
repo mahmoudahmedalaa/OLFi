@@ -31,6 +31,7 @@ const menuGroups = [
         items: [
             { href: '/users', label: 'Users', icon: '👥' },
             { href: '/loans', label: 'Loans', icon: '💳' },
+            { href: '/waitlist', label: 'Waitlist', icon: '⏳' },
             { href: '/notifications', label: 'Notifications', icon: '🔔' },
         ],
     },

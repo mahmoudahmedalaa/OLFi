@@ -28,9 +28,13 @@ BuyOut has fully pivoted to an **Islamic Fintech** application. The app allows u
 - `SafeAreaView` warnings have been eradicated at the React Native core level via `patch-package`.
 - The user is preparing to **manually archive** the app via Xcode themselves to submit to TestFlight. **Do not run the archive command.**
 
-## 4. Next Steps for Incoming AI
-1. **Monitor Launch:** Wait for the user to complete the Xcode archive and TestFlight submission. Stand by to troubleshoot any App Store Connect Rejections or missing metadata (e.g., Privacy Policy URLs, Export Compliance, Screenshot dimensions).
-2. **Phase 2 Features:** Depending on the user's direction, prepare to begin work on Phase 2, which involves integrating live Open Banking sync hooks to process real user debt over API rather than manual document uploads.
-3. **No Expo Go:** The user explicitly stated "do not use expo!!". This means you must rely entirely on native iOS simulator builds (`prebuild --clean`, `run:ios`, `patch-package`, native linked frameworks). Expo Go is fundamentally incompatible with the custom native scripts we've injected.
+## 4. Next Steps for Incoming AI (Current Web Vibe Refinement)
+1. **Renalta Color Refinement Issue:** The user explicitly requested to replicate Renalta's true brand colors (the "dark green" and "light beige"). Previous AI extracted `#011819` for dark and `#e1ded1` for light from Renalta HTML, but the user insists it is still "a weird green" or "forest green".
+    - **Your Goal:** Extract the correct brand identity colors from Renalta, or perhaps sample different sections of their site (there may be a different primary green color they use for backgrounds such as `#0f2923` or similar deep teal greens).
+    - **Verify with User:** Please test the color directly, show screenshots or explicitly ask them for confirmation. Do not be random.
+    - **Apply globally:** Update `globals.css` (Tailwind `@theme` block or `:root` vars, depending on structure).
+2. **Directory Mismatch Warning:** Currently, the active terminal runs `npm run dev` in `BuyOut/web`. However, the user's active IDE document was shown as `BuyOut/marketing-sites/v1-glassmorphism-fintech/src/app/page.tsx`. Be extremely cautious to identify *exactly* which directory's code is strictly rendering in the user's view environment. The previous AI faced issues with caching or directory mismatches when pushing UI changes to Tailwind due to this difference.
+3. **No Em-Dashes:** The user specifically prohibited the use of em-dashes (`—`) in all copy/content. Do not use them.
+4. **App Store Launch:** Monitor any instructions for the Native mobile app codebase (`npx expo run:ios`). The previous instructions for Native still stand (Do not use Expo Go, test bio-auth accurately, prepare for Phase 2 Open Banking).
 
 Good luck!

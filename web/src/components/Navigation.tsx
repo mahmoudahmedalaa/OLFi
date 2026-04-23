@@ -2,31 +2,20 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 export function Navigation() {
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
 
     return (
         <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-base-dark/80 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'
-                }`}
+            className="absolute top-0 left-0 right-0 z-50 py-6"
         >
             <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-base-beige">
-                    <Image src="/assets/olfi-logo.jpeg" alt="OLFi Logo" width={32} height={32} className="rounded-md" />
+                <Link href="/" className="flex items-center gap-3 text-3xl font-bold tracking-tighter text-base-beige">
+                    <Image src="/assets/olfi-logo.jpeg" alt="OLFi Logo" width={48} height={48} className="rounded-xl" />
                     OLFi
                 </Link>
 
@@ -40,7 +29,7 @@ export function Navigation() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="#waitlist"
-                        className="bg-brand-teal hover:bg-brand-teal/90 text-base-dark text-sm font-bold px-5 py-2.5 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(13,148,136,0.5)] flex items-center gap-2"
+                        className="bg-base-beige text-base-dark hover:bg-brand-teal hover:text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-300 flex items-center gap-2"
                     >
                         Join the waitlist
                     </Link>

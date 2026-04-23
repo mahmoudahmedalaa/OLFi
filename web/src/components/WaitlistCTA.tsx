@@ -37,12 +37,32 @@ export function WaitlistCTA() {
 
     const [email, setEmail] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (email) {
+        if (!email) return;
+
+        setLoading(true);
+        setErrorMsg('');
+
+        try {
+            // Dynamically import to keep it isolated from SSR if necessary, or just import at top
+            const { supabase } = await import('@/utils/supabase');
+            const { error } = await supabase.from('waitlist').insert([{ email }]);
+
+            if (error && error.code !== '23505') { // 23505 is unique violation, meaning already on list, which we can treat as success
+                throw error;
+            }
+
             setSubmitted(true);
             setEmail('');
+        } catch (err: any) {
+            console.error('Waitlist error:', err);
+            setErrorMsg('Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -56,8 +76,7 @@ export function WaitlistCTA() {
                     transition={{ duration: 0.8 }}
                     className="bg-brand-teal/[0.03] border border-brand-teal/20 rounded-[2rem] p-8 md:p-16 lg:p-20 text-center relative overflow-hidden"
                 >
-                    {/* Glow effect */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-brand-teal/10 blur-[100px] rounded-full pointer-events-none" />
+
 
                     <div className="relative z-10">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-8 mx-auto">
@@ -80,19 +99,23 @@ export function WaitlistCTA() {
                                 ✓ You're on the list. See you at launch.
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@example.ae"
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
-                                />
-                                <button type="submit" className="bg-brand-teal text-base-dark font-bold px-8 py-4 rounded-xl hover:bg-brand-teal/90 transition-all shadow-[0_0_20px_rgba(13,148,136,0.3)] hover:shadow-[0_0_30px_rgba(13,148,136,0.5)] transform hover:-translate-y-0.5">
-                                    Join waitlist →
-                                </button>
-                            </form>
+                            <>
+                                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+                                    <input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="you@example.ae"
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
+                                        disabled={loading}
+                                    />
+                                    <button type="submit" disabled={loading} className="bg-brand-teal text-white font-bold px-8 py-4 rounded-xl hover:opacity-90 transition-all disabled:opacity-50">
+                                        {loading ? 'Joining...' : 'Join waitlist →'}
+                                    </button>
+                                </form>
+                                {errorMsg && <p className="text-red-400 text-sm mb-6">{errorMsg}</p>}
+                            </>
                         )}
                         {!submitted && (
                             <p className="text-xs font-mono text-base-beige/40 tracking-widest uppercase mb-12">
@@ -137,7 +160,7 @@ export function WaitlistCTA() {
                         </p>
                     </div>
                 </motion.div>
-            </div>
-        </section>
+            </div >
+        </section >
     );
 }

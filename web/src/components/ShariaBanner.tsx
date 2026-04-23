@@ -70,9 +70,7 @@ export function ShariaBanner() {
                             className="flex items-center gap-4 mt-2"
                         >
                             <div className="relative">
-                                {/* Animated ring */}
-                                <div className="absolute inset-0 rounded-full border-2 border-brand-teal/30 animate-ping" style={{ animationDuration: '3s' }} />
-                                <div className="w-16 h-16 rounded-full bg-brand-teal/10 border border-brand-teal/30 flex items-center justify-center backdrop-blur-sm">
+                                <div className="w-16 h-16 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
                                     <svg className="w-7 h-7 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                                         <path d="M9 12l2 2 4-4" />
