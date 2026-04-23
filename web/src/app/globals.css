@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-base-dark: #020B11;
+  --color-base-beige: #F2F1EA;
+  --color-brand-teal: #0D9488;
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background-color: var(--color-base-dark);
+  color: var(--color-base-beige);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
