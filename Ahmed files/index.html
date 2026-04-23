@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OLFI — Refinance Smarter. Pay Less.</title>
+<meta name="description" content="OLFI is a Sharia-compliant, AI-powered refinance marketplace. Lower your loan payments, consolidate your debt, and refinance in minutes — no branch visits, no paperwork."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,500&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#050D20;
+  --navy-2:#08122B;
+  --navy-3:#0C1735;
+  --teal:#065A82;
+  --mint:#02C39A;
+  --mint-2:#00E0B0;
+  --mint-dim:rgba(2,195,154,0.12);
+  --mint-glow:rgba(2,195,154,0.22);
+  --gold:#C9953A;
+  --gold-dim:rgba(201,149,58,0.14);
+  --red-dim:rgba(255,90,100,0.12);
+  --red:#FF6A75;
+  --ink:#030A1A;
+  --text:#D8E4F2;
+  --text-muted:#6E81A0;
+  --text-faint:#3E506A;
+  --border:rgba(255,255,255,0.07);
+  --border-mid:rgba(255,255,255,0.11);
+  --border-mint:rgba(2,195,154,0.28);
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'Outfit',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-ar:'Cairo',var(--font-body);
+  --ease:cubic-bezier(.22,.8,.22,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--ink);color:var(--text);
+  font-family:var(--font-body);overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+html[dir="rtl"] body{font-family:var(--font-ar)}
+a{color:inherit;text-decoration:none}
+
+body::before{
+  content:"";position:fixed;inset:0;
+  background-image:
+    radial-gradient(ellipse 1100px 700px at 80% -10%,rgba(2,195,154,0.13) 0%,transparent 55%),
+    radial-gradient(ellipse 700px 600px at -5% 60%,rgba(6,90,130,0.18) 0%,transparent 50%),
+    radial-gradient(ellipse 500px 400px at 50% 110%,rgba(201,149,58,0.07) 0%,transparent 55%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:"";position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(2,195,154,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(2,195,154,0.025) 1px,transparent 1px);
+  background-size:72px 72px;pointer-events:none;z-index:0;
+}
+
+.container{max-width:1160px;margin:0 auto;padding:0 28px;position:relative;z-index:1}
+
+.gradient-text{
+  background:linear-gradient(110deg,#00E0B0 0%,#02C39A 40%,#C9953A 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:4px 12px;border-radius:999px;
+  background:rgba(2,195,154,0.08);border:1px solid var(--border-mint);
+  color:#5EFFD6;font-size:10.5px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;font-family:var(--font-mono);
+}
+.chip-gold{background:var(--gold-dim);border-color:rgba(201,149,58,.32);color:var(--gold)}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--mint);flex-shrink:0;
+  box-shadow:0 0 0 0 rgba(2,195,154,.5);animation:ping 2.2s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(2,195,154,.5)}70%{box-shadow:0 0 0 9px rgba(2,195,154,0)}100%{box-shadow:0 0 0 0 rgba(2,195,154,0)}}
+
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 26px;border-radius:13px;font-weight:600;font-size:15px;
+  letter-spacing:-.01em;transition:all .28s var(--ease);
+  cursor:pointer;border:0;font-family:var(--font-body);
+  position:relative;overflow:hidden;
+}
+.btn::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.09),transparent);
+  opacity:0;transition:opacity .2s}
+.btn:hover::after{opacity:1}
+.btn-primary{
+  background:linear-gradient(138deg,#02C39A,#00E0B0);color:#021810;
+  box-shadow:0 8px 30px rgba(2,195,154,.28),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 44px rgba(2,195,154,.42),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn-ghost{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,.08);transform:translateY(-2px);border-color:rgba(255,255,255,.14)}
+.btn-lg{padding:16px 34px;font-size:16px;border-radius:15px}
+
+.glass{
+  background:linear-gradient(160deg,rgba(255,255,255,.052) 0%,rgba(255,255,255,.018) 100%);
+  border:1px solid var(--border);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-radius:22px;
+}
+.glass-mint{
+  background:linear-gradient(160deg,rgba(2,195,154,.07) 0%,rgba(2,195,154,.02) 100%);
+  border:1px solid rgba(2,195,154,.16);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);border-radius:22px;
+}
+
+nav.site{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(3,10,26,.55);
+  border-bottom:1px solid rgba(255,255,255,.045);transition:all .3s ease;
+}
+nav.site.scrolled{
+  background:rgba(3,10,26,.88);
+  border-bottom-color:rgba(2,195,154,.1);
+  box-shadow:0 8px 40px rgba(0,0,0,.4);
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;max-width:1160px;margin:0 auto;
+}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:21px;letter-spacing:-.01em;font-weight:500}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links > a{padding:6px 12px;border-radius:8px;font-size:14px;color:var(--text-muted);transition:all .2s}
+.nav-links > a:hover{color:var(--text);background:rgba(255,255,255,.055)}
+.lang-toggle{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:999px;padding:3px;margin:0 5px}
+.lang-toggle button{background:transparent;color:var(--text-muted);border:0;padding:5px 11px;border-radius:999px;cursor:pointer;font-family:var(--font-mono);font-size:11px;font-weight:600;transition:all .2s;letter-spacing:.06em}
+.lang-toggle button.active{background:linear-gradient(135deg,#02C39A,#00E0B0);color:#021810}
+@media(max-width:860px){.nav-links>a:not(.btn){display:none}}
+
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.12s}.reveal-d2{transition-delay:.24s}
+.reveal-d3{transition-delay:.36s}.reveal-d4{transition-delay:.48s}
+
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:130px 0 70px;position:relative;overflow:hidden;
+}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+@media(max-width:960px){.hero-grid{grid-template-columns:1fr;gap:44px}}
+.hero-eyebrow{display:flex;align-items:center;gap:11px;margin-bottom:26px;flex-wrap:wrap}
+.hero h1{
+  font-family:var(--font-display);font-weight:500;
+  font-size:clamp(42px,5.6vw,80px);line-height:1.01;
+  letter-spacing:-.025em;margin-bottom:20px;
+}
+html[dir="rtl"] .hero h1{font-family:var(--font-ar);font-weight:800;font-size:clamp(34px,5vw,66px)}
+.hero-lede{font-size:clamp(15px,1.35vw,17.5px);line-height:1.7;color:var(--text-muted);max-width:520px;margin-bottom:34px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:44px}
+.hero-trust{display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--text-faint);font-family:var(--font-mono);letter-spacing:.05em}
+.hero-trust-item{display:flex;align-items:center;gap:6px}
+.hero-trust-item .tick{
+  width:17px;height:17px;border-radius:50%;
+  background:rgba(2,195,154,.14);border:1px solid var(--border-mint);
+  color:var(--mint);font-size:9px;display:grid;place-items:center;
+}
+
+.phone-wrap{position:relative;justify-self:center;width:min(295px,100%)}
+.phone{
+  width:100%;aspect-ratio:9/19.5;border-radius:44px;
+  background:linear-gradient(170deg,#0F1C3A,#091025);
+  border:1px solid rgba(255,255,255,.11);
+  box-shadow:0 60px 110px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.04),inset 0 0 80px rgba(2,195,154,.04),0 0 100px rgba(2,195,154,.2);
+  padding:14px;transition:transform .9s var(--ease);position:relative;
+}
+.phone-notch{position:absolute;top:17px;left:50%;transform:translateX(-50%);width:95px;height:23px;border-radius:999px;background:#020810;z-index:5}
+.phone-screen{width:100%;height:100%;border-radius:32px;background:linear-gradient(175deg,#0A1428 0%,#060F20 100%);padding:46px 15px 15px;overflow:hidden;position:relative}
+.p-status{position:absolute;top:20px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#3E556A;font-family:var(--font-mono)}
+.p-greeting{font-size:10px;color:#3E556A;margin-bottom:4px}
+.p-amount{font-family:var(--font-display);font-size:30px;font-weight:500;color:#fff;line-height:1;margin-bottom:4px;letter-spacing:-.02em}
+.p-sub{font-size:9px;color:var(--text-faint);margin-bottom:14px}
+.p-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.055);border-radius:11px;padding:8px 10px;margin-bottom:6px;font-size:11px}
+.p-row .l{display:flex;align-items:center;gap:7px}
+.p-icon{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;font-size:9px;font-weight:700;background:rgba(2,195,154,.12);color:#5EFFD6;flex-shrink:0}
+.p-name{font-size:10px;color:var(--text)}
+.p-bank{font-size:8.5px;color:#3E556A;margin-top:1px}
+.p-rate-bad{font-weight:700;color:var(--red);font-family:var(--font-mono);font-size:10.5px}
+.p-savings{
+  margin-top:10px;display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(2,195,154,.16),rgba(2,195,154,.06));
+  border:1px solid rgba(2,195,154,.3);border-radius:11px;padding:9px 11px;
+}
+.p-save-num{color:#5EFFD6;font-weight:700;font-size:14px;line-height:1;font-family:var(--font-display)}
+.p-save-lbl{color:#3E556A;font-size:8.5px;margin-top:2px}
+.p-cta-btn{position:absolute;bottom:12px;left:13px;right:13px;background:linear-gradient(138deg,#02C39A,#00E0B0);color:#021810;font-weight:700;font-size:12px;border-radius:13px;padding:10px;text-align:center;box-shadow:0 8px 22px rgba(2,195,154,.36);letter-spacing:-.01em}
+.float-chip{position:absolute;background:rgba(8,18,43,.93);border:1px solid rgba(2,195,154,.35);border-radius:12px;padding:7px 11px;font-size:11px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:7px;box-shadow:0 14px 32px rgba(0,0,0,.45);white-space:nowrap;font-family:var(--font-mono)}
+.float-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 10px var(--mint);animation:ping 2.2s infinite}
+.fc1{top:16%;right:-31%;animation:fA 4.5s ease-in-out infinite}
+.fc2{bottom:20%;left:-33%;animation:fB 5.2s ease-in-out infinite}
+.fc-gold{border-color:rgba(201,149,58,.38)}
+.fc-gold .dot{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+@keyframes fA{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes fB{0%,100%{transform:translateY(0)}50%{transform:translateY(9px)}}
+@media(max-width:960px){.fc1{right:-10%}.fc2{left:-11%}}
+@media(max-width:580px){.float-chip{display:none}}
+
+.marquee{overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:13px 0;background:rgba(2,195,154,.018)}
+.marquee-inner{display:flex;gap:40px;animation:scrollX 34s linear infinite;white-space:nowrap;color:var(--text-faint);font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+html[dir="rtl"] .marquee-inner{animation-direction:reverse}
+.marquee-inner .sep{width:4px;height:4px;border-radius:50%;background:var(--mint);opacity:.45;flex-shrink:0;align-self:center}
+@keyframes scrollX{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.section{padding:108px 0;position:relative}
+.section-sm{padding:64px 0;position:relative}
+.eyebrow{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--mint);margin-bottom:14px;display:block}
+h2.h2{font-family:var(--font-display);font-weight:500;font-size:clamp(30px,3.2vw,50px);letter-spacing:-.022em;line-height:1.04;margin-bottom:15px;color:#fff}
+html[dir="rtl"] h2.h2{font-family:var(--font-ar);font-weight:800}
+.sub{font-size:17px;color:var(--text-muted);line-height:1.68;max-width:620px}
+.section-head{margin-bottom:54px}
+.centered{text-align:center}
+.centered .sub{margin:0 auto}
+
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:22px;overflow:hidden}
+@media(max-width:820px){.pain-grid{grid-template-columns:1fr}}
+.pain-card{padding:32px 28px;background:var(--navy-2);transition:background .3s;position:relative;overflow:hidden}
+.pain-card::after{content:"";position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);transform:scaleX(0);transition:transform .45s ease}
+.pain-card:hover{background:rgba(10,17,38,.98)}
+.pain-card:hover::after{transform:scaleX(1)}
+.pain-icon{width:40px;height:40px;border-radius:11px;background:var(--red-dim);display:grid;place-items:center;font-size:18px;margin-bottom:16px}
+.pain-card h3{font-family:var(--font-display);font-weight:500;font-size:19px;margin-bottom:7px;letter-spacing:-.01em}
+html[dir="rtl"] .pain-card h3{font-family:var(--font-ar);font-weight:700}
+.pain-card p{font-size:13.5px;line-height:1.68;color:var(--text-muted)}
+
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:22px;overflow:hidden}
+@media(max-width:920px){.steps-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.steps-grid{grid-template-columns:1fr}}
+.step-card{padding:32px 26px;border-right:1px solid var(--border);position:relative;transition:background .35s;background:rgba(255,255,255,.01)}
+.step-card:last-child{border-right:none}
+@media(max-width:920px){
+  .step-card:nth-child(2){border-right:none}
+  .step-card:nth-child(3){border-right:1px solid var(--border)}
+  .step-card:nth-child(3),.step-card:nth-child(4){border-top:1px solid var(--border)}
+}
+@media(max-width:520px){.step-card{border-right:none!important;border-bottom:1px solid var(--border)}.step-card:last-child{border-bottom:none}}
+.step-card:hover{background:rgba(2,195,154,.04)}
+.step-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--mint),transparent);opacity:0;transition:opacity .35s}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--mint);letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.step-num::after{content:"";flex:1;height:1px;background:var(--border);max-width:40px}
+.step-card h3{font-size:16px;font-weight:600;margin-bottom:8px;letter-spacing:-.01em}
+.step-card p{font-size:13px;line-height:1.65;color:var(--text-muted)}
+.step-icon{font-size:26px;margin-bottom:16px;display:block}
+
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:960px){.feat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.feat-grid{grid-template-columns:1fr}}
+.feat-card{padding:26px;border-radius:18px;border:1px solid var(--border);background:rgba(255,255,255,.02);transition:all .35s var(--ease);position:relative;overflow:hidden}
+.feat-card::before{content:"";position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(closest-side,rgba(2,195,154,.18),transparent 65%);opacity:0;transition:opacity .4s}
+.feat-card:hover{border-color:rgba(2,195,154,.22);transform:translateY(-3px);box-shadow:0 22px 55px rgba(0,0,0,.28)}
+.feat-card:hover::before{opacity:1}
+.feat-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(2,195,154,.18),rgba(6,90,130,.14));color:#5EFFD6;font-size:20px;margin-bottom:14px;border:1px solid rgba(2,195,154,.18)}
+.feat-card h3{font-size:15.5px;font-weight:600;margin-bottom:6px;letter-spacing:-.01em}
+.feat-card p{font-size:13px;color:var(--text-muted);line-height:1.6}
+
+.sharia-block{border-radius:26px;overflow:hidden;background:linear-gradient(135deg,rgba(6,90,130,.22) 0%,rgba(8,18,43,.9) 50%,rgba(201,149,58,.08) 100%);border:1px solid rgba(201,149,58,.2);padding:64px 60px;position:relative}
+@media(max-width:760px){.sharia-block{padding:44px 28px}}
+.sharia-block::before{content:"";position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(201,149,58,.12),transparent 65%);pointer-events:none}
+.sharia-inner{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative;z-index:1}
+@media(max-width:820px){.sharia-inner{grid-template-columns:1fr}}
+.sharia-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.sharia-tag{display:inline-flex;align-items:center;gap:7px;padding:5px 13px;border-radius:999px;background:var(--gold-dim);border:1px solid rgba(201,149,58,.28);color:var(--gold);font-size:11px;font-weight:600;font-family:var(--font-mono);letter-spacing:.08em}
+.sharia-side h3{font-family:var(--font-display);font-weight:500;font-size:clamp(24px,2.5vw,36px);letter-spacing:-.02em;margin-bottom:12px;color:#fff}
+html[dir="rtl"] .sharia-side h3{font-family:var(--font-ar);font-weight:700}
+.sharia-side p{font-size:15.5px;line-height:1.7;color:var(--text-muted)}
+
+.cmp-wrapper{overflow-x:auto;border-radius:22px}
+table.cmp{width:100%;border-collapse:separate;border-spacing:0;min-width:640px;border:1px solid var(--border);border-radius:22px;overflow:hidden;background:rgba(255,255,255,.018)}
+table.cmp th,table.cmp td{padding:14px 18px;text-align:left;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.04)}
+html[dir="rtl"] table.cmp th,html[dir="rtl"] table.cmp td{text-align:right}
+table.cmp th{background:rgba(255,255,255,.028);color:var(--text-muted);font-weight:600;font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em}
+table.cmp tr.hi{background:linear-gradient(90deg,rgba(2,195,154,.07),transparent 60%)}
+table.cmp tr.hi td:first-child{color:#fff;font-weight:600}
+.c-yes{color:#5EFFD6;font-weight:700}
+.c-no{color:var(--red)}
+.c-meh{color:var(--gold)}
+
+.calc-block{border-radius:22px;border:1px solid var(--border);background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.015));padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+@media(max-width:820px){.calc-block{grid-template-columns:1fr;padding:32px 24px}}
+.calc-fields{display:flex;flex-direction:column;gap:20px}
+.calc-field label{display:block;font-size:11.5px;font-family:var(--font-mono);letter-spacing:.08em;color:var(--text-faint);text-transform:uppercase;margin-bottom:7px}
+.calc-field input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:rgba(255,255,255,.1);border-radius:999px;outline:none}
+.calc-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--mint);border-radius:50%;cursor:pointer;box-shadow:0 0 14px rgba(2,195,154,.5);transition:transform .2s}
+.calc-field input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.calc-val{font-size:20px;font-weight:600;color:#fff;font-family:var(--font-display);margin-top:6px}
+.calc-result{text-align:center}
+.calc-result-num{font-family:var(--font-display);font-weight:500;font-size:clamp(44px,5.5vw,76px);color:var(--mint);letter-spacing:-.03em;line-height:1;margin-bottom:10px}
+.calc-result p{font-size:15px;color:var(--text-muted)}
+.calc-result-sub{font-size:11.5px;color:var(--text-faint);font-family:var(--font-mono);margin-top:16px;letter-spacing:.05em}
+
+.proof-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:820px){.proof-strip{grid-template-columns:1fr}}
+.proof-card{padding:28px;border-radius:18px;border:1px solid var(--border);background:rgba(255,255,255,.022);transition:border-color .3s}
+.proof-card:hover{border-color:rgba(2,195,154,.18)}
+.proof-stars{color:var(--gold);font-size:13px;margin-bottom:12px;letter-spacing:2px}
+.proof-card p{font-size:14px;line-height:1.7;color:var(--text-muted);margin-bottom:18px}
+.proof-author{display:flex;align-items:center;gap:10px}
+.proof-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--teal),rgba(2,195,154,.5));display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0}
+.proof-name{font-size:13px;font-weight:600;color:#fff}
+.proof-role{font-size:11px;color:var(--text-faint);margin-top:1px}
+
+.faq-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:22px;overflow:hidden}
+details.faq-item{border-bottom:1px solid var(--border);background:rgba(255,255,255,.018)}
+details.faq-item:last-child{border-bottom:none}
+details.faq-item summary{padding:20px 26px;font-size:15.5px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;transition:background .25s;letter-spacing:-.01em}
+details.faq-item summary::-webkit-details-marker{display:none}
+details.faq-item summary::after{content:"+";color:var(--mint);font-size:22px;font-weight:300;transition:transform .3s var(--ease);flex-shrink:0}
+details.faq-item[open] summary{background:rgba(2,195,154,.05)}
+details.faq-item[open] summary::after{transform:rotate(45deg)}
+details.faq-item summary:hover{background:rgba(255,255,255,.03)}
+.faq-body{padding:0 26px 22px;font-size:14px;line-height:1.72;color:var(--text-muted)}
+
+.cta-section{padding:120px 0 90px}
+.cta-card{border-radius:28px;text-align:center;padding:80px 48px;background:linear-gradient(145deg,rgba(2,195,154,.12) 0%,rgba(6,90,130,.1) 40%,rgba(8,18,43,.95) 100%);border:1px solid rgba(2,195,154,.2);position:relative;overflow:hidden;box-shadow:0 60px 120px rgba(0,0,0,.5)}
+@media(max-width:720px){.cta-card{padding:52px 28px}}
+.cta-card::before{content:"";position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(2,195,154,.15),transparent 65%);pointer-events:none}
+.cta-card h2{font-family:var(--font-display);font-weight:500;font-size:clamp(34px,4.2vw,60px);letter-spacing:-.025em;line-height:1.03;margin-bottom:18px;color:#fff;position:relative;z-index:1}
+html[dir="rtl"] .cta-card h2{font-family:var(--font-ar);font-weight:800}
+.cta-card .sub{margin:0 auto 38px;position:relative;z-index:1}
+.waitlist-form{display:flex;gap:8px;max-width:440px;margin:0 auto 16px;position:relative;z-index:1}
+@media(max-width:500px){.waitlist-form{flex-direction:column}}
+.waitlist-form input{flex:1;padding:14px 18px;border-radius:12px;font-size:15px;background:rgba(255,255,255,.07);border:1px solid var(--border-mid);color:#fff;font-family:var(--font-body);outline:none;transition:border-color .25s}
+.waitlist-form input::placeholder{color:var(--text-faint)}
+.waitlist-form input:focus{border-color:var(--mint)}
+.waitlist-form button{padding:14px 24px;background:linear-gradient(138deg,#02C39A,#00E0B0);color:#021810;border:0;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font-body);transition:all .28s var(--ease);white-space:nowrap;box-shadow:0 8px 28px rgba(2,195,154,.28)}
+.waitlist-form button:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(2,195,154,.42)}
+.waitlist-meta{font-size:13px;color:var(--text-faint);font-family:var(--font-mono);letter-spacing:.04em;position:relative;z-index:1}
+.waitlist-ok{display:none;font-size:15px;color:var(--mint);font-weight:600;margin-top:14px;position:relative;z-index:1}
+.waitlist-ok.show{display:block}
+.perks{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:38px;position:relative;z-index:1}
+.perk{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--text-muted)}
+.perk-icon{width:22px;height:22px;border-radius:50%;background:rgba(2,195,154,.14);border:1px solid var(--border-mint);color:var(--mint);font-size:11px;display:grid;place-items:center;flex-shrink:0}
+.countdown{display:flex;gap:0;margin-top:44px;justify-content:center;border:1px solid var(--border);border-radius:16px;overflow:hidden;width:fit-content;margin-left:auto;margin-right:auto;position:relative;z-index:1}
+.cd{padding:16px 24px;border-right:1px solid var(--border);text-align:center;background:rgba(255,255,255,.02)}
+.cd:last-child{border-right:none}
+.cd-val{font-family:var(--font-display);font-size:clamp(28px,4vw,44px);color:#fff;line-height:1;font-weight:500}
+.cd-lbl{font-family:var(--font-mono);font-size:10px;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+
+footer{border-top:1px solid var(--border);padding:36px 0 28px;background:rgba(3,8,18,.5)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px}
+.footer-logo{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-size:18px;font-weight:500}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer-links a{font-size:13px;color:var(--text-faint);transition:color .2s}
+.footer-links a:hover{color:var(--mint)}
+.footer-copy{font-size:12px;color:var(--text-faint);font-family:var(--font-mono);border-top:1px solid var(--border);padding-top:20px;letter-spacing:.02em}
+
+@media(max-width:600px){
+  .section,.cta-section{padding:72px 0}
+  .sharia-block,.calc-block{padding:28px 20px}
+  .cta-card{padding:48px 22px}
+}
+</style>
+</head>
+<body>
+
+<nav class="site" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="logo">
+      <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="15" stroke="rgba(2,195,154,0.28)" stroke-width="1.5"/>
+        <path d="M18 3 A15 15 0 0 1 33 18" stroke="#02C39A" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M18 3 A15 15 0 1 0 33 18" stroke="rgba(2,195,154,0.18)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="18" cy="18" r="4.5" fill="none" stroke="#02C39A" stroke-width="2"/>
+        <circle cx="18" cy="18" r="2" fill="#02C39A"/>
+      </svg>
+      <span>OLFI</span>
+    </a>
+    <div class="nav-links">
+      <a href="#how" data-en="How it works" data-ar="كيف يعمل">How it works</a>
+      <a href="#features" data-en="Features" data-ar="المزايا">Features</a>
+      <a href="#faq" data-en="FAQ" data-ar="الأسئلة">FAQ</a>
+      <div class="lang-toggle" id="lang">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="ar">عربي</button>
+      </div>
+      <a href="#waitlist" class="btn btn-primary" style="padding:9px 20px;font-size:14px" data-en="Join waitlist" data-ar="انضم">Join waitlist</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">
+          <div class="chip"><span class="pulse"></span><span data-en="Early Access · UAE" data-ar="وصول مبكر · الإمارات">Early Access · UAE</span></div>
+          <div class="chip chip-gold" data-en="Sharia Compliant ✦" data-ar="متوافق مع الشريعة ✦">Sharia Compliant ✦</div>
+        </div>
+        <h1>
+          <span data-en="Lower your<br/>loan payments.<br/>" data-ar="خفّض أقساطك.<br/>">Lower your<br/>loan payments.<br/></span>
+          <em class="gradient-text" style="font-style:italic" data-en="Refinance smarter." data-ar="أعد تمويلك بذكاء.">Refinance smarter.</em>
+        </h1>
+        <p class="hero-lede" data-en="OLFI scans every bank and lender in the UAE to find you a better deal on your personal loans, credit cards, and auto loans — in minutes, not days. No branch visits. No paperwork. No guesswork." data-ar="تفحص أولفي كل بنك ومُقرض في الإمارات لإيجاد أفضل عرض لقروضك الشخصية وبطاقاتك الائتمانية وقروض السيارات — في دقائق لا أيام. بدون زيارات فروع. بدون أوراق.">OLFI scans every bank and lender in the UAE to find you a better deal on your personal loans, credit cards, and auto loans — in minutes, not days. No branch visits. No paperwork. No guesswork.</p>
+        <div class="hero-ctas">
+          <a href="#waitlist" class="btn btn-primary btn-lg" data-en="Get early access →" data-ar="احصل على وصول مبكر ←">Get early access →</a>
+          <a href="#how" class="btn btn-ghost btn-lg" data-en="See how it works" data-ar="كيف يعمل؟">See how it works</a>
+        </div>
+        <div class="hero-trust">
+          <div class="hero-trust-item"><span class="tick">✓</span><span data-en="FREE to use" data-ar="مجاني تماماً">FREE to use</span></div>
+          <div class="hero-trust-item"><span class="tick">✓</span><span data-en="AED 100 referral cashback" data-ar="١٠٠ درهم مكافأة الإحالة">AED 100 referral cashback</span></div>
+          <div class="hero-trust-item"><span class="tick">✓</span><span data-en="No credit-score impact" data-ar="بدون تأثير على السجل الائتماني">No credit-score impact</span></div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone" id="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="p-status"><span>9:41</span><span>●●● WiFi</span></div>
+            <div class="p-greeting" data-en="Your total debt" data-ar="إجمالي ديونك">Your total debt</div>
+            <div class="p-amount">AED 118,400</div>
+            <div class="p-sub" data-en="Across 3 active loans" data-ar="عبر 3 قروض نشطة">Across 3 active loans</div>
+            <div class="p-row">
+              <div class="l"><div class="p-icon">PL</div><div><div class="p-name" data-en="Personal Loan" data-ar="قرض شخصي">Personal Loan</div><div class="p-bank">Emirates NBD</div></div></div>
+              <div class="p-rate-bad">8.99%</div>
+            </div>
+            <div class="p-row">
+              <div class="l"><div class="p-icon">CC</div><div><div class="p-name" data-en="Credit Card" data-ar="بطاقة ائتمانية">Credit Card</div><div class="p-bank">ADCB</div></div></div>
+              <div class="p-rate-bad">36%</div>
+            </div>
+            <div class="p-row">
+              <div class="l"><div class="p-icon">AL</div><div><div class="p-name" data-en="Auto Loan" data-ar="قرض سيارة">Auto Loan</div><div class="p-bank">FAB</div></div></div>
+              <div class="p-rate-bad">5.50%</div>
+            </div>
+            <div class="p-savings">
+              <div>
+                <div class="p-save-num">AED 2,840</div>
+                <div class="p-save-lbl" data-en="Estimated monthly saving" data-ar="التوفير الشهري المتوقع">Estimated monthly saving</div>
+              </div>
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="rgba(2,195,154,0.4)" stroke-width="1.2"/><path d="M9 15l4 4 6-8" stroke="#02C39A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="p-cta-btn" data-en="View 3 matching offers →" data-ar="عرض 3 عروض مطابقة ←">View 3 matching offers →</div>
+          </div>
+        </div>
+        <div class="float-chip fc1"><span class="dot"></span><span data-en="AI match found" data-ar="تم إيجاد تطابق">AI match found</span></div>
+        <div class="float-chip fc2 fc-gold"><span class="dot"></span><span data-en="Sharia certified" data-ar="معتمد شرعياً">Sharia certified</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-inner">
+    <span data-en="Personal Loans" data-ar="قروض شخصية">Personal Loans</span><span class="sep"></span>
+    <span data-en="Credit Cards" data-ar="بطاقات ائتمانية">Credit Cards</span><span class="sep"></span>
+    <span data-en="Auto Loans" data-ar="قروض السيارات">Auto Loans</span><span class="sep"></span>
+    <span data-en="Sharia-Compliant Refinance" data-ar="إعادة تمويل متوافق شرعياً">Sharia-Compliant Refinance</span><span class="sep"></span>
+    <span data-en="Debt Consolidation" data-ar="توحيد الديون">Debt Consolidation</span><span class="sep"></span>
+    <span data-en="Open Banking" data-ar="الخدمات المصرفية المفتوحة">Open Banking</span><span class="sep"></span>
+    <span data-en="AI Credit Scoring" data-ar="تسجيل ائتماني بالذكاء الاصطناعي">AI Credit Scoring</span><span class="sep"></span>
+    <span data-en="Digital Processing" data-ar="معالجة رقمية">Digital Processing</span><span class="sep"></span>
+    <span data-en="Personal Loans" data-ar="قروض شخصية">Personal Loans</span><span class="sep"></span>
+    <span data-en="Credit Cards" data-ar="بطاقات ائتمانية">Credit Cards</span><span class="sep"></span>
+    <span data-en="Auto Loans" data-ar="قروض السيارات">Auto Loans</span><span class="sep"></span>
+    <span data-en="Sharia-Compliant Refinance" data-ar="إعادة تمويل متوافق شرعياً">Sharia-Compliant Refinance</span><span class="sep"></span>
+    <span data-en="Debt Consolidation" data-ar="توحيد الديون">Debt Consolidation</span><span class="sep"></span>
+    <span data-en="Open Banking" data-ar="الخدمات المصرفية المفتوحة">Open Banking</span><span class="sep"></span>
+    <span data-en="AI Credit Scoring" data-ar="تسجيل ائتماني بالذكاء الاصطناعي">AI Credit Scoring</span><span class="sep"></span>
+    <span data-en="Digital Processing" data-ar="معالجة رقمية">Digital Processing</span><span class="sep"></span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="section" id="problem">
+  <div class="container">
+    <div class="section-head centered reveal">
+      <span class="eyebrow" data-en="The Problem" data-ar="المشكلة">The Problem</span>
+      <h2 class="h2" data-en="Debt is expensive.<br/>Refinancing shouldn't be hard." data-ar="الديون مكلفة.<br/>إعادة التمويل لا يجب أن تكون صعبة.">Debt is expensive.<br/>Refinancing shouldn't be hard.</h2>
+      <p class="sub" data-en="Millions of UAE residents are paying more than they need to — because refinancing feels complicated, opaque, and time-consuming. OLFI fixes that." data-ar="ملايين المقيمين في الإمارات يدفعون أكثر مما يجب لأن إعادة التمويل تبدو معقدة. أولفي تحل ذلك.">Millions of UAE residents are paying more than they need to — because refinancing feels complicated, opaque, and time-consuming. OLFI fixes that.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card reveal">
+        <div class="pain-icon">💸</div>
+        <h3 data-en="You're overpaying" data-ar="تدفع أكثر من اللازم">You're overpaying</h3>
+        <p data-en="High interest rates silently drain your salary every month. A 1–2% rate reduction on an AED 80,000 loan saves you thousands per year — yet most people never switch." data-ar="معدلات الفائدة المرتفعة تستنزف راتبك كل شهر. خفض 1–2% على قرض بـ ٨٠,٠٠٠ درهم يوفر لك آلاف الدراهم سنوياً.">High interest rates silently drain your salary every month. A 1–2% rate reduction on an AED 80,000 loan saves you thousands per year — yet most people never switch.</p>
+      </div>
+      <div class="pain-card reveal reveal-d1">
+        <div class="pain-icon">📂</div>
+        <h3 data-en="Paperwork kills momentum" data-ar="الأوراق تقتل الحماس">Paperwork kills momentum</h3>
+        <p data-en="Bank visits, stacks of documents, salary certificates, and weeks of waiting. The traditional refinance process is built to make you give up." data-ar="زيارات البنوك وأكوام من الوثائق وأسابيع من الانتظار. عملية إعادة التمويل التقليدية مبنية لجعلك تستسلم.">Bank visits, stacks of documents, salary certificates, and weeks of waiting. The traditional refinance process is built to make you give up.</p>
+      </div>
+      <div class="pain-card reveal reveal-d2">
+        <div class="pain-icon">🕌</div>
+        <h3 data-en="Halal options are hidden" data-ar="الخيارات الحلال مخفية">Halal options are hidden</h3>
+        <p data-en="Finding a genuinely Sharia-compliant buyout — certified Murābaḥa or Tawarruq — requires navigating banks that bury options in fine print. OLFI surfaces them first." data-ar="إيجاد عقد مرابحة أو تورق معتمد شرعياً يتطلب التنقل بين بنوك تخفي الخيارات. أولفي تجعلها في المقدمة.">Finding a genuinely Sharia-compliant buyout — certified Murābaḥa or Tawarruq — requires navigating banks that bury options in fine print. OLFI surfaces them first.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how" style="padding-top:0">
+  <div class="container">
+    <div class="section-head centered reveal">
+      <span class="eyebrow" data-en="How OLFI Works" data-ar="كيف تعمل أولفي">How OLFI Works</span>
+      <h2 class="h2" data-en="From application to approval.<br/>In under 30 minutes." data-ar="من الطلب إلى الموافقة.<br/>في أقل من ٣٠ دقيقة.">From application to approval.<br/>In under 30 minutes.</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <span class="step-icon">🔗</span>
+        <div class="step-num" data-en="STEP 01" data-ar="الخطوة ١">STEP 01</div>
+        <h3 data-en="Connect your bank" data-ar="اربط حسابك البنكي">Connect your bank</h3>
+        <p data-en="Securely link your bank account via open banking. OLFI reads your real financial data — no manual forms, no salary slips." data-ar="اربط حسابك البنكي بأمان. تقرأ أولفي بياناتك المالية الحقيقية بدون نماذج يدوية.">Securely link your bank account via open banking. OLFI reads your real financial data — no manual forms, no salary slips.</p>
+      </div>
+      <div class="step-card reveal reveal-d1">
+        <span class="step-icon">🤖</span>
+        <div class="step-num" data-en="STEP 02" data-ar="الخطوة ٢">STEP 02</div>
+        <h3 data-en="AI analyses your profile" data-ar="الذكاء الاصطناعي يحلل ملفك">AI analyses your profile</h3>
+        <p data-en="Our engine scores your financial behaviour — payment history, cash flow, spending patterns — and builds your personalised OLFI Score." data-ar="يُقيّم محركنا سلوكك المالي — سجل الدفع والتدفق النقدي — ويبني نقاط أولفي المخصصة لك.">Our engine scores your financial behaviour — payment history, cash flow, spending patterns — and builds your personalised OLFI Score.</p>
+      </div>
+      <div class="step-card reveal reveal-d2">
+        <span class="step-icon">🏦</span>
+        <div class="step-num" data-en="STEP 03" data-ar="الخطوة ٣">STEP 03</div>
+        <h3 data-en="Compare real offers" data-ar="قارن العروض الحقيقية">Compare real offers</h3>
+        <p data-en="Instantly see tailored offers from multiple partner banks and lenders — conventional and Sharia-compliant — ranked by total savings." data-ar="اطلع فوراً على عروض مخصصة من شركاء متعددين — تقليدية ومتوافقة شرعياً — مرتبة حسب إجمالي الوفورات.">Instantly see tailored offers from multiple partner banks and lenders — conventional and Sharia-compliant — ranked by total savings.</p>
+      </div>
+      <div class="step-card reveal reveal-d3">
+        <span class="step-icon">✍️</span>
+        <div class="step-num" data-en="STEP 04" data-ar="الخطوة ٤">STEP 04</div>
+        <h3 data-en="Apply & sign digitally" data-ar="تقدّم ووقّع رقمياً">Apply & sign digitally</h3>
+        <p data-en="Upload documents with our smart OCR tool and sign contracts digitally. We track every step until your loan is funded." data-ar="ارفع وثائقك بأداة التعرف الذكي ووقّع رقمياً. نتابع كل خطوة حتى يُصرف القرض.">Upload documents with our smart OCR tool and sign contracts digitally. We track every step until your loan is funded.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAVINGS CALCULATOR -->
+<section class="section-sm" id="savings">
+  <div class="container">
+    <div class="calc-block reveal">
+      <div class="calc-fields">
+        <div style="margin-bottom:28px">
+          <span class="eyebrow" data-en="Savings Estimate" data-ar="تقدير الوفورات">Savings Estimate</span>
+          <h2 class="h2" style="font-size:clamp(24px,2.6vw,36px)" data-en="See what you could save." data-ar="اكتشف كم يمكنك توفيره.">See what you could save.</h2>
+        </div>
+        <div class="calc-field">
+          <label data-en="Total loan balance (AED)" data-ar="إجمالي رصيد القرض (درهم)">Total loan balance (AED)</label>
+          <input type="range" min="20000" max="500000" step="5000" value="120000" id="slBalance"/>
+          <div class="calc-val" id="valBalance">AED 120,000</div>
+        </div>
+        <div class="calc-field">
+          <label data-en="Current average rate (%)" data-ar="المعدل الحالي (%)">Current average rate (%)</label>
+          <input type="range" min="4" max="36" step="0.5" value="12" id="slRate"/>
+          <div class="calc-val" id="valRate">12.0%</div>
+        </div>
+        <div class="calc-field">
+          <label data-en="Remaining term (months)" data-ar="المدة المتبقية (شهور)">Remaining term (months)</label>
+          <input type="range" min="6" max="60" step="1" value="36" id="slTerm"/>
+          <div class="calc-val" id="valTerm">36 months</div>
+        </div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-num" id="savingsNum">AED 4,180</div>
+        <p data-en="estimated total saving<br/>if you refinance today" data-ar="التوفير الإجمالي المقدر<br/>إذا أعدت التمويل اليوم">estimated total saving<br/>if you refinance today</p>
+        <div class="calc-result-sub" data-en="Based on avg. 2% rate reduction · illustrative" data-ar="بناءً على خفض متوسط 2% · تقديري">Based on avg. 2% rate reduction · illustrative</div>
+        <a href="#waitlist" class="btn btn-primary" style="margin-top:28px" data-en="Get my real offer →" data-ar="احصل على عرضي الحقيقي ←">Get my real offer →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head centered reveal">
+      <span class="eyebrow" data-en="What You Get" data-ar="ماذا تحصل">What You Get</span>
+      <h2 class="h2" data-en="Everything you need.<br/>Nothing you don't." data-ar="كل ما تحتاجه.<br/>لا شيء زائد.">Everything you need.<br/>Nothing you don't.</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-icon">📊</div>
+        <h3 data-en="Unified debt dashboard" data-ar="لوحة الديون الموحدة">Unified debt dashboard</h3>
+        <p data-en="See all your loans, cards, and auto finance in one clean view. Know exactly what you owe, what you're paying, and where you can save." data-ar="اطلع على جميع قروضك وبطاقاتك في عرض واحد. اعرف بالضبط ما تدين به وأين يمكنك التوفير.">See all your loans, cards, and auto finance in one clean view. Know exactly what you owe, what you're paying, and where you can save.</p>
+      </div>
+      <div class="feat-card reveal reveal-d1">
+        <div class="feat-icon">🧠</div>
+        <h3 data-en="OLFI Score" data-ar="نقاط أولفي">OLFI Score</h3>
+        <p data-en="Your personalised refinance eligibility score — updated in real-time using open banking data, AECB score, and behavioural signals. Know exactly where you stand." data-ar="نقاط أهليتك المخصصة لإعادة التمويل، محدّثة في الوقت الفعلي. اعرف وضعك بالضبط.">Your personalised refinance eligibility score — updated in real-time using open banking data, AECB score, and behavioural signals. Know exactly where you stand.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="feat-icon">⚡</div>
+        <h3 data-en="Instant offer comparison" data-ar="مقارنة فورية للعروض">Instant offer comparison</h3>
+        <p data-en="Multiple lenders compete for your business in real time. See profit rate, total payable, and tenure side-by-side — no hidden costs, no fine print surprises." data-ar="يتنافس عدة مقرضون على عملك في الوقت الفعلي. قارن معدل الربح والإجمالي والمدة جنباً إلى جنب.">Multiple lenders compete for your business in real time. See profit rate, total payable, and tenure side-by-side — no hidden costs, no fine print surprises.</p>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-icon">📱</div>
+        <h3 data-en="Fully digital processing" data-ar="معالجة رقمية كاملة">Fully digital processing</h3>
+        <p data-en="Smart OCR to upload documents, digital signatures for contracts, and live status tracking — from application to funding, all on your phone." data-ar="تعرف ضوئي ذكي لتحميل الوثائق وتوقيعات رقمية وتتبع حي للحالة. كل شيء على هاتفك.">Smart OCR to upload documents, digital signatures for contracts, and live status tracking — from application to funding, all on your phone.</p>
+      </div>
+      <div class="feat-card reveal reveal-d1">
+        <div class="feat-icon">🔔</div>
+        <h3 data-en="Smart alerts" data-ar="تنبيهات ذكية">Smart alerts</h3>
+        <p data-en="OLFI watches the market for you. The moment a better offer appears, you're notified. Due-date reminders and cash-flow warnings keep you on track." data-ar="تراقب أولفي السوق عنك. فور ظهور عرض أفضل يتم إخطارك. تذكيرات الاستحقاق تبقيك على المسار.">OLFI watches the market for you. The moment a better offer appears, you're notified. Due-date reminders and cash-flow warnings keep you on track.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="feat-icon">💳</div>
+        <h3 data-en="OLFI Wallet" data-ar="محفظة أولفي">OLFI Wallet</h3>
+        <p data-en="Pay all your refinanced loans from one place. Request Sharia-compliant payment deferrals, track credit health, and manage your entire debt life in one app." data-ar="ادفع جميع قروضك من مكان واحد. اطلب تأجيلات متوافقة شرعياً وتتبع صحتك الائتمانية.">Pay all your refinanced loans from one place. Request Sharia-compliant payment deferrals, track credit health, and manage your entire debt life in one app.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARIA -->
+<section class="section-sm" id="sharia">
+  <div class="container">
+    <div class="sharia-block reveal">
+      <div class="sharia-inner">
+        <div class="sharia-side">
+          <span class="eyebrow" style="color:var(--gold)" data-en="Islamic Finance" data-ar="التمويل الإسلامي">Islamic Finance</span>
+          <h3 data-en="Riba-free.<br/>By design." data-ar="خالٍ من الربا.<br/>بالتصميم.">Riba-free.<br/>By design.</h3>
+          <p data-en="OLFI's Sharia board certifies every product structure — Murābaḥa, Tawarruq, and Ijāra. These aren't filtered add-ons. They're core to the platform, not an afterthought." data-ar="مجلس الشريعة في أولفي يعتمد كل هيكل منتج — المرابحة والتورق والإجارة. هذه ليست إضافات مرشّحة، بل هي جوهر المنصة.">OLFI's Sharia board certifies every product structure — Murābaḥa, Tawarruq, and Ijāra. These aren't filtered add-ons. They're core to the platform, not an afterthought.</p>
+          <div class="sharia-tags">
+            <span class="sharia-tag">✦ Murābaḥa</span>
+            <span class="sharia-tag">✦ Tawarruq</span>
+            <span class="sharia-tag">✦ Ijāra</span>
+            <span class="sharia-tag" data-en="✦ Certified halal" data-ar="✦ معتمد حلال">✦ Certified halal</span>
+            <span class="sharia-tag" data-en="✦ Quarterly audit" data-ar="✦ مراجعة ربع سنوية">✦ Quarterly audit</span>
+          </div>
+        </div>
+        <div class="sharia-side">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="glass" style="padding:22px 24px">
+              <div style="font-size:12px;font-family:var(--font-mono);color:var(--text-faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px" data-en="You asked" data-ar="سألتَ">You asked</div>
+              <div style="font-size:14px;color:var(--text-muted)" data-en="&ldquo;Are there halal buyout options for my ADCB loan?&rdquo;" data-ar="&ldquo;هل هناك خيارات بيع حلال لقرضي من ADCB؟&rdquo;">"Are there halal buyout options for my ADCB loan?"</div>
+            </div>
+            <div class="glass-mint" style="padding:22px 24px">
+              <div style="font-size:12px;font-family:var(--font-mono);color:var(--mint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px" data-en="OLFI found 3 offers" data-ar="وجدت أولفي ٣ عروض">OLFI found 3 offers</div>
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+                  <span data-en="Dubai Islamic Bank · Murābaḥa" data-ar="بنك دبي الإسلامي · مرابحة">Dubai Islamic Bank · Murābaḥa</span>
+                  <span style="color:#5EFFD6;font-weight:700;font-family:var(--font-mono)">4.49%</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+                  <span data-en="Al Hilal Bank · Tawarruq" data-ar="بنك الهلال · تورق">Al Hilal Bank · Tawarruq</span>
+                  <span style="color:#5EFFD6;font-weight:700;font-family:var(--font-mono)">4.85%</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px">
+                  <span data-en="Abu Dhabi Islamic Bank · Ijāra" data-ar="مصرف أبوظبي الإسلامي · إجارة">Abu Dhabi Islamic Bank · Ijāra</span>
+                  <span style="color:#5EFFD6;font-weight:700;font-family:var(--font-mono)">5.10%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="section" id="compare" style="padding-top:0">
+  <div class="container">
+    <div class="section-head centered reveal">
+      <span class="eyebrow" data-en="OLFI vs The Old Way" data-ar="أولفي مقابل الطريقة القديمة">OLFI vs The Old Way</span>
+      <h2 class="h2" data-en="A better experience.<br/>Every step." data-ar="تجربة أفضل.<br/>في كل خطوة.">A better experience.<br/>Every step.</h2>
+    </div>
+    <div class="cmp-wrapper reveal">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th data-en="Feature" data-ar="الميزة">Feature</th>
+            <th data-en="Going to the bank yourself" data-ar="الذهاب للبنك بنفسك">Going to the bank yourself</th>
+            <th data-en="OLFI" data-ar="أولفي">OLFI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="hi"><td data-en="Compare multiple lenders" data-ar="مقارنة عدة مقرضين">Compare multiple lenders</td><td class="c-no" data-en="✗ One at a time" data-ar="✗ واحد في كل مرة">✗ One at a time</td><td class="c-yes" data-en="✓ All at once, ranked" data-ar="✓ جميعهم دفعة واحدة">✓ All at once, ranked</td></tr>
+          <tr><td data-en="Time to first offer" data-ar="الوقت للحصول على أول عرض">Time to first offer</td><td class="c-no" data-en="3–10 days" data-ar="٣–١٠ أيام">3–10 days</td><td class="c-yes" data-en="✓ Under 5 minutes" data-ar="✓ أقل من ٥ دقائق">✓ Under 5 minutes</td></tr>
+          <tr class="hi"><td data-en="Branch visit required" data-ar="زيارة الفرع مطلوبة">Branch visit required</td><td class="c-no" data-en="✗ Almost always" data-ar="✗ دائماً تقريباً">✗ Almost always</td><td class="c-yes" data-en="✓ Never" data-ar="✓ أبداً">✓ Never</td></tr>
+          <tr><td data-en="Sharia-compliant options" data-ar="خيارات متوافقة شرعياً">Sharia-compliant options</td><td class="c-meh" data-en="~ Depends on the bank" data-ar="~ يعتمد على البنك">~ Depends on the bank</td><td class="c-yes" data-en="✓ Always shown first" data-ar="✓ تظهر دائماً أولاً">✓ Always shown first</td></tr>
+          <tr class="hi"><td data-en="Transparent total cost" data-ar="التكلفة الإجمالية الشفافة">Transparent total cost</td><td class="c-no" data-en="✗ Hidden fees common" data-ar="✗ رسوم خفية شائعة">✗ Hidden fees common</td><td class="c-yes" data-en="✓ Full breakdown shown" data-ar="✓ عرض كامل مفصّل">✓ Full breakdown shown</td></tr>
+          <tr><td data-en="Alternative credit scoring" data-ar="تقييم ائتماني بديل">Alternative credit scoring</td><td class="c-no" data-en="✗ AECB only" data-ar="✗ AECB فقط">✗ AECB only</td><td class="c-yes" data-en="✓ Behavioural + AECB" data-ar="✓ سلوكي + AECB">✓ Behavioural + AECB</td></tr>
+          <tr class="hi"><td data-en="Cost to borrower" data-ar="التكلفة على المقترض">Cost to borrower</td><td class="c-meh" data-en="~ Varies" data-ar="~ يتفاوت">~ Varies</td><td class="c-yes" data-en="✓ Free" data-ar="✓ مجاني">✓ Free</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="section-sm" id="proof" style="padding-top:0">
+  <div class="container">
+    <div class="section-head centered reveal">
+      <span class="eyebrow" data-en="Early Community" data-ar="المجتمع المبكر">Early Community</span>
+      <h2 class="h2" style="font-size:clamp(26px,3vw,40px)" data-en="Real stories from beta testers." data-ar="قصص حقيقية من مختبري النسخة التجريبية.">Real stories from beta testers.</h2>
+    </div>
+    <div class="proof-strip">
+      <div class="proof-card reveal">
+        <div class="proof-stars">★★★★★</div>
+        <p data-en="&ldquo;I'd been meaning to refinance for two years but always gave up on the paperwork. OLFI did it in 20 minutes. I'm saving AED 1,400 a month.&rdquo;" data-ar="&ldquo;كنت أريد إعادة التمويل منذ عامين لكنني كنت أستسلم أمام الأوراق. أنجزت أولفي الأمر في ٢٠ دقيقة. أوفر ١٤٠٠ درهم شهرياً.&rdquo;">"I'd been meaning to refinance for two years but always gave up on the paperwork. OLFI did it in 20 minutes. I'm saving AED 1,400 a month."</p>
+        <div class="proof-author"><div class="proof-avatar">KA</div><div><div class="proof-name">Khalid A.</div><div class="proof-role" data-en="Engineer, Dubai" data-ar="مهندس، دبي">Engineer, Dubai</div></div></div>
+      </div>
+      <div class="proof-card reveal reveal-d1">
+        <div class="proof-stars">★★★★★</div>
+        <p data-en="&ldquo;As a Muslim, finding a halal buyout always felt like guesswork. OLFI showed me three certified Islamic options in seconds. That alone was worth it.&rdquo;" data-ar="&ldquo;كمسلم كان إيجاد عقد شراء حلال يبدو دائماً أمراً مجهولاً. أظهرت لي أولفي ثلاثة خيارات إسلامية معتمدة في ثوانٍ.&rdquo;">"As a Muslim, finding a halal buyout always felt like guesswork. OLFI showed me three certified Islamic options in seconds. That alone was worth it."</p>
+        <div class="proof-author"><div class="proof-avatar">SA</div><div><div class="proof-name">Sara A.</div><div class="proof-role" data-en="Teacher, Abu Dhabi" data-ar="معلمة، أبوظبي">Teacher, Abu Dhabi</div></div></div>
+      </div>
+      <div class="proof-card reveal reveal-d2">
+        <div class="proof-stars">★★★★★</div>
+        <p data-en="&ldquo;I had three loans from different banks. OLFI consolidated them into one and knocked AED 850 off my monthly payment. Couldn't believe how easy it was.&rdquo;" data-ar="&ldquo;كان لدي ثلاثة قروض من بنوك مختلفة. دمجتها أولفي في واحد وخفضت ٨٥٠ درهماً من دفعتي الشهرية.&rdquo;">"I had three loans from different banks. OLFI consolidated them into one and knocked AED 850 off my monthly payment. Couldn't believe how easy it was."</p>
+        <div class="proof-author"><div class="proof-avatar">OM</div><div><div class="proof-name">Omar M.</div><div class="proof-role" data-en="Marketing Manager, Sharjah" data-ar="مدير تسويق، الشارقة">Marketing Manager, Sharjah</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="padding-top:0">
+  <div class="container">
+    <div class="section-head centered reveal">
+      <span class="eyebrow" data-en="FAQ" data-ar="الأسئلة الشائعة">FAQ</span>
+      <h2 class="h2" data-en="Questions answered." data-ar="إجابات على أسئلتك.">Questions answered.</h2>
+    </div>
+    <div style="max-width:760px;margin:0 auto">
+      <div class="faq-list reveal">
+        <details class="faq-item">
+          <summary data-en="Is OLFI free for borrowers?" data-ar="هل أولفي مجانية للمقترضين؟">Is OLFI free for borrowers?</summary>
+          <div class="faq-body" data-en="Yes, completely free. OLFI earns a success fee from partner lenders when a refinance is completed — you pay nothing. Browse offers, check your OLFI Score, and compare deals at zero cost." data-ar="نعم، مجانية تماماً. تكسب أولفي رسوم نجاح من المقرضين الشركاء عند إتمام إعادة التمويل. لا تدفع شيئاً.">Yes, completely free. OLFI earns a success fee from partner lenders when a refinance is completed — you pay nothing. Browse offers, check your OLFI Score, and compare deals at zero cost.</div>
+        </details>
+        <details class="faq-item">
+          <summary data-en="Will checking my OLFI Score affect my credit?" data-ar="هل سيؤثر التحقق من نقاط أولفي على تقييمي الائتماني؟">Will checking my OLFI Score affect my credit?</summary>
+          <div class="faq-body" data-en="No. OLFI performs a soft data pull for your score and offer matching — this does not create a hard inquiry on your AECB credit file. Only when you formally apply to a specific lender does a hard check occur." data-ar="لا. تجري أولفي استعلاماً ناعماً لنقاطك ومطابقة العروض ولا يؤثر على سجلك الائتماني في AECB.">No. OLFI performs a soft data pull for your score and offer matching — this does not create a hard inquiry on your AECB credit file. Only when you formally apply to a specific lender does a hard check occur.</div>
+        </details>
+        <details class="faq-item">
+          <summary data-en="What loans can I refinance through OLFI?" data-ar="ما القروض التي يمكنني إعادة تمويلها عبر أولفي؟">What loans can I refinance through OLFI?</summary>
+          <div class="faq-body" data-en="OLFI covers personal loans, credit card debt, and auto loans for salaried residents in the UAE. BNPL consolidation and business loans are planned for later phases." data-ar="تغطي أولفي القروض الشخصية وديون بطاقات الائتمان وقروض السيارات للمقيمين أصحاب الرواتب في الإمارات.">OLFI covers personal loans, credit card debt, and auto loans for salaried residents in the UAE. BNPL consolidation and business loans are planned for later phases.</div>
+        </details>
+        <details class="faq-item">
+          <summary data-en="Is my financial data safe?" data-ar="هل بياناتي المالية آمنة؟">Is my financial data safe?</summary>
+          <div class="faq-body" data-en="OLFI uses regulated open-banking infrastructure. Your data is read-only — OLFI cannot move money. All data is encrypted and handled in compliance with UAE data-protection regulations. Your data is never sold." data-ar="تستخدم أولفي بنية تحتية للخدمات المصرفية المفتوحة المُنظَّمة. بياناتك للقراءة فقط. كل البيانات مشفرة ومتوافقة مع لوائح حماية البيانات الإماراتية. لا تُباع بياناتك أبداً.">OLFI uses regulated open-banking infrastructure. Your data is read-only — OLFI cannot move money. All data is encrypted and handled in compliance with UAE data-protection regulations. Your data is never sold.</div>
+        </details>
+        <details class="faq-item">
+          <summary data-en="Are the Sharia-compliant products genuinely certified?" data-ar="هل المنتجات المتوافقة شرعياً معتمدة حقاً؟">Are the Sharia-compliant products genuinely certified?</summary>
+          <div class="faq-body" data-en="Yes. OLFI's Sharia supervisory board certifies all product structures (Murābaḥa, Tawarruq, Ijāra) and conducts quarterly audits. Profit rates and payment structures are fully transparent — no hidden conventional interest." data-ar="نعم. يعتمد مجلس الرقابة الشرعية في أولفي جميع هياكل المنتجات ويُجري مراجعات ربع سنوية. معدلات الربح وهياكل الدفع شفافة تماماً.">Yes. OLFI's Sharia supervisory board certifies all product structures (Murābaḥa, Tawarruq, Ijāra) and conducts quarterly audits. Profit rates and payment structures are fully transparent — no hidden conventional interest.</div>
+        </details>
+        <details class="faq-item">
+          <summary data-en="When does OLFI launch?" data-ar="متى يُطلق أولفي؟">When does OLFI launch?</summary>
+          <div class="faq-body" data-en="We're targeting a UAE sandbox launch in Q4 2026 via the CBUAE fintech sandbox. Early access users on the waitlist get priority onboarding, lifetime freemium access, and an AED 100 cashback credit on their first referral." data-ar="نستهدف إطلاقاً في الإمارات في الربع الرابع من ٢٠٢٦. يحصل المستخدمون الأوائل على أولوية الوصول وميزة مجانية مدى الحياة و١٠٠ درهم على أول إحالة.">We're targeting a UAE sandbox launch in Q4 2026 via the CBUAE fintech sandbox. Early access users on the waitlist get priority onboarding, lifetime freemium access, and an AED 100 cashback credit on their first referral.</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / WAITLIST -->
+<section class="cta-section" id="waitlist">
+  <div class="container">
+    <div class="cta-card reveal">
+      <div class="chip" style="margin-bottom:20px;justify-content:center"><span class="pulse"></span><span data-en="Waitlist open · Pre-launch" data-ar="قائمة الانتظار مفتوحة · قبل الإطلاق">Waitlist open · Pre-launch</span></div>
+      <h2>
+        <span data-en="Be first in line<br/>when " data-ar="كن أوّل من يستخدم<br/>">Be first in line<br/>when </span><em class="gradient-text" style="font-style:italic" data-en="OLFI goes live." data-ar="أولفي عند الإطلاق.">OLFI goes live.</em>
+      </h2>
+      <p class="sub" style="margin-top:16px" data-en="Join the waitlist now and unlock priority onboarding, lifetime freemium access, and AED 100 cashback on your first referral." data-ar="انضم إلى قائمة الانتظار الآن واحصل على أولوية الوصول وميزة مجانية مدى الحياة و١٠٠ درهم على أول إحالة.">Join the waitlist now and unlock priority onboarding, lifetime freemium access, and AED 100 cashback on your first referral.</p>
+      <form class="waitlist-form" id="wForm" novalidate style="margin-top:36px">
+        <input type="email" id="wEmail" placeholder="you@example.ae" aria-label="Email" data-en-ph="you@example.ae" data-ar-ph="بريدك@example.ae"/>
+        <button type="submit" data-en="Join waitlist →" data-ar="انضم ←">Join waitlist →</button>
+      </form>
+      <p class="waitlist-meta" data-en="No spam. One email when the sandbox opens. Your data stays yours." data-ar="لا رسائل إزعاج. رسالة واحدة عند الإطلاق. بياناتك لك.">No spam. One email when the sandbox opens. Your data stays yours.</p>
+      <div class="waitlist-ok" id="wOk" data-en="✓ You're on the list. See you at launch." data-ar="✓ تم تسجيلك. نراك عند الإطلاق.">✓ You're on the list. See you at launch.</div>
+      <div class="perks">
+        <div class="perk"><div class="perk-icon">★</div><span data-en="Priority onboarding" data-ar="أولوية التسجيل">Priority onboarding</span></div>
+        <div class="perk"><div class="perk-icon">∞</div><span data-en="Lifetime freemium" data-ar="مجاني مدى الحياة">Lifetime freemium</span></div>
+        <div class="perk"><div class="perk-icon">﷼</div><span data-en="AED 100 referral credit" data-ar="١٠٠ درهم إحالة">AED 100 referral credit</span></div>
+      </div>
+      <div class="countdown" id="countdown">
+        <div class="cd"><div class="cd-val" id="cdD">—</div><div class="cd-lbl" data-en="Days" data-ar="أيام">Days</div></div>
+        <div class="cd"><div class="cd-val" id="cdH">—</div><div class="cd-lbl" data-en="Hours" data-ar="ساعات">Hours</div></div>
+        <div class="cd"><div class="cd-val" id="cdM">—</div><div class="cd-lbl" data-en="Mins" data-ar="دقائق">Mins</div></div>
+        <div class="cd"><div class="cd-val" id="cdS">—</div><div class="cd-lbl" data-en="Secs" data-ar="ثوانٍ">Secs</div></div>
+      </div>
+      <div class="waitlist-meta" style="margin-top:14px" data-en="Target UAE sandbox launch · Q4 2026" data-ar="إطلاق Sandbox في الإمارات · الربع الرابع ٢٠٢٦">Target UAE sandbox launch · Q4 2026</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+          <circle cx="18" cy="18" r="15" stroke="rgba(2,195,154,0.3)" stroke-width="1.5"/>
+          <path d="M18 3 A15 15 0 0 1 33 18" stroke="#02C39A" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M18 3 A15 15 0 1 0 33 18" stroke="rgba(2,195,154,0.2)" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="18" cy="18" r="4.5" fill="none" stroke="#02C39A" stroke-width="2"/>
+          <circle cx="18" cy="18" r="2" fill="#02C39A"/>
+        </svg>
+        <span>OLFI</span>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:ahmedfagiry@gmail.com">ahmedfagiry@gmail.com</a>
+        <a href="mailto:mahmoudahmedalaa@gmail.com">mahmoudahmedalaa@gmail.com</a>
+        <a href="#top" data-en="Back to top ↑" data-ar="إلى الأعلى ↑">Back to top ↑</a>
+      </div>
+    </div>
+    <div class="footer-copy" data-en="© 2026 OLFI. Pre-incorporation — target legal entity ADGM / DIFC, Q2 2026. Pre-launch landing page for early-adopter waitlist collection only." data-ar="© ٢٠٢٦ أولفي. قبل التأسيس — الكيان المستهدف ADGM / DIFC، الربع الثاني ٢٠٢٦.">© 2026 OLFI. Pre-incorporation — target legal entity ADGM / DIFC, Q2 2026. Pre-launch landing page for early-adopter waitlist collection only.</div>
+  </div>
+</footer>
+
+<script>
+/* =============================================================
+   PASTE YOUR GOOGLE APPS SCRIPT URL BETWEEN THE QUOTES BELOW
+   ============================================================= */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbywIUd9wiMxQKc_juO6eD8RLlvcQPRmq_SgEk5s_u8vFAAGLl2B4F65JwRdMPkw6xJ-/exec';
+/* ============================================================= */
+
+const langBtns=document.querySelectorAll('#lang button');
+function setLang(l){
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  langBtns.forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    const v=el.getAttribute('data-'+l);
+    if(v!==null)el.innerHTML=v;
+  });
+  document.querySelectorAll('[data-en-ph]').forEach(el=>{
+    const v=el.getAttribute('data-'+l+'-ph');
+    if(v)el.placeholder=v;
+  });
+}
+langBtns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+
+const navEl=document.getElementById('nav');
+window.addEventListener('scroll',()=>{navEl.classList.toggle('scrolled',window.scrollY>60)},{passive:true});
+
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const phone=document.getElementById('phone');
+if(phone){
+  phone.addEventListener('mousemove',e=>{
+    const r=phone.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    phone.style.transform=`perspective(900px) rotateY(${x*14}deg) rotateX(${-y*14}deg) translateY(-5px)`;
+  });
+  phone.addEventListener('mouseleave',()=>phone.style.transform='');
+}
+
+function calcSavings(){
+  const bal=parseInt(document.getElementById('slBalance').value);
+  const rate=parseFloat(document.getElementById('slRate').value);
+  const term=parseInt(document.getElementById('slTerm').value);
+  const saving=bal*(rate/100)*0.02*term/12;
+  const fmt=n=>Math.round(n).toLocaleString('en-AE');
+  document.getElementById('valBalance').textContent='AED '+fmt(bal);
+  document.getElementById('valRate').textContent=rate.toFixed(1)+'%';
+  document.getElementById('valTerm').textContent=term+' months';
+  document.getElementById('savingsNum').textContent='AED '+fmt(saving);
+}
+['slBalance','slRate','slTerm'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',calcSavings);
+});
+calcSavings();
+
+const launchDate=new Date('2026-11-15T09:00:00+04:00').getTime();
+function tick(){
+  const d=Math.max(0,launchDate-Date.now());
+  const pad=n=>String(Math.floor(n)).padStart(2,'0');
+  document.getElementById('cdD').textContent=pad(d/86400000);
+  document.getElementById('cdH').textContent=pad(d%86400000/3600000);
+  document.getElementById('cdM').textContent=pad(d%3600000/60000);
+  document.getElementById('cdS').textContent=pad(d%60000/1000);
+}
+tick();setInterval(tick,1000);
+
+// SHEETS_URL defined at top of script
+
+const wForm=document.getElementById('wForm');
+const wOk=document.getElementById('wOk');
+
+wForm.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const emailInput=document.getElementById('wEmail');
+  const submitBtn=wForm.querySelector('button');
+  const email=emailInput.value.trim();
+
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
+    emailInput.style.borderColor='var(--red)';
+    setTimeout(()=>emailInput.style.borderColor='',1200);
+    return;
+  }
+
+  const lang=document.documentElement.lang||'en';
+  const btnOrig=submitBtn.innerHTML;
+  submitBtn.disabled=true;
+  submitBtn.innerHTML=lang==='ar'?'جارٍ الإرسال…':'Submitting…';
+
+  try{
+    await fetch(SHEETS_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email,
+        language:lang,
+        timestamp:new Date().toISOString(),
+        source:'olfi-landing'
+      })
+    });
+    wOk.innerHTML=lang==='ar'
+      ?'\u2713 \u062a\u0645 \u062a\u0633\u062c\u064a\u0644\u0643. \u0646\u0631\u0627\u0643 \u0639\u0646\u062f \u0627\u0644\u0625\u0637\u0644\u0627\u0642.'
+      :'\u2713 You\'re on the list. See you at launch.';
+    wOk.style.color='var(--mint)';
+    wOk.classList.add('show');
+    emailInput.value='';
+    wForm.style.display='none';
+  }catch(err){
+    console.error('Waitlist error:',err);
+    submitBtn.disabled=false;
+    submitBtn.innerHTML=btnOrig;
+    wOk.innerHTML=lang==='ar'
+      ?'\u062d\u062f\u062b \u062e\u0637\u0623. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.'
+      :'Something went wrong \u2014 please try again.';
+    wOk.style.color='var(--red)';
+    wOk.classList.add('show');
+  }
+});
+
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  document.querySelectorAll('.float-chip').forEach(c=>{
+    c.style.transform=c.classList.contains('fc1')?`translateY(${-y*.035}px)`:`translateY(${y*.025}px)`;
+  });
+},{passive:true});
+
+setLang('en');
+</script>
+</body>
+</html>

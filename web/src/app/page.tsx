@@ -1,11 +1,14 @@
 import { Navigation } from '@/components/Navigation';
 import { Hero } from '@/components/Hero';
-import { FeaturesAccordion } from '@/components/FeaturesAccordion';
+import { ProblemSection } from '@/components/ProblemSection';
 import { HowItWorks } from '@/components/HowItWorks';
-import { SecurityGrid } from '@/components/SecurityGrid';
-import { ShariaBanner } from '@/components/ShariaBanner';
+import { SavingsCalculator } from '@/components/SavingsCalculator';
+import { FeaturesAccordion } from '@/components/FeaturesAccordion';
+import { IslamicFinanceQA } from '@/components/IslamicFinanceQA';
 import { ComparisonTable } from '@/components/ComparisonTable';
+import { BetaTestersStories } from '@/components/BetaTestersStories';
 import { FAQAccordion } from '@/components/FAQAccordion';
+import { WaitlistCTA } from '@/components/WaitlistCTA';
 import { Footer } from '@/components/Footer';
 
 export default function Home() {
@@ -13,12 +16,15 @@ export default function Home() {
     <main className="min-h-screen bg-base-dark text-base-beige">
       <Navigation />
       <Hero />
-      <FeaturesAccordion />
+      <ProblemSection />
       <HowItWorks />
-      <SecurityGrid />
-      <ShariaBanner />
+      <SavingsCalculator />
+      <FeaturesAccordion />
+      <IslamicFinanceQA />
       <ComparisonTable />
+      <BetaTestersStories />
       <FAQAccordion />
+      <WaitlistCTA />
       <Footer />
     </main>
   );

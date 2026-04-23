@@ -6,17 +6,17 @@ const steps = [
     {
         num: '01',
         title: 'Input Your Liabilities',
-        desc: 'Securely link your UAE accounts manually or via explicit banking integration to surface your outstanding debts.',
+        desc: 'Securely link your UAE accounts manually or via explicit banking integration to surface your outstanding debts',
     },
     {
         num: '02',
         title: 'Get Unbiased Offers',
-        desc: 'Our AI architecture analyzes your portfolio to present the optimal refinancing options from top UAE banks without bias.',
+        desc: 'Our AI architecture analyzes your portfolio to present the optimal refinancing options from top UAE banks without bias',
     },
     {
         num: '03',
         title: 'Accept and Save',
-        desc: 'Choose the best option to quickly consolidate your obligations into one simple payment and improve your credit profile.',
+        desc: 'Choose the best option to quickly consolidate your obligations into one simple payment and improve your credit profile',
     },
 ];
 
@@ -29,7 +29,7 @@ export function HowItWorks() {
                         Your path to stability
                     </h2>
                     <p className="text-xl text-base-beige/60 max-w-2xl mx-auto">
-                        Three simple steps to restructure your debt and regain control of your financial clarity.
+                        Three simple steps to restructure your debt and regain control of your financial clarity
                     </p>
                 </div>
 

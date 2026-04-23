@@ -6,7 +6,7 @@ export function Footer() {
             {/* Massive CTA */}
             <div className="container mx-auto px-6 max-w-7xl border-b border-white/10 pb-32">
                 <h2 className="text-[12vw] leading-none font-bold tracking-tighter text-base-beige mb-12 text-center uppercase">
-                    Ready to <br /> <span className="text-brand-teal italic pr-8">consolidate</span>
+                    Ready to <br /> <span className="text-brand-teal italic pr-8">consolidate?</span>
                 </h2>
 
                 <div className="flex justify-center">
@@ -26,7 +26,7 @@ export function Footer() {
             {/* Footer Bottom */}
             <div className="container mx-auto px-6 max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="text-2xl font-bold tracking-tighter text-base-beige">
-                    OLFi<span className="text-brand-teal">.</span>
+                    OLFi
                 </div>
 
                 <div className="flex gap-6 text-sm text-base-beige/40">
@@ -36,7 +36,7 @@ export function Footer() {
                 </div>
 
                 <div className="text-sm text-base-beige/20 text-center md:text-right">
-                    &copy; {new Date().getFullYear()} OLFi Technologies Ltd. Dubai, UAE. <br className="md:hidden" /> All rights reserved.
+                    &copy; {new Date().getFullYear()} OLFi Technologies Ltd Dubai, UAE <br className="md:hidden" /> All rights reserved
                 </div>
             </div>
         </footer>

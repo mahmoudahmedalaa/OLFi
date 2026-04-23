@@ -7,22 +7,22 @@ const features = [
     {
         icon: LinkIcon,
         title: 'Market Aggregation',
-        desc: 'Seamlessly link your existing liabilities. We analyze loans and cards across the UAE banking sector to find tailored alternatives.',
+        desc: 'Seamlessly link your existing liabilities We analyze loans and cards across the UAE banking sector to find tailored alternatives',
     },
     {
         icon: Calculator,
         title: 'Precision Savings Calculator',
-        desc: 'Input your balances and dynamically visualize your lowered DBR (Debt Burden Ratio) and exact monthly savings.',
+        desc: 'Input your balances and dynamically visualize your lowered DBR (Debt Burden Ratio) and exact monthly savings',
     },
     {
         icon: BarChart3,
         title: 'Soft Credit Projections',
-        desc: 'Understand your credit standing and eligibility without impacting your official AECB score through hard inquiries.',
+        desc: 'Understand your credit standing and eligibility without impacting your official AECB score through hard inquiries',
     },
     {
         icon: PieChart,
         title: 'Financial Health Analytics',
-        desc: 'Track your repayment journey with elegant dashboards. See exactly when you\'ll be debt-free under our restructured plans.',
+        desc: 'Track your repayment journey with elegant dashboards See exactly when you\'ll be debt-free under our restructured plans',
     },
 ];
 
@@ -40,7 +40,7 @@ export function SecurityGrid() {
                             <span className="text-brand-teal">Financial Reality</span>
                         </h2>
                         <p className="text-xl text-base-beige/60">
-                            Beyond simple refinancing. OLFi acts as your intelligent co-pilot, delivering the analytics and tools you need to optimize your debt structure.
+                            Beyond simple refinancing, OLFi acts as your intelligent co-pilot, delivering the analytics and tools you need to optimize your debt structure
                         </p>
                     </div>
 

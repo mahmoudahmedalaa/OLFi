@@ -14,8 +14,8 @@ const faqs = [
         a: "No, BuyOut is an aggregator and intelligent orchestration platform. We map the market to find you the best refinance opportunities, but the actual loans are provided by UAE Central Bank regulated institutions."
     },
     {
-        q: "Do you offer Sharia-compliant solutions?",
-        a: "Yes. Simply toggle the 'Islamic Only' filter, and our engine will restrict offers strictly to Murābaḥa, Ijāra, and Tawarruq alternatives."
+        q: "Do you offer Islamic solutions?",
+        a: "Yes. All our products are vetted to be fully Sharia-compliant, meaning we only match you with recognized Islamic finance options."
     },
     {
         q: "Does using OLFi impact my credit score?",

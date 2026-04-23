@@ -39,11 +39,10 @@ export function Navigation() {
 
                 <div className="flex items-center gap-4">
                     <Link
-                        href="https://apps.apple.com/app/"
-                        target="_blank"
-                        className="bg-brand-teal hover:bg-brand-teal/90 text-base-beige text-sm font-medium px-5 py-2.5 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(13,148,136,0.3)] flex items-center gap-2"
+                        href="#waitlist"
+                        className="bg-brand-teal hover:bg-brand-teal/90 text-base-dark text-sm font-bold px-5 py-2.5 rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(13,148,136,0.5)] flex items-center gap-2"
                     >
-                        Download App
+                        Join the waitlist
                     </Link>
                 </div>
             </div>

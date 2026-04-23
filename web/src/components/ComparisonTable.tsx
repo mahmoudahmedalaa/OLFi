@@ -8,56 +8,56 @@ const compareData = [
         traditional: true,
         creditors: false,
         olfi: true,
-        tooltip: 'OLFi connects you strictly to UAE Central Bank regulated institutions.',
+        tooltip: 'OLFi connects you strictly to UAE Central Bank regulated institutions',
     },
     {
         feature: 'Consolidates Multiple Debts',
         traditional: true,
         creditors: true,
         olfi: true,
-        tooltip: 'All options allow you to consolidate, but how they source the buyout matters.',
+        tooltip: 'All options allow you to consolidate, but how they source the buyout matters',
     },
     {
         feature: 'Zero Upfront Fees',
         traditional: true,
         creditors: false,
         olfi: true,
-        tooltip: 'Banks and OLFi do not charge you upfront consultation fees; private consultants often do.',
+        tooltip: 'Banks and OLFi do not charge you upfront consultation fees; private consultants often do',
     },
     {
         feature: 'Physical Branch Access',
         traditional: true,
         creditors: false,
         olfi: false,
-        tooltip: 'We operate 100% digitally to save you time and overhead costs associated with physical visits.',
+        tooltip: 'We operate 100% digitally to save you time and overhead costs associated with physical visits',
     },
     {
         feature: 'Market-Wide Aggregation',
         traditional: false,
         creditors: true,
         olfi: true,
-        tooltip: 'We scan the entire UAE banking sector, ensuring you aren\'t limited to just one bank\'s rates.',
+        tooltip: 'We scan the entire UAE banking sector, ensuring you aren\'t limited to just one bank\'s rates',
     },
     {
         feature: 'Bias-Free Recommendations',
         traditional: false,
         creditors: false,
         olfi: true,
-        tooltip: 'Unlike staff driven by specific commission quotas, our AI gives you objective, mathematical recommendations.',
+        tooltip: 'Unlike staff driven by specific commission quotas, our AI gives you objective, mathematical recommendations',
     },
     {
         feature: 'Instant Soft-Credit Offers',
         traditional: false,
         creditors: false,
         olfi: true,
-        tooltip: 'Get pre-qualified offers and analyze your health without immediately hitting your AECB score.',
+        tooltip: 'Get pre-qualified offers and analyze your health without immediately hitting your AECB score',
     },
     {
         feature: 'Automated Sharia-Filtering',
         traditional: false,
         creditors: false,
         olfi: true,
-        tooltip: 'One click filters the entire market down to strictly Islamic finance structures (Murābaḥa, Ijāra, etc).',
+        tooltip: 'One click filters the entire market down to strictly Islamic finance structures',
     },
 ];
 
@@ -70,7 +70,7 @@ export function ComparisonTable() {
                         The intelligent choice
                     </h2>
                     <p className="text-lg text-base-dark/60 max-w-xl mx-auto">
-                        See exactly how a bias-free aggregator gives you the upper hand when refinancing your existing debt.
+                        See exactly how a bias-free aggregator gives you the upper hand when refinancing your existing debt
                     </p>
                 </div>
 
