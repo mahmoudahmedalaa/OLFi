@@ -58,7 +58,7 @@ export function ShariaBanner() {
                             <span className="text-brand-teal">Sharia-verified</span>
                         </h2>
 
-                        <p className="text-xl text-base-beige/50 leading-relaxed max-w-lg">
+                        <p className="text-xl text-white/80 leading-relaxed max-w-lg">
                             Our compliance engine pre-filters every refinancing option before it reaches you Only products structured under recognized Islamic finance frameworks are surfaced never exceptions, never manual toggles
                         </p>
 
@@ -79,7 +79,7 @@ export function ShariaBanner() {
                             </div>
                             <div>
                                 <p className="text-base-beige font-semibold text-lg">100% Verified</p>
-                                <p className="text-base-beige/40 text-sm">UAE Central Bank compliant structures only</p>
+                                <p className="text-white/60 text-sm">UAE Central Bank compliant structures only</p>
                             </div>
                         </motion.div>
                     </div>
@@ -105,7 +105,7 @@ export function ShariaBanner() {
                                         <h3 className="text-xl font-bold text-base-beige mb-2 tracking-tight">
                                             {pillar.title}
                                         </h3>
-                                        <p className="text-sm text-base-beige/50 leading-relaxed">
+                                        <p className="text-sm text-white/70 leading-relaxed">
                                             {pillar.desc}
                                         </p>
                                     </div>

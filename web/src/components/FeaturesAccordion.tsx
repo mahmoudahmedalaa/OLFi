@@ -95,7 +95,7 @@ export function FeaturesAccordion() {
                         {/* Wavy subtle background line pattern */}
                         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #011819 0px, #011819 1px, transparent 1px, transparent 20px)" }} />
 
-                        <div className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-black shadow-xl overflow-hidden aspect-[9/19.5] z-10">
+                        <div className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10">
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />
                             <AnimatePresence mode="wait">

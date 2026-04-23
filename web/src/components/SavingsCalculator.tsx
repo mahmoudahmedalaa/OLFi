@@ -49,7 +49,7 @@ export function SavingsCalculator() {
                         <div className="space-y-8">
                             {/* Balance Input */}
                             <div className="flex flex-col gap-3">
-                                <div className="flex justify-between items-center text-sm font-medium text-base-beige/60 uppercase tracking-widest">
+                                <div className="flex justify-between items-center text-sm font-medium text-white/70 uppercase tracking-widest">
                                     <label htmlFor="slBalance">Total loan balance (AED)</label>
                                     <span className="text-xl font-bold text-base-beige">{formatCurrency(balance)}</span>
                                 </div>
@@ -67,7 +67,7 @@ export function SavingsCalculator() {
 
                             {/* Rate Input */}
                             <div className="flex flex-col gap-3">
-                                <div className="flex justify-between items-center text-sm font-medium text-base-beige/60 uppercase tracking-widest">
+                                <div className="flex justify-between items-center text-sm font-medium text-white/70 uppercase tracking-widest">
                                     <label htmlFor="slRate">Current average rate (%)</label>
                                     <span className="text-xl font-bold text-base-beige">{rate.toFixed(1)}%</span>
                                 </div>
@@ -85,7 +85,7 @@ export function SavingsCalculator() {
 
                             {/* Term Input */}
                             <div className="flex flex-col gap-3">
-                                <div className="flex justify-between items-center text-sm font-medium text-base-beige/60 uppercase tracking-widest">
+                                <div className="flex justify-between items-center text-sm font-medium text-white/70 uppercase tracking-widest">
                                     <label htmlFor="slTerm">Remaining term (months)</label>
                                     <span className="text-xl font-bold text-base-beige">{term} months</span>
                                 </div>
@@ -117,13 +117,13 @@ export function SavingsCalculator() {
                         <p className="text-lg text-base-beige/80 mb-6">
                             Estimated total saving<br />if you refinance today
                         </p>
-                        <p className="text-xs text-base-beige/40 uppercase tracking-widest font-mono text-center">
+                        <p className="text-xs text-white/60 uppercase tracking-widest font-mono text-center">
                             Based on avg 2% rate reduction · illustrative
                         </p>
 
                         <a
                             href="#waitlist"
-                            className="mt-10 px-8 py-4 w-full text-center bg-brand-teal text-white hover:opacity-90 rounded-full font-bold transition-all"
+                            className="mt-10 px-8 py-4 w-full text-center bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark rounded-full font-bold transition-all duration-300"
                         >
                             Get my real offer →
                         </a>

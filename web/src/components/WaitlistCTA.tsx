@@ -89,7 +89,7 @@ export function WaitlistCTA() {
                             when <em className="text-brand-teal font-medium not-italic">OLFi goes live</em>
                         </h2>
 
-                        <p className="text-lg text-base-beige/60 max-w-2xl mx-auto mb-10">
+                        <p className="text-lg text-white/80 max-w-2xl mx-auto mb-10">
                             Join the waitlist now and unlock priority onboarding, a free one-time AECB credit scoring, and AED 100 cashback on your first referral
                         </p>
 
@@ -110,7 +110,7 @@ export function WaitlistCTA() {
                                         className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
                                         disabled={loading}
                                     />
-                                    <button type="submit" disabled={loading} className="bg-brand-teal text-white font-bold px-8 py-4 rounded-xl hover:opacity-90 transition-all disabled:opacity-50">
+                                    <button type="submit" disabled={loading} className="bg-transparent text-base-beige border border-white/10 font-bold px-8 py-4 rounded-xl hover:bg-white hover:text-base-dark transition-all duration-300 disabled:opacity-50">
                                         {loading ? 'Joining...' : 'Join waitlist →'}
                                     </button>
                                 </form>
@@ -118,7 +118,7 @@ export function WaitlistCTA() {
                             </>
                         )}
                         {!submitted && (
-                            <p className="text-xs font-mono text-base-beige/40 tracking-widest uppercase mb-12">
+                            <p className="text-xs font-mono text-white/50 tracking-widest uppercase mb-12">
                                 No spam. One email when sandbox opens. Your data stays yours.
                             </p>
                         )}
@@ -150,7 +150,7 @@ export function WaitlistCTA() {
                                 ].map((unit, i) => (
                                     <div key={i} className="flex flex-col items-center justify-center px-6 py-4 border-r border-white/5 last:border-0 min-w-[90px]">
                                         <span className="text-3xl font-display font-bold text-base-beige mb-1">{unit.value.toString().padStart(2, '0')}</span>
-                                        <span className="text-[10px] font-mono text-base-beige/40 tracking-[0.15em] uppercase">{unit.label}</span>
+                                        <span className="text-[10px] font-mono text-white/50 tracking-[0.15em] uppercase">{unit.label}</span>
                                     </div>
                                 ))}
                             </div>

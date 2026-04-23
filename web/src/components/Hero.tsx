@@ -14,8 +14,10 @@ export function Hero() {
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                        className="flex flex-col gap-8 max-w-xl"
+                        className="relative flex flex-col gap-8 max-w-xl bg-white/5 border border-white/10 rounded-3xl p-8 sm:p-12"
                     >
+                        {/* User requested to drop the animated border box for now. */}
+
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-teal/20 bg-brand-teal/5 hover:bg-brand-teal/10 transition-all cursor-default">
                                 <span className="w-2 h-2 rounded-full bg-brand-teal" />
@@ -31,14 +33,14 @@ export function Hero() {
                             <em className="text-brand-teal italic font-medium">Refinance smarter</em>
                         </h1>
 
-                        <p className="text-lg sm:text-xl text-base-beige/70 leading-relaxed max-w-xl">
+                        <p className="text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">
                             OLFi aggregates Islamic finance loan offers into a bias-free AI engine that constructs the perfect refinancing recommendation for you, delivering transparency and financial freedom.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                             <Link
                                 href="#waitlist"
-                                className="w-full sm:w-auto bg-base-beige text-base-dark hover:bg-brand-teal hover:text-white text-lg font-medium px-8 py-3.5 rounded-lg transition-all duration-300 text-center flex items-center justify-center"
+                                className="w-full sm:w-auto bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark text-lg font-medium px-8 py-3.5 rounded-lg transition-all duration-300 text-center flex items-center justify-center"
                             >
                                 Join the waitlist
                             </Link>
@@ -52,7 +54,7 @@ export function Hero() {
                         className="relative lg:ml-auto w-full max-w-[320px] mx-auto hidden lg:block"
                     >
                         {/* Phone Frame Mockup container */}
-                        <div className="relative aspect-[9/19.5] w-full rounded-[48px] border-[8px] border-[#131313] bg-black shadow-2xl overflow-hidden">
+                        <div className="relative aspect-[9/19.5] w-full rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-2xl overflow-hidden">
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />
 

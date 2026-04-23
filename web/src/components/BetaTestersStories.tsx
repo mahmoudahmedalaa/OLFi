@@ -26,11 +26,11 @@ const testimonials = [
 
 export function BetaTestersStories() {
     return (
-        <section className="py-24 bg-base-dark relative border-t border-white/5">
+        <section className="py-24 bg-base-beige relative border-t border-base-dark/5">
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="text-center mb-16 max-w-2xl mx-auto">
                     <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">Early Community</span>
-                    <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-base-beige">
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-base-dark">
                         Real stories from beta testers
                     </h2>
                 </div>
@@ -43,25 +43,25 @@ export function BetaTestersStories() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/[0.07] hover:border-brand-teal/30 transition-all duration-300"
+                            className="bg-white/60 border border-base-dark/5 rounded-2xl p-8 hover:bg-white hover:border-brand-teal/30 hover:shadow-md transition-all duration-300"
                         >
-                            <div className="flex gap-1 mb-6 text-amber-400">
+                            <div className="flex gap-1 mb-6 text-amber-500">
                                 {[...Array(5)].map((_, idx) => (
                                     <Star key={idx} fill="currentColor" size={16} />
                                 ))}
                             </div>
 
-                            <p className="text-[15px] leading-relaxed text-base-beige/70 mb-8 italic">
+                            <p className="text-[15px] leading-relaxed text-base-dark/80 mb-8 italic">
                                 "{testimonial.quote}"
                             </p>
 
                             <div className="flex items-center gap-4 mt-auto">
-                                <div className="w-10 h-10 rounded-full bg-brand-teal/20 border border-brand-teal/30 flex items-center justify-center text-brand-teal font-bold font-mono text-sm">
+                                <div className="w-10 h-10 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal font-bold font-mono text-sm">
                                     {testimonial.initials}
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="font-semibold text-base-beige text-sm">{testimonial.author}</span>
-                                    <span className="text-xs text-base-beige/40 uppercase tracking-widest">{testimonial.role}</span>
+                                    <span className="font-semibold text-base-dark text-sm">{testimonial.author}</span>
+                                    <span className="text-xs text-base-dark/50 uppercase tracking-widest">{testimonial.role}</span>
                                 </div>
                             </div>
                         </motion.div>

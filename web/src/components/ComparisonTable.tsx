@@ -64,12 +64,14 @@ const compareData = [
 export function ComparisonTable() {
     return (
         <section id="compare" className="py-32 bg-base-beige text-base-dark relative">
-            <div className="container mx-auto px-6 max-w-5xl">
+
+
+            <div className="container mx-auto px-6 max-w-5xl relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-5xl font-bold tracking-tighter mb-4">
                         The intelligent choice
                     </h2>
-                    <p className="text-lg text-base-dark/60 max-w-xl mx-auto">
+                    <p className="text-lg text-base-dark/70 max-w-xl mx-auto">
                         See exactly how a bias-free aggregator gives you the upper hand when refinancing your existing debt
                     </p>
                 </div>
