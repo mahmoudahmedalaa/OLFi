@@ -38,12 +38,12 @@ export function Hero() {
                                 <span className="text-[11px] font-bold tracking-wider text-white uppercase">Early Access · UAE</span>
                             </div>
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all cursor-default text-amber-500">
-                                <span className="text-[11px] font-bold tracking-wider uppercase">Sharia Compliant ✦</span>
+                                <span className="text-[11px] font-bold tracking-wider uppercase text-white">Sharia Compliant ✦</span>
                             </div>
                         </div>
 
-                        <h1 className="text-5xl sm:text-6xl lg:text-[5.5rem] font-bold tracking-tighter leading-[1.1] text-base-beige">
-                            Lower your loan payments <br />
+                        <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1] text-base-beige">
+                            Lower your <br className="hidden sm:block" /> loan payments <br />
                             <em className="text-brand-teal italic font-medium">Refinance smarter</em>
                         </h1>
 

@@ -11,8 +11,8 @@ export function IslamicFinanceQA() {
                     <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
                         {/* Text Content */}
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6 text-brand-teal">
-                                <span className="text-xs font-bold tracking-wide uppercase">Islamic Finance Standard</span>
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6">
+                                <span className="text-xs font-bold tracking-wide uppercase text-white">Islamic Finance Standard</span>
                             </div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-base-beige leading-tight mb-6 mt-4">
                                 Riba-free <br />

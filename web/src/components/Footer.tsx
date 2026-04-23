@@ -25,9 +25,9 @@ export function Footer() {
 
             {/* Footer Bottom */}
             <div className="container mx-auto px-6 max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                <div className="text-2xl font-bold tracking-tighter text-base-beige">
-                    OLFi
-                </div>
+                <Link href="/" className="flex items-center">
+                    <img src="/assets/olfi-logo.png" alt="OLFi Logo" className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
+                </Link>
 
                 <div className="flex flex-wrap justify-center gap-6 text-sm text-white/70">
                     <Link href="/privacy" className="hover:text-base-beige transition-colors">Privacy Policy</Link>
