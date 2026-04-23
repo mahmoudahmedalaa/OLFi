@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export function Footer() {
     return (
-        <footer className="bg-[#000c0d] border-t border-white/5 pt-24 pb-8 overflow-hidden">
+        <footer className="bg-[#011011] border-t border-white/5 pt-24 pb-8 overflow-hidden">
             {/* Massive CTA */}
             <div className="container mx-auto px-6 max-w-7xl border-b border-white/10 pb-24">
                 <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[110px] leading-[0.9] font-bold tracking-tighter text-base-beige mb-12 text-center uppercase break-words">

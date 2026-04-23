@@ -80,7 +80,7 @@ export function WaitlistCTA() {
 
                     <div className="relative z-10">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-8 mx-auto">
-                            <span className="w-2 h-2 rounded-full bg-brand-teal animate-pulse" />
+                            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
                             <span className="text-xs font-bold tracking-wide uppercase text-white">Waitlist open · Pre-launch</span>
                         </div>
 

@@ -98,13 +98,13 @@ export function FeaturesAccordion() {
                         <div className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10">
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />
-                            <AnimatePresence>
+                            <AnimatePresence mode="wait">
                                 <motion.div
                                     key={activeFeature.id}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.15 }}
+                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.98 }}
+                                    transition={{ duration: 0.15, ease: "easeOut" }}
                                     className="absolute inset-0 flex items-center justify-center bg-transparent"
                                 >
                                     <Image
@@ -112,6 +112,7 @@ export function FeaturesAccordion() {
                                         alt={activeFeature.title}
                                         fill
                                         className="object-cover"
+                                        priority
                                     />
                                 </motion.div>
                             </AnimatePresence>

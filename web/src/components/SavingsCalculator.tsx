@@ -39,7 +39,7 @@ export function SavingsCalculator() {
                     <div className="relative z-10 flex flex-col gap-10">
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6">
-                                <span className="text-xs font-bold tracking-wide uppercase text-brand-teal">Savings Estimate</span>
+                                <span className="text-xs font-bold tracking-wide uppercase text-white">Savings Estimate</span>
                             </div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-base-beige leading-tight">
                                 See what you could save
