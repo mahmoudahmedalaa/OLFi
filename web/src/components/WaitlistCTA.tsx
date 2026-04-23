@@ -60,7 +60,7 @@ export function WaitlistCTA() {
             setEmail('');
         } catch (err: any) {
             console.error('Waitlist error:', err);
-            setErrorMsg('Something went wrong. Please try again.');
+            setErrorMsg(err.message || 'Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }

@@ -7,6 +7,20 @@ import Link from 'next/link';
 export function Hero() {
     return (
         <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
+            {/* Animated Ambient Orbs */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <motion.div
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-brand-teal blur-[120px]"
+                />
+                <motion.div
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                    className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-[#00ffd1] blur-[150px]"
+                />
+            </div>
+
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
