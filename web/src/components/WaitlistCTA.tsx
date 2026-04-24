@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 import { getSupabase } from '@/utils/supabase';
 
 export function WaitlistCTA() {
-    const { t } = useLanguage();
+    const t = useTranslations('waitlist');
     // Basic countdown logic to Q4 2026 (Oct 1, 2026 for illustration)
     const [timeLeft, setTimeLeft] = useState({
         days: 0,
@@ -39,6 +39,7 @@ export function WaitlistCTA() {
     }, []);
 
     const [email, setEmail] = useState('');
+    const [fullName, setFullName] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
@@ -53,7 +54,7 @@ export function WaitlistCTA() {
         try {
             // Uses static import but lazy initialization to prevent SSR build crashes
             const supabase = getSupabase();
-            const { error } = await supabase.from('waitlist').insert([{ email }]);
+            const { error } = await supabase.from('waitlist').insert([{ email, full_name: fullName }]);
 
             if (error && error.code !== '23505') { // 23505 is unique violation, meaning already on list, which we can treat as success
                 throw error;
@@ -61,6 +62,7 @@ export function WaitlistCTA() {
 
             setSubmitted(true);
             setEmail('');
+            setFullName('');
         } catch (err: any) {
             console.error('Waitlist error:', err);
             setErrorMsg(err.message || 'Something went wrong. Please try again.');
@@ -84,37 +86,46 @@ export function WaitlistCTA() {
                     <div className="relative z-10">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-8 mx-auto">
                             <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
-                            <span className="text-xs font-bold tracking-wide uppercase text-white">{t('waitlist.label')}</span>
+                            <span className="text-xs font-bold tracking-wide uppercase text-white">{t('label')}</span>
                         </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-base-beige mb-6">
-                            {t('waitlist.headlinePart1')} <br className="hidden sm:block" />
-                            {t('waitlist.headlinePart2')} <em className="text-brand-teal font-medium not-italic">{t('waitlist.headlinePart3')}</em>
+                            {t('headlinePart1')} <br className="hidden sm:block" />
+                            {t('headlinePart2')} <em className="text-brand-teal font-medium not-italic">{t('headlinePart3')}</em>
                         </h2>
 
                         <p className="text-lg text-white/80 max-w-2xl mx-auto mb-10">
-                            {t('waitlist.description')}
+                            {t('description')}
                         </p>
 
                         {/* Form */}
                         {submitted ? (
                             <div className="max-w-md mx-auto p-6 bg-brand-teal/10 border border-brand-teal/30 rounded-2xl text-brand-teal font-medium mb-12">
-                                {t('waitlist.success')}
+                                {t('success')}
                             </div>
                         ) : (
                             <>
-                                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-6">
+                                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-6">
+                                    <input
+                                        type="text"
+                                        required
+                                        value={fullName}
+                                        onChange={(e) => setFullName(e.target.value)}
+                                        placeholder={t('namePlaceholder')}
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
+                                        disabled={loading}
+                                    />
                                     <input
                                         type="email"
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder={t('waitlist.placeholder')}
+                                        placeholder={t('placeholder')}
                                         className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
                                         disabled={loading}
                                     />
                                     <button type="submit" disabled={loading} className="cursor-pointer bg-transparent text-base-beige border border-white/10 font-bold px-8 py-4 rounded-xl hover:bg-white hover:text-base-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                                        {loading ? t('waitlist.btnJoining') : t('waitlist.btnJoin')}
+                                        {loading ? t('btnJoining') : t('btnJoin')}
                                     </button>
                                 </form>
                                 {errorMsg && <p className="text-red-400 text-sm mb-6">{errorMsg}</p>}
@@ -122,16 +133,16 @@ export function WaitlistCTA() {
                         )}
                         {!submitted && (
                             <p className="text-xs font-mono text-white/50 tracking-widest uppercase mb-12">
-                                {t('waitlist.spamNotice')}
+                                {t('spamNotice')}
                             </p>
                         )}
 
                         {/* Perks */}
                         <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
                             {[
-                                { icon: t('waitlist.perk1.icon'), label: t('waitlist.perk1.label') },
-                                { icon: t('waitlist.perk2.icon'), label: t('waitlist.perk2.label') },
-                                { icon: t('waitlist.perk3.icon'), label: t('waitlist.perk3.label') },
+                                { icon: t('perk1_icon'), label: t('perk1_label') },
+                                { icon: t('perk2_icon'), label: t('perk2_label') },
+                                { icon: t('perk3_icon'), label: t('perk3_label') },
                             ].map((perk, i) => (
                                 <div key={i} className="flex items-center gap-2 text-sm text-base-beige/70">
                                     <div className="w-6 h-6 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal text-[10px]">
@@ -146,10 +157,10 @@ export function WaitlistCTA() {
                         <div className="flex justify-center">
                             <div className="inline-flex border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
                                 {[
-                                    { value: timeLeft.days, label: t('waitlist.countdown.days') },
-                                    { value: timeLeft.hours, label: t('waitlist.countdown.hours') },
-                                    { value: timeLeft.mins, label: t('waitlist.countdown.mins') },
-                                    { value: timeLeft.secs, label: t('waitlist.countdown.secs') },
+                                    { value: timeLeft.days, label: t('countdown_days') },
+                                    { value: timeLeft.hours, label: t('countdown_hours') },
+                                    { value: timeLeft.mins, label: t('countdown_mins') },
+                                    { value: timeLeft.secs, label: t('countdown_secs') },
                                 ].map((unit, i) => (
                                     <div key={i} className="flex flex-col items-center justify-center px-6 py-4 border-r border-white/5 last:border-0 min-w-[90px]">
                                         <span className="text-3xl font-display font-bold text-base-beige mb-1">{unit.value.toString().padStart(2, '0')}</span>
@@ -159,7 +170,7 @@ export function WaitlistCTA() {
                             </div>
                         </div>
                         <p className="text-xs font-mono text-brand-teal/60 tracking-widest uppercase mt-6">
-                            {t('waitlist.launchTarget')}
+                            {t('launchTarget')}
                         </p>
                     </div>
                 </motion.div>

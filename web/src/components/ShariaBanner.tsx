@@ -70,12 +70,18 @@ export function ShariaBanner() {
                             className="flex items-center gap-4 mt-2"
                         >
                             <div className="relative">
-                                <div className="w-16 h-16 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
+                                <motion.div
+                                    animate={{
+                                        boxShadow: ["0px 0px 0px 0px rgba(13, 148, 136, 0.2)", "0px 0px 0px 10px rgba(13, 148, 136, 0)", "0px 0px 0px 0px rgba(13, 148, 136, 0)"]
+                                    }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                    className="w-16 h-16 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center"
+                                >
                                     <svg className="w-7 h-7 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                                         <path d="M9 12l2 2 4-4" />
                                     </svg>
-                                </div>
+                                </motion.div>
                             </div>
                             <div>
                                 <p className="text-base-beige font-semibold text-lg">100% Verified</p>

@@ -3,25 +3,25 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 export function FAQAccordion() {
     const [open, setOpen] = useState<number | null>(0);
-    const { t } = useLanguage();
+    const t = useTranslations('faq');
 
     const faqsList = [
-        { q: t('faq.q1.q'), a: t('faq.q1.a') },
-        { q: t('faq.q2.q'), a: t('faq.q2.a') },
-        { q: t('faq.q3.q'), a: t('faq.q3.a') },
-        { q: t('faq.q4.q'), a: t('faq.q4.a') },
-        { q: t('faq.q5.q'), a: t('faq.q5.a') }
+        { q: t('q1_q'), a: t('q1_a') },
+        { q: t('q2_q'), a: t('q2_a') },
+        { q: t('q3_q'), a: t('q3_a') },
+        { q: t('q4_q'), a: t('q4_a') },
+        { q: t('q5_q'), a: t('q5_a') }
     ];
 
     return (
         <section id="faq" className="py-32 bg-base-dark border-t border-white/5">
             <div className="container mx-auto px-6 max-w-3xl">
                 <h2 className="text-5xl font-bold tracking-tighter text-base-beige mb-16 text-center">
-                    {t('faq.headline')}
+                    {t('headline')}
                 </h2>
 
                 <div className="flex flex-col gap-4">

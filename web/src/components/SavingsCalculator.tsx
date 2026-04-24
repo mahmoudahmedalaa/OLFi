@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 export function SavingsCalculator() {
-    const { t } = useLanguage();
+    const t = useTranslations('calculator');
     const [balance, setBalance] = useState(120000);
     const [rate, setRate] = useState(12.0);
     const [term, setTerm] = useState(36);
@@ -41,10 +41,10 @@ export function SavingsCalculator() {
                     <div className="relative z-10 flex flex-col gap-10">
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6">
-                                <span className="text-xs font-bold tracking-wide uppercase text-white">{t('calculator.label')}</span>
+                                <span className="text-xs font-bold tracking-wide uppercase text-white">{t('label')}</span>
                             </div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-base-beige leading-tight">
-                                {t('calculator.headline')}
+                                {t('headline')}
                             </h2>
                         </div>
 
@@ -52,7 +52,7 @@ export function SavingsCalculator() {
                             {/* Balance Input */}
                             <div className="flex flex-col gap-3">
                                 <div className="flex justify-between items-center text-sm font-medium text-white/70 uppercase tracking-widest">
-                                    <label htmlFor="slBalance">{t('calculator.totalOutstanding')}</label>
+                                    <label htmlFor="slBalance">{t('totalOutstanding')}</label>
                                     <span className="text-xl font-bold text-base-beige">{formatCurrency(balance)}</span>
                                 </div>
                                 <input
@@ -70,7 +70,7 @@ export function SavingsCalculator() {
                             {/* Rate Input */}
                             <div className="flex flex-col gap-3">
                                 <div className="flex justify-between items-center text-sm font-medium text-white/70 uppercase tracking-widest">
-                                    <label htmlFor="slRate">{t('calculator.currentRate')}</label>
+                                    <label htmlFor="slRate">{t('currentRate')}</label>
                                     <span className="text-xl font-bold text-base-beige">{rate.toFixed(1)}%</span>
                                 </div>
                                 <input
@@ -88,7 +88,7 @@ export function SavingsCalculator() {
                             {/* Term Input */}
                             <div className="flex flex-col gap-3">
                                 <div className="flex justify-between items-center text-sm font-medium text-white/70 uppercase tracking-widest">
-                                    <label htmlFor="slTerm">{t('calculator.remainingTenure')}</label>
+                                    <label htmlFor="slTerm">{t('remainingTenure')}</label>
                                     <span className="text-xl font-bold text-base-beige">{term} months</span>
                                 </div>
                                 <input
@@ -117,17 +117,17 @@ export function SavingsCalculator() {
                             {formatCurrency(calculateSavings())}
                         </motion.div>
                         <p className="text-lg text-base-beige/80 mb-6">
-                            {t('calculator.estimatedTotal')}<br />{t('calculator.ifRefinance')}
+                            {t('estimatedTotal')}<br />{t('ifRefinance')}
                         </p>
                         <p className="text-xs text-white/60 uppercase tracking-widest font-mono text-center">
-                            {t('calculator.disclaimer')}
+                            {t('disclaimer')}
                         </p>
 
                         <a
                             href="#waitlist"
                             className="mt-10 px-8 py-4 w-full text-center bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark rounded-full font-bold transition-all duration-300"
                         >
-                            {t('calculator.getOffer')}
+                            {t('getOffer')}
                         </a>
                     </div>
                 </div>

@@ -45,6 +45,7 @@ export default function WaitlistPage() {
                     <thead className="bg-gray-800/50">
                         <tr>
                             <th className="text-left px-6 py-4 text-gray-400 font-medium">Email</th>
+                            <th className="text-left px-6 py-4 text-gray-400 font-medium">Full Name</th>
                             <th className="text-right px-6 py-4 text-gray-400 font-medium whitespace-nowrap">Join Date</th>
                         </tr>
                     </thead>
@@ -52,6 +53,7 @@ export default function WaitlistPage() {
                         {waitlist.map((entry: any) => (
                             <tr key={entry.id || entry.email} className="hover:bg-gray-800/30 transition-colors">
                                 <td className="px-6 py-4 font-medium text-gray-200">{entry.email}</td>
+                                <td className="px-6 py-4 font-medium text-gray-200">{entry.full_name || '—'}</td>
                                 <td className="px-6 py-4 text-right text-gray-500">
                                     {new Date(entry.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </td>

@@ -3,38 +3,38 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 export function FeaturesAccordion() {
-    const { t } = useLanguage();
+    const t = useTranslations('features');
 
     const featuresList = [
         {
             id: 1,
             num: '01',
-            title: t('features.step1Title'),
-            content: t('features.step1Desc'),
+            title: t('step1Title'),
+            content: t('step1Desc'),
             image: '/assets/addloans.PNG',
         },
         {
             id: 2,
             num: '02',
-            title: t('features.step2Title'),
-            content: t('features.step2Desc'),
+            title: t('step2Title'),
+            content: t('step2Desc'),
             image: '/assets/products.PNG',
         },
         {
             id: 3,
             num: '03',
-            title: t('features.step3Title'),
-            content: t('features.step3Desc'),
+            title: t('step3Title'),
+            content: t('step3Desc'),
             image: '/assets/application_submitted.PNG',
         },
         {
             id: 4,
             num: '04',
-            title: t('features.step4Title'),
-            content: t('features.step4Desc'),
+            title: t('step4Title'),
+            content: t('step4Desc'),
             image: '/assets/myloans.PNG',
         },
     ];
@@ -51,10 +51,10 @@ export function FeaturesAccordion() {
                     <div className="p-8 lg:p-16 border-b lg:border-b-0 lg:border-r border-base-dark/10 flex flex-col justify-center gap-12">
                         <div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter leading-tight mb-4">
-                                {t('features.headline')}
+                                {t('headline')}
                             </h2>
                             <p className="text-lg text-base-dark/60 max-w-md">
-                                {t('features.subheadline')}
+                                {t('subheadline')}
                             </p>
                         </div>
 
@@ -98,7 +98,11 @@ export function FeaturesAccordion() {
                         {/* Wavy subtle background line pattern */}
                         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #011819 0px, #011819 1px, transparent 1px, transparent 20px)" }} />
 
-                        <div className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10">
+                        <motion.div
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10"
+                        >
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />
                             <AnimatePresence mode="wait">
@@ -119,7 +123,7 @@ export function FeaturesAccordion() {
                                     />
                                 </motion.div>
                             </AnimatePresence>
-                        </div>
+                        </motion.div>
                     </div>
 
                 </div>

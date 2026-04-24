@@ -2,7 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import { Check, Minus, X, Info } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 const headerFadeUp: Variants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
@@ -27,64 +27,64 @@ const checkPop: Variants = {
 };
 
 export function ComparisonTable() {
-    const { t } = useLanguage();
+    const t = useTranslations('compare');
 
     const compareData = [
         {
-            feature: t('compare.feat1'),
+            feature: t('feat1'),
             traditional: true,
             creditors: false,
             olfi: true,
-            tooltip: t('compare.tooltip1'),
+            tooltip: t('tooltip1'),
         },
         {
-            feature: t('compare.feat2'),
+            feature: t('feat2'),
             traditional: true,
             creditors: true,
             olfi: true,
-            tooltip: t('compare.tooltip2'),
+            tooltip: t('tooltip2'),
         },
         {
-            feature: t('compare.feat3'),
+            feature: t('feat3'),
             traditional: true,
             creditors: false,
             olfi: true,
-            tooltip: t('compare.tooltip3'),
+            tooltip: t('tooltip3'),
         },
         {
-            feature: t('compare.feat4'),
+            feature: t('feat4'),
             traditional: true,
             creditors: false,
             olfi: false,
-            tooltip: t('compare.tooltip4'),
+            tooltip: t('tooltip4'),
         },
         {
-            feature: t('compare.feat5'),
+            feature: t('feat5'),
             traditional: false,
             creditors: true,
             olfi: true,
-            tooltip: t('compare.tooltip5'),
+            tooltip: t('tooltip5'),
         },
         {
-            feature: t('compare.feat6'),
+            feature: t('feat6'),
             traditional: false,
             creditors: false,
             olfi: true,
-            tooltip: t('compare.tooltip6'),
+            tooltip: t('tooltip6'),
         },
         {
-            feature: t('compare.feat7'),
+            feature: t('feat7'),
             traditional: false,
             creditors: false,
             olfi: true,
-            tooltip: t('compare.tooltip7'),
+            tooltip: t('tooltip7'),
         },
         {
-            feature: t('compare.feat8'),
+            feature: t('feat8'),
             traditional: false,
             creditors: false,
             olfi: true,
-            tooltip: t('compare.tooltip8'),
+            tooltip: t('tooltip8'),
         },
     ];
 
@@ -100,10 +100,10 @@ export function ComparisonTable() {
                     className="text-center mb-16"
                 >
                     <motion.h2 variants={headerFadeUp} className="text-5xl font-bold tracking-tighter mb-4">
-                        {t('compare.headline')}
+                        {t('headline')}
                     </motion.h2>
                     <motion.p variants={headerFadeUp} className="text-lg text-base-dark/70 max-w-xl mx-auto">
-                        {t('compare.subheadline')}
+                        {t('subheadline')}
                     </motion.p>
                 </motion.div>
 
@@ -111,10 +111,10 @@ export function ComparisonTable() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr>
-                                <th className="w-[45%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider">{t('compare.featureCol')}</th>
-                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">{t('compare.traditional')}</th>
-                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">{t('compare.consultants')}</th>
-                                <th className="w-[19%] pb-8 font-bold text-brand-teal text-lg tracking-tight text-center">{t('compare.olfi')}</th>
+                                <th className="w-[45%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider">{t('featureCol')}</th>
+                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">{t('traditional')}</th>
+                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">{t('consultants')}</th>
+                                <th className="w-[19%] pb-8 font-bold text-brand-teal text-lg tracking-tight text-center">{t('olfi')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-base-dark/10">

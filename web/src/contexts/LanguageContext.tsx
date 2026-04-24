@@ -1,20 +1,24 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { en } from "../translations/en";
-import { ar } from "../translations/ar";
+import { NextIntlClientProvider } from "next-intl";
+import enMessages from "../../messages/en.json";
+import arMessages from "../../messages/ar.json";
 
 type Language = "en" | "ar";
-
 
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
-    t: (key: string) => string;
     isRtl: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+const messagesMap: Record<Language, typeof enMessages> = {
+    en: enMessages,
+    ar: arMessages,
+};
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const [language, setLanguage] = useState<Language>("en");
@@ -36,23 +40,11 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         localStorage.setItem("language", language);
     }, [language]);
 
-    const t = (key: string): string => {
-        const dict = language === "en" ? en : ar;
-        const keys = key.split(".");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let value: any = dict;
-        for (const k of keys) {
-            if (value[k] === undefined) {
-                return key; // return key if not found
-            }
-            value = value[k];
-        }
-        return value as unknown as string;
-    };
-
     return (
-        <LanguageContext.Provider value={{ language, setLanguage, t, isRtl: language === "ar" }}>
-            {children}
+        <LanguageContext.Provider value={{ language, setLanguage, isRtl: language === "ar" }}>
+            <NextIntlClientProvider locale={language} messages={messagesMap[language]}>
+                {children}
+            </NextIntlClientProvider>
         </LanguageContext.Provider>
     );
 };

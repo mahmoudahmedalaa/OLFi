@@ -3,13 +3,15 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export function Navigation() {
     const { scrollY } = useScroll();
     const bgOpacity = useTransform(scrollY, [0, 80], [0, 1]);
     const borderOpacity = useTransform(scrollY, [0, 80], [0, 0.08]);
-    const { t, language, setLanguage } = useLanguage();
+    const t = useTranslations('nav');
+    const { language, setLanguage } = useLanguage();
 
     const toggleLanguage = () => {
         setLanguage(language === 'en' ? 'ar' : 'en');
@@ -39,10 +41,10 @@ export function Navigation() {
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
-                    <Link href="#features" className="hover:text-base-beige transition-colors">{t('nav.features')}</Link>
-                    <Link href="#how-it-works" className="hover:text-base-beige transition-colors">{t('nav.howItWorks')}</Link>
-                    <Link href="#compare" className="hover:text-base-beige transition-colors">{t('nav.compare')}</Link>
-                    <Link href="#faq" className="hover:text-base-beige transition-colors">{t('nav.faq')}</Link>
+                    <Link href="#features" className="hover:text-base-beige transition-colors">{t('features')}</Link>
+                    <Link href="#how-it-works" className="hover:text-base-beige transition-colors">{t('howItWorks')}</Link>
+                    <Link href="#compare" className="hover:text-base-beige transition-colors">{t('compare')}</Link>
+                    <Link href="#faq" className="hover:text-base-beige transition-colors">{t('faq')}</Link>
                 </nav>
 
                 <div className="flex items-center gap-4">
@@ -56,7 +58,7 @@ export function Navigation() {
                         href="#waitlist"
                         className="bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-300 flex items-center gap-2"
                     >
-                        {t('nav.joinWaitlist')}
+                        {t('joinWaitlist')}
                     </Link>
                 </div>
             </div>

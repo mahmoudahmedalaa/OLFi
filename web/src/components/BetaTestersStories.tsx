@@ -2,29 +2,29 @@
 
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 export function BetaTestersStories() {
-    const { t } = useLanguage();
+    const t = useTranslations('stories');
 
     const testimonialsList = [
         {
-            quote: t('stories.t1.quote'),
-            author: t('stories.t1.author'),
-            role: t('stories.t1.role'),
-            initials: t('stories.t1.initials')
+            quote: t('t1_quote'),
+            author: t('t1_author'),
+            role: t('t1_role'),
+            initials: t('t1_initials')
         },
         {
-            quote: t('stories.t2.quote'),
-            author: t('stories.t2.author'),
-            role: t('stories.t2.role'),
-            initials: t('stories.t2.initials')
+            quote: t('t2_quote'),
+            author: t('t2_author'),
+            role: t('t2_role'),
+            initials: t('t2_initials')
         },
         {
-            quote: t('stories.t3.quote'),
-            author: t('stories.t3.author'),
-            role: t('stories.t3.role'),
-            initials: t('stories.t3.initials')
+            quote: t('t3_quote'),
+            author: t('t3_author'),
+            role: t('t3_role'),
+            initials: t('t3_initials')
         }
     ];
 
@@ -32,9 +32,9 @@ export function BetaTestersStories() {
         <section className="py-24 bg-base-beige relative border-t border-base-dark/5">
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="text-center mb-16 max-w-2xl mx-auto">
-                    <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">{t('stories.label')}</span>
+                    <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">{t('label')}</span>
                     <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-base-dark">
-                        {t('stories.headline')}
+                        {t('headline')}
                     </h2>
                 </div>
 

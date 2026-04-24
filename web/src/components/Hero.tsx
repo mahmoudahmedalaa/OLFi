@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 const stagger = {
     hidden: {},
@@ -18,7 +18,7 @@ const fadeUp = {
 };
 
 export function Hero() {
-    const { t } = useLanguage();
+    const t = useTranslations('hero');
     return (
         <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
             {/* Animated Ambient Orbs */}
@@ -48,20 +48,20 @@ export function Hero() {
                         <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-teal/20 bg-brand-teal/5 hover:bg-brand-teal/10 transition-all cursor-default">
                                 <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
-                                <span className="text-[11px] font-bold tracking-wider text-white uppercase">{t('hero.earlyAccess')}</span>
+                                <span className="text-[11px] font-bold tracking-wider text-white uppercase">{t('earlyAccess')}</span>
                             </div>
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all cursor-default text-amber-500">
-                                <span className="text-[11px] font-bold tracking-wider uppercase text-white">{t('hero.sharia')}</span>
+                                <span className="text-[11px] font-bold tracking-wider uppercase text-white">{t('sharia')}</span>
                             </div>
                         </motion.div>
 
                         <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1] text-base-beige">
-                            {t('hero.headlineLine1')} <br className="hidden sm:block" /> {t('hero.headlineLine2')} <br />
-                            <em className="text-brand-teal italic font-medium">{t('hero.headlineLine3')}</em>
+                            {t('headlineLine1')} <br className="hidden sm:block" /> {t('headlineLine2')} <br />
+                            <em className="text-brand-teal italic font-medium">{t('headlineLine3')}</em>
                         </motion.h1>
 
                         <motion.p variants={fadeUp} className="text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">
-                            {t('hero.subheadline')}
+                            {t('subheadline')}
                         </motion.p>
 
                         <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 pt-4">
@@ -69,7 +69,7 @@ export function Hero() {
                                 href="#waitlist"
                                 className="w-full sm:w-auto bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark text-lg font-medium px-8 py-3.5 rounded-lg transition-all duration-300 text-center flex items-center justify-center"
                             >
-                                {t('hero.joinWaitlist')}
+                                {t('joinWaitlist')}
                             </Link>
                         </motion.div>
                     </motion.div>

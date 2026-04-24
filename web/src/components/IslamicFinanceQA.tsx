@@ -1,15 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslations } from 'next-intl';
 
 export function IslamicFinanceQA() {
-    const { t } = useLanguage();
+    const t = useTranslations('islamicQa');
 
     const offersList = [
-        { bank: t('islamicQa.offer1.bank'), product: t('islamicQa.offer1.product'), rate: t('islamicQa.offer1.rate') },
-        { bank: t('islamicQa.offer2.bank'), product: t('islamicQa.offer2.product'), rate: t('islamicQa.offer2.rate') },
-        { bank: t('islamicQa.offer3.bank'), product: t('islamicQa.offer3.product'), rate: t('islamicQa.offer3.rate') }
+        { bank: t('offer1_bank'), product: t('offer1_product'), rate: t('offer1_rate') },
+        { bank: t('offer2_bank'), product: t('offer2_product'), rate: t('offer2_rate') },
+        { bank: t('offer3_bank'), product: t('offer3_product'), rate: t('offer3_rate') }
     ];
 
     return (
@@ -21,14 +21,14 @@ export function IslamicFinanceQA() {
                         {/* Text Content */}
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6">
-                                <span className="text-xs font-bold tracking-wide uppercase text-white">{t('islamicQa.label')}</span>
+                                <span className="text-xs font-bold tracking-wide uppercase text-white">{t('label')}</span>
                             </div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-base-beige leading-tight mb-6 mt-4">
-                                {t('islamicQa.headlineLine1')} <br />
-                                {t('islamicQa.headlineLine2')}
+                                {t('headlineLine1')} <br />
+                                {t('headlineLine2')}
                             </h2>
                             <p className="text-lg text-white/80 leading-relaxed mb-8">
-                                {t('islamicQa.description')}
+                                {t('description')}
                             </p>
 
                             <motion.div
@@ -46,8 +46,8 @@ export function IslamicFinanceQA() {
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-base-beige font-semibold text-lg">{t('islamicQa.verifiedLabel')}</p>
-                                    <p className="text-white/60 text-sm">{t('islamicQa.verifiedSub')}</p>
+                                    <p className="text-base-beige font-semibold text-lg">{t('verifiedLabel')}</p>
+                                    <p className="text-white/60 text-sm">{t('verifiedSub')}</p>
                                 </div>
                             </motion.div>
                         </div>
@@ -62,9 +62,9 @@ export function IslamicFinanceQA() {
                                 transition={{ duration: 0.6 }}
                                 className="bg-white/5 border border-white/10 rounded-2xl p-6 w-full"
                             >
-                                <div className="text-xs font-mono text-white/50 tracking-widest uppercase mb-3">{t('islamicQa.youAsked')}</div>
+                                <div className="text-xs font-mono text-white/50 tracking-widest uppercase mb-3">{t('youAsked')}</div>
                                 <div className="text-base text-white/90 italic">
-                                    {t('islamicQa.question')}
+                                    {t('question')}
                                 </div>
                             </motion.div>
 
@@ -76,7 +76,7 @@ export function IslamicFinanceQA() {
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="bg-brand-teal/10 border border-brand-teal/20 rounded-2xl p-6 self-start w-full relative overflow-hidden"
                             >
-                                <div className="text-xs font-mono text-brand-teal tracking-widest uppercase mb-6 relative z-10">{t('islamicQa.resultLabel')}</div>
+                                <div className="text-xs font-mono text-brand-teal tracking-widest uppercase mb-6 relative z-10">{t('resultLabel')}</div>
 
                                 <div className="space-y-4 relative z-10">
                                     {offersList.map((offer, i) => (

@@ -1,32 +1,179 @@
-# Session Handover: Renalta-Style UI Polish
+# AI HANDOVER — OLFi Marketing Site
 
-**To the next AI Agent:** The user is currently refining the "BuyOut" marketing site to strictly match the "Renalta" aesthetic (renalta.com). The site uses Next.js 15, Tailwind v4, and Framer Motion. 
+> **Last Updated**: 2026-04-24  
+> **Project**: OLFi (Islamic finance debt consolidation platform)  
+> **Site**: Next.js 16 marketing site with `next-intl` localization
 
-The previous agent ran out of context and reached the end of the session. **Follow these instructions exactly** to complete the final frontend UI polish.
+---
 
-## User's Explicit Comments / Pending Tasks
+## 🚨 CRITICAL: CONTENT LOCK
 
-1.  **Comparison Table Horizontal Lines**: 
-    > *"The horizontal lines on the compare section are all messed up, they are too big and far apart and distracting, you need to reference what I showed you from renata, its small gaps consistent and not too many anyways. The current one is weird so its clashing with the comparison table itself which is wrong."*
-    *   **Action Needed:** Go to `ComparisonTable.tsx` and fix the background styling. Look at renalta.com's grid/line background. It needs to be much finer, tighter grid/lines that are extremely subtle and don't clash with the table content.
+**DO NOT modify any text content in the translation files.** The copy has been carefully written and refined by the founder. All canonical content is documented in `web/CONTENT_LOCK.md`.
 
-2.  **Real Stories Section Background**:
-    > *"Can you make the real stories section background light"*
-    *   **Action Needed:** Go to the Testimonials or "Real Stories" component and change its background color to the light variant (presumably `bg-[#e9e6d9]` or similar beige), instead of dark. Remember to invert text colors (dark text on light bg) if necessary!
+- **English**: `web/messages/en.json`
+- **Arabic**: `web/messages/ar.json`
+- **Lock file**: `web/CONTENT_LOCK.md`
 
-3.  **Footer Background**:
-    > *"Then the footer slightly darker than what it is now, similar to what renata does."*
-    *   **Action Needed:** Go to `Footer.tsx`. It's currently in `bg-base-dark` (`#011819`). You need to make it even darker, perhaps pure black (`#000000`) or an extremely deep teal/black.
+If you must make structural changes (key renaming, format migration), copy content **character-for-character**. Run `git diff` afterwards to verify zero content drift.
 
-4.  **Hero Border Beam Animation (Dropped/Optional)**:
-    > *"I dont thnk you are getting the beam right, this is it here you can spot it in this screenshot of renata. This is how it should look like, use animation and motion to get it spinning around the square like that. If its too hard then drop it and forget about it."*
-    *   **Action Needed:** The previous agent removed the broken attempt. If you are confident you can do a CSS border-image with a spinning conic-gradient (or SVG path animation) that looks EXACTLY like the screenshot provided in the user's chat, go for it. Otherwise, **leave it dropped**.
+---
 
-## Context / What's Been Done
+## Project Structure
 
-*   **Vercel Deployment:** Fixed git email blocker (using `mahmoudahmedalaa@users.noreply.github.com`).
-*   **Text Brightness:** Brightened most text across Hero, ShariaBanner, SavingsCalculator, WaitlistCTA from very dim (40/50%) to brighter (60/80%).
-*   **Glow Effects:** Eliminated basically all `blur`, `backdrop-blur`, and `shadow-2xl` glow effects (particularly in IslamicFinanceQA) to adhere to the flat, brutalist "no glow" Renalta style.
-*   **Phone Features UI:** The phone background side of `FeaturesAccordion.tsx` was restored to its light color (`#e9e6d9`) as requested in the final prompt.
+```
+BuyOut/
+├── web/                          # Main marketing site (Next.js 16 + Turbopack)
+│   ├── src/
+│   │   ├── app/                  # App router (layout.tsx, page.tsx)
+│   │   ├── components/           # All page sections
+│   │   │   ├── Navigation.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── ProblemSection.tsx
+│   │   │   ├── SavingsCalculator.tsx
+│   │   │   ├── FeaturesAccordion.tsx
+│   │   │   ├── IslamicFinanceQA.tsx
+│   │   │   ├── ComparisonTable.tsx
+│   │   │   ├── BetaTestersStories.tsx
+│   │   │   ├── FAQAccordion.tsx
+│   │   │   ├── WaitlistCTA.tsx
+│   │   │   └── Footer.tsx
+│   │   ├── contexts/
+│   │   │   └── LanguageContext.tsx  # Client-side locale state (en/ar toggle)
+│   │   ├── i18n/
+│   │   │   └── request.ts          # next-intl server config
+│   │   └── utils/
+│   │       └── supabase.ts         # Supabase client with validation
+│   ├── messages/
+│   │   ├── en.json                 # 🔒 LOCKED — English translations
+│   │   └── ar.json                 # 🔒 LOCKED — Arabic translations
+│   ├── public/assets/              # App screenshots, images
+│   ├── .env.local                  # Supabase credentials (NOT committed)
+│   ├── CONTENT_LOCK.md             # Content policy document
+│   └── package.json
+└── marketing-sites/                # Legacy/experimental sites (not active)
+```
 
-**Next Steps**: Acknowledge this handover, read the relevant files (`ComparisonTable.tsx`, `Footer.tsx`, and the Testimonials component), and execute those specific remaining changes.
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16.2.4 (App Router, Turbopack) |
+| Styling | Tailwind CSS v4 |
+| Animations | Framer Motion |
+| Localization | `next-intl` (client provider mode, no i18n routing) |
+| Fonts | Inter (English) + Cairo (Arabic, via Google Fonts) |
+| Database | Supabase (PostgreSQL) |
+| Icons | Lucide React |
+
+---
+
+## Localization Architecture
+
+Uses `next-intl` in **"without i18n routing"** mode — single URL structure, client-side language toggle.
+
+- `src/i18n/request.ts` — Loads messages server-side based on cookie/default
+- `src/contexts/LanguageContext.tsx` — Client-side state manager for locale persistence
+- `layout.tsx` — Wraps app in `NextIntlClientProvider`
+- All 10 components use `useTranslations('namespace')` hook
+
+**RTL Support**: Arabic activates `dir="rtl"` on `<html>`, Cairo font, and mirrored layout.
+
+---
+
+## Supabase Configuration
+
+### Environment Variables (`.env.local`)
+```
+NEXT_PUBLIC_SUPABASE_URL="https://uivkpqjdoqwgfhvnskaw.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### ⚠️ BLOCKING: Waitlist Table Does Not Exist
+
+The `public.waitlist` table has **not been created yet**. The waitlist form submits to `supabase.from('waitlist').insert(...)` but the table doesn't exist in the database.
+
+**To fix — run this SQL in the Supabase Dashboard SQL Editor:**
+
+```sql
+CREATE TABLE public.waitlist (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email text NOT NULL UNIQUE,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE public.waitlist ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow anonymous inserts"
+  ON public.waitlist FOR INSERT
+  TO anon
+  WITH CHECK (true);
+```
+
+Dashboard URL: https://supabase.com/dashboard/project/uivkpqjdoqwgfhvnskaw/sql/new
+
+### Key Format Notes
+- The **anon key** (JWT format, starts with `eyJ...`) is used in `.env.local` for the client
+- The `sb_publishable_` / `sb_secret_` keys are Supabase's newer format — **NOT compatible** with PostgREST or the `@supabase/supabase-js` client library
+- The **service_role key** (also JWT format) is needed for admin operations but is NOT stored in this project
+
+---
+
+## Waitlist Form Flow
+
+1. User enters email in `WaitlistCTA.tsx`
+2. `getSupabase()` creates client from env vars (with validation)
+3. Inserts into `public.waitlist` table
+4. Handles duplicate emails gracefully (error code `23505`)
+5. Shows success state with countdown timer
+
+---
+
+## Running Locally
+
+```bash
+cd web
+npm install
+npm run dev        # → http://localhost:3000
+npm run build      # Production build verification
+```
+
+---
+
+## Writing Style Rules (Strictly Enforced)
+
+- **No full stops** on headlines/statements
+- **No em-dashes** (—) anywhere
+- Punchy, direct, premium fintech tone
+- UAE-market specific terminology (AECB, AED, DBR)
+
+---
+
+## Git History Context
+
+| Commit | What Changed |
+|--------|-------------|
+| `068c3f3` | Original hardcoded content — Hero: "Lower your / loan payments / Refinance smarter" |
+| `49511fe` | Animation upgrades — Hero changed to "Outsmart your debt" (REVERTED) |
+| `fa6a489` | Content extracted into `en.ts` / `ar.ts` translation files |
+| `ceef784` | Content refined (4 feature steps, OLFi branding) |
+| Current | Content migrated to `en.json` / `ar.json` via `next-intl`, original hero restored |
+
+---
+
+## Known Issues
+
+1. **Waitlist table missing** — Must be created via Supabase SQL Editor (see SQL above)
+2. **`ENVIRONMENT_FALLBACK` warning** — Non-blocking `next-intl` timezone warning; can be fixed by adding `timeZone: 'Asia/Dubai'` to `src/i18n/request.ts`
+3. **Vercel deployment** — Ensure `.env.local` variables are set in Vercel project settings
+
+---
+
+## What NOT To Do
+
+1. ❌ Do NOT change copy in `en.json` or `ar.json`
+2. ❌ Do NOT use `sb_publishable_` or `sb_secret_` keys in `.env.local` — use JWT format keys only
+3. ❌ Do NOT delete `CONTENT_LOCK.md`
+4. ❌ Do NOT add new translation keys without preserving existing ones character-for-character
+5. ❌ Do NOT restructure the component architecture without explicit approval
