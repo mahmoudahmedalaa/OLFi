@@ -1,15 +1,42 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import Link from 'next/link';
+
+const fadeUp = {
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.2 } },
+};
 
 export function Footer() {
     return (
         <footer className="bg-[#011011] border-t border-white/5 pt-24 pb-8 overflow-hidden">
             {/* Massive CTA */}
-            <div className="container mx-auto px-6 max-w-7xl border-b border-white/10 pb-24">
-                <h2 className="text-5xl sm:text-7xl md:text-8xl lg:text-[110px] leading-[0.9] font-bold tracking-tighter text-base-beige mb-12 text-center uppercase break-words">
+            <motion.div
+                variants={stagger}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, margin: "-100px" }}
+                className="container mx-auto px-6 max-w-7xl border-b border-white/10 pb-24"
+            >
+                <motion.h2
+                    variants={fadeUp}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    className="text-5xl sm:text-7xl md:text-8xl lg:text-[110px] leading-[0.9] font-bold tracking-tighter text-base-beige mb-12 text-center uppercase break-words"
+                >
                     Ready to <br /> <span className="text-brand-teal italic">consolidate?</span>
-                </h2>
+                </motion.h2>
 
-                <div className="flex justify-center">
+                <motion.div
+                    variants={fadeUp}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex justify-center"
+                >
                     <Link
                         href="https://apps.apple.com/app/"
                         target="_blank"
@@ -20,11 +47,17 @@ export function Footer() {
                         </svg>
                         Download on the App Store
                     </Link>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
             {/* Footer Bottom */}
-            <div className="container mx-auto px-6 max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="container mx-auto px-6 max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6"
+            >
                 <Link href="/" className="flex items-center">
                     <img src="/assets/olfi-logo.png" alt="OLFi Logo" className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
                 </Link>
@@ -38,7 +71,7 @@ export function Footer() {
                 <div className="text-sm text-white/60 text-center md:text-right">
                     &copy; {new Date().getFullYear()} OLFi Technologies Ltd Dubai, UAE <br className="md:hidden" /> All rights reserved
                 </div>
-            </div>
+            </motion.div>
         </footer>
     );
 }

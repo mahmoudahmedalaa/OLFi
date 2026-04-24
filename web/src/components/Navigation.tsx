@@ -1,18 +1,32 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export function Navigation() {
+    const { scrollY } = useScroll();
+    const bgOpacity = useTransform(scrollY, [0, 80], [0, 1]);
+    const borderOpacity = useTransform(scrollY, [0, 80], [0, 0.08]);
 
     return (
         <motion.header
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute top-0 left-0 right-0 z-50 py-6"
+            className="fixed top-0 left-0 right-0 z-50 py-6"
         >
+            {/* Scroll-aware glass background */}
+            <motion.div
+                className="absolute inset-0 backdrop-blur-xl -z-10"
+                style={{
+                    opacity: bgOpacity,
+                    backgroundColor: 'rgba(1, 16, 17, 0.85)',
+                    borderBottom: '1px solid',
+                    borderColor: useTransform(borderOpacity, (v) => `rgba(255,255,255,${v})`),
+                }}
+            />
+
             <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
                 <Link href="/" className="flex items-center">
                     <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={100} height={40} className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />

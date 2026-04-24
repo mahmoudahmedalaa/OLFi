@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { Check, Minus, X, Info } from 'lucide-react';
 
 const compareData = [
@@ -61,20 +62,48 @@ const compareData = [
     },
 ];
 
+const headerFadeUp = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+};
+
+const rowVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: (i: number) => ({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.45, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
+const checkPop = {
+    hidden: { scale: 0.5, opacity: 0 },
+    show: (i: number) => ({
+        scale: 1,
+        opacity: 1,
+        transition: { type: "spring", stiffness: 300, damping: 20, delay: i * 0.06 + 0.2 },
+    }),
+};
+
 export function ComparisonTable() {
     return (
         <section id="compare" className="py-32 bg-base-beige text-base-dark relative">
 
-
             <div className="container mx-auto px-6 max-w-5xl relative z-10">
-                <div className="text-center mb-16">
-                    <h2 className="text-5xl font-bold tracking-tighter mb-4">
+                <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true, margin: "-80px" }}
+                    variants={{ hidden: {}, show: { transition: { staggerChildren: 0.15 } } }}
+                    className="text-center mb-16"
+                >
+                    <motion.h2 variants={headerFadeUp} className="text-5xl font-bold tracking-tighter mb-4">
                         The intelligent choice
-                    </h2>
-                    <p className="text-lg text-base-dark/70 max-w-xl mx-auto">
+                    </motion.h2>
+                    <motion.p variants={headerFadeUp} className="text-lg text-base-dark/70 max-w-xl mx-auto">
                         See exactly how a bias-free aggregator gives you the upper hand when refinancing your existing debt
-                    </p>
-                </div>
+                    </motion.p>
+                </motion.div>
 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -88,7 +117,15 @@ export function ComparisonTable() {
                         </thead>
                         <tbody className="divide-y divide-base-dark/10">
                             {compareData.map((row, idx) => (
-                                <tr key={idx} className="group hover:bg-white/50 transition-colors cursor-default">
+                                <motion.tr
+                                    key={idx}
+                                    custom={idx}
+                                    variants={rowVariants}
+                                    initial="hidden"
+                                    whileInView="show"
+                                    viewport={{ once: true, margin: "-40px" }}
+                                    className="group hover:bg-white/50 transition-colors cursor-default"
+                                >
                                     <td className="py-6 font-semibold text-lg relative">
                                         <span className="flex items-center gap-2 group/tooltip cursor-help relative w-fit">
                                             {row.feature}
@@ -123,12 +160,21 @@ export function ComparisonTable() {
                                         {idx === compareData.length - 1 && <div className="absolute inset-x-0 bottom-0 h-px bg-brand-teal/20" />}
 
                                         {row.olfi ? (
-                                            <Check className="w-6 h-6 mx-auto text-brand-teal" strokeWidth={3} />
+                                            <motion.div
+                                                custom={idx}
+                                                variants={checkPop}
+                                                initial="hidden"
+                                                whileInView="show"
+                                                viewport={{ once: true }}
+                                                className="inline-flex"
+                                            >
+                                                <Check className="w-6 h-6 mx-auto text-brand-teal" strokeWidth={3} />
+                                            </motion.div>
                                         ) : (
                                             <Minus className="w-6 h-6 mx-auto text-brand-teal/20" />
                                         )}
                                     </td>
-                                </tr>
+                                </motion.tr>
                             ))}
                         </tbody>
                     </table>
