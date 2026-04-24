@@ -48,9 +48,9 @@ export function Navigation() {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={toggleLanguage}
-                        className="text-white/60 hover:text-white font-mono text-sm uppercase tracking-widest px-2 transition-colors cursor-pointer"
+                        className="text-white hover:text-base-beige text-sm font-medium transition-colors cursor-pointer"
                     >
-                        {language === 'en' ? 'عربي' : 'EN'}
+                        {language === 'en' ? 'العربية' : 'EN'}
                     </button>
                     <Link
                         href="#waitlist"

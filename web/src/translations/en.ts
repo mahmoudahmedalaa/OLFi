@@ -18,6 +18,7 @@ export const en = {
     },
     features: {
         headline: "The best way to restructure your debt.",
+        subheadline: "Four simple steps to regain control of your financial clarity with zero friction.",
         step1Title: "Aggregate Your Liabilities",
         step1Desc: "Securely link your UAE accounts manually or via banking explicit integration to surface your outstanding debts into one unified dashboard.",
         step2Title: "Bias-Free AI Recommendations",
@@ -28,6 +29,7 @@ export const en = {
         step4Desc: "Once you accept the best offer, watch your application progress through each banking stage in real-time until final settlement."
     },
     calculator: {
+        label: "Savings Estimate",
         headline: "See how much you could keep",
         subheadline: "Stop guessing. Input your current obligations and watch the AI calculate exactly how much you overpay every month.",
         totalOutstanding: "Total Outstanding Loan",
@@ -36,29 +38,45 @@ export const en = {
         youPay: "You currently pay",
         withOlfi: "With OLFi",
         potentialSavings: "Potential Monthly Savings",
-        over5Years: "Over 5 Years"
+        over5Years: "Over 5 Years",
+        currentRate: "Current average rate (%)",
+        estimatedTotal: "Estimated total saving",
+        ifRefinance: "if you refinance today",
+        disclaimer: "Based on avg 2% rate reduction · illustrative",
+        getOffer: "Get my real offer →"
     },
     compare: {
         headline: "The intelligent choice",
         subheadline: "See exactly how a bias-free aggregator gives you the upper hand when refinancing your existing debt",
+        featureCol: "Feature",
         traditional: "Traditional Banks",
         consultants: "Private Consultants",
         olfi: "OLFi AI",
         feat1: "Regulated Loan Products",
+        tooltip1: "OLFi connects you strictly to UAE Central Bank regulated institutions",
         feat2: "Consolidates Multiple Debts",
+        tooltip2: "All options allow you to consolidate, but how they source the buyout matters",
         feat3: "Zero Upfront Fees",
+        tooltip3: "Banks and OLFi do not charge you upfront consultation fees; private consultants often do",
         feat4: "Physical Branch Access",
+        tooltip4: "We operate 100% digitally to save you time and overhead costs associated with physical visits",
         feat5: "Market-Wide Aggregation",
+        tooltip5: "We scan the entire UAE banking sector, ensuring you aren't limited to just one bank's rates",
         feat6: "Bias-Free Recommendations",
+        tooltip6: "Unlike staff driven by specific commission quotas, our AI gives you objective, mathematical recommendations",
         feat7: "Instant Soft-Credit Offers",
-        feat8: "Automated Sharia-Filtering"
+        tooltip7: "Get pre-qualified offers and analyze your health without immediately hitting your AECB score",
+        feat8: "Automated Sharia-Filtering",
+        tooltip8: "One click filters the entire market down to strictly Islamic finance structures"
     },
     footer: {
         headline: "Ready to consolidate?",
         download: "Download on the App Store",
         privacy: "Privacy Policy",
         terms: "Terms of Service",
-        contact: "Contact"
+        contact: "Contact",
+        rights: "OLFi Technologies Ltd Dubai, UAE",
+        reserved: "All rights reserved"
     },
     stories: {
         label: "Early Community",

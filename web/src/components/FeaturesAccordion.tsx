@@ -3,40 +3,43 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-
-const features = [
-    {
-        id: 1,
-        num: '01',
-        title: 'Aggregate Your Liabilities',
-        content: 'Securely link your UAE accounts manually or via banking explicit integration to surface your outstanding debts into one unified dashboard.',
-        image: '/assets/addloans.PNG',
-    },
-    {
-        id: 2,
-        num: '02',
-        title: 'Bias-Free AI Recommendations',
-        content: 'Our intelligence engine scans multiple UAE banks to find the most optimal refinancing option tailored to you, completely free from external bias.',
-        image: '/assets/products.PNG',
-    },
-    {
-        id: 3,
-        num: '03',
-        title: 'Accept and Save',
-        content: 'Choose the best option to quickly consolidate your obligations into one simple payment and improve your credit profile.',
-        image: '/assets/application_submitted.PNG',
-    },
-    {
-        id: 4,
-        num: '04',
-        title: 'Track Your Pipeline',
-        content: 'Once you accept the best offer, watch your application progress through each banking stage in real-time until final settlement.',
-        image: '/assets/myloans.PNG',
-    },
-];
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function FeaturesAccordion() {
-    const [activeFeature, setActiveFeature] = useState(features[0]);
+    const { t } = useLanguage();
+
+    const featuresList = [
+        {
+            id: 1,
+            num: '01',
+            title: t('features.step1Title'),
+            content: t('features.step1Desc'),
+            image: '/assets/addloans.PNG',
+        },
+        {
+            id: 2,
+            num: '02',
+            title: t('features.step2Title'),
+            content: t('features.step2Desc'),
+            image: '/assets/products.PNG',
+        },
+        {
+            id: 3,
+            num: '03',
+            title: t('features.step3Title'),
+            content: t('features.step3Desc'),
+            image: '/assets/application_submitted.PNG',
+        },
+        {
+            id: 4,
+            num: '04',
+            title: t('features.step4Title'),
+            content: t('features.step4Desc'),
+            image: '/assets/myloans.PNG',
+        },
+    ];
+
+    const [activeFeature, setActiveFeature] = useState(featuresList[0]);
 
     return (
         <section id="features" className="py-24 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
@@ -48,15 +51,15 @@ export function FeaturesAccordion() {
                     <div className="p-8 lg:p-16 border-b lg:border-b-0 lg:border-r border-base-dark/10 flex flex-col justify-center gap-12">
                         <div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter leading-tight mb-4">
-                                The best way to <br /> restructure your debt.
+                                {t('features.headline')}
                             </h2>
                             <p className="text-lg text-base-dark/60 max-w-md">
-                                Four simple steps to regain control of your financial clarity with zero friction.
+                                {t('features.subheadline')}
                             </p>
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            {features.map((feature) => (
+                            {featuresList.map((feature) => (
                                 <button
                                     key={feature.id}
                                     onClick={() => setActiveFeature(feature)}

@@ -2,66 +2,7 @@
 
 import { motion, Variants } from 'framer-motion';
 import { Check, Minus, X, Info } from 'lucide-react';
-
-const compareData = [
-    {
-        feature: 'Regulated Loan Products',
-        traditional: true,
-        creditors: false,
-        olfi: true,
-        tooltip: 'OLFi connects you strictly to UAE Central Bank regulated institutions',
-    },
-    {
-        feature: 'Consolidates Multiple Debts',
-        traditional: true,
-        creditors: true,
-        olfi: true,
-        tooltip: 'All options allow you to consolidate, but how they source the buyout matters',
-    },
-    {
-        feature: 'Zero Upfront Fees',
-        traditional: true,
-        creditors: false,
-        olfi: true,
-        tooltip: 'Banks and OLFi do not charge you upfront consultation fees; private consultants often do',
-    },
-    {
-        feature: 'Physical Branch Access',
-        traditional: true,
-        creditors: false,
-        olfi: false,
-        tooltip: 'We operate 100% digitally to save you time and overhead costs associated with physical visits',
-    },
-    {
-        feature: 'Market-Wide Aggregation',
-        traditional: false,
-        creditors: true,
-        olfi: true,
-        tooltip: 'We scan the entire UAE banking sector, ensuring you aren\'t limited to just one bank\'s rates',
-    },
-    {
-        feature: 'Bias-Free Recommendations',
-        traditional: false,
-        creditors: false,
-        olfi: true,
-        tooltip: 'Unlike staff driven by specific commission quotas, our AI gives you objective, mathematical recommendations',
-    },
-    {
-        feature: 'Instant Soft-Credit Offers',
-        traditional: false,
-        creditors: false,
-        olfi: true,
-        tooltip: 'Get pre-qualified offers and analyze your health without immediately hitting your AECB score',
-    },
-    {
-        feature: 'Automated Sharia-Filtering',
-        traditional: false,
-        creditors: false,
-        olfi: true,
-        tooltip: 'One click filters the entire market down to strictly Islamic finance structures',
-    },
-];
-
+import { useLanguage } from '../contexts/LanguageContext';
 const headerFadeUp: Variants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
@@ -86,6 +27,67 @@ const checkPop: Variants = {
 };
 
 export function ComparisonTable() {
+    const { t } = useLanguage();
+
+    const compareData = [
+        {
+            feature: t('compare.feat1'),
+            traditional: true,
+            creditors: false,
+            olfi: true,
+            tooltip: t('compare.tooltip1'),
+        },
+        {
+            feature: t('compare.feat2'),
+            traditional: true,
+            creditors: true,
+            olfi: true,
+            tooltip: t('compare.tooltip2'),
+        },
+        {
+            feature: t('compare.feat3'),
+            traditional: true,
+            creditors: false,
+            olfi: true,
+            tooltip: t('compare.tooltip3'),
+        },
+        {
+            feature: t('compare.feat4'),
+            traditional: true,
+            creditors: false,
+            olfi: false,
+            tooltip: t('compare.tooltip4'),
+        },
+        {
+            feature: t('compare.feat5'),
+            traditional: false,
+            creditors: true,
+            olfi: true,
+            tooltip: t('compare.tooltip5'),
+        },
+        {
+            feature: t('compare.feat6'),
+            traditional: false,
+            creditors: false,
+            olfi: true,
+            tooltip: t('compare.tooltip6'),
+        },
+        {
+            feature: t('compare.feat7'),
+            traditional: false,
+            creditors: false,
+            olfi: true,
+            tooltip: t('compare.tooltip7'),
+        },
+        {
+            feature: t('compare.feat8'),
+            traditional: false,
+            creditors: false,
+            olfi: true,
+            tooltip: t('compare.tooltip8'),
+        },
+    ];
+
     return (
         <section id="compare" className="py-32 bg-base-beige text-base-dark relative">
 
@@ -98,21 +100,21 @@ export function ComparisonTable() {
                     className="text-center mb-16"
                 >
                     <motion.h2 variants={headerFadeUp} className="text-5xl font-bold tracking-tighter mb-4">
-                        The intelligent choice
+                        {t('compare.headline')}
                     </motion.h2>
                     <motion.p variants={headerFadeUp} className="text-lg text-base-dark/70 max-w-xl mx-auto">
-                        See exactly how a bias-free aggregator gives you the upper hand when refinancing your existing debt
+                        {t('compare.subheadline')}
                     </motion.p>
                 </motion.div>
 
-                <div className="overflow-x-auto">
+                <div className="w-full">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr>
-                                <th className="w-[45%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider">Feature</th>
-                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">Traditional Banks</th>
-                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">Private Consultants</th>
-                                <th className="w-[19%] pb-8 font-bold text-brand-teal text-lg tracking-tight text-center">OLFi AI</th>
+                                <th className="w-[45%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider">{t('compare.featureCol')}</th>
+                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">{t('compare.traditional')}</th>
+                                <th className="w-[18%] pb-8 font-medium text-base-dark/50 text-sm uppercase tracking-wider text-center">{t('compare.consultants')}</th>
+                                <th className="w-[19%] pb-8 font-bold text-brand-teal text-lg tracking-tight text-center">{t('compare.olfi')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-base-dark/10">
