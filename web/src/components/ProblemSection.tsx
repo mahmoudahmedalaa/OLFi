@@ -2,38 +2,41 @@
 
 import { motion } from 'framer-motion';
 import { AlertCircle, FileX, ShieldX } from 'lucide-react';
-
-const problems = [
-    {
-        title: 'Trapped in high-profit rates',
-        desc: 'Overpaying monthly because restructuring is too murky to navigate manually.',
-        icon: AlertCircle
-    },
-    {
-        title: 'Paperwork paralyses',
-        desc: 'Endless physical visits, stamps, and manual verifications across multiple branches.',
-        icon: FileX
-    },
-    {
-        title: 'Opaque Halal options',
-        desc: 'True Sharia-compliant choices are buried deep in bank portfolios or require tedious screening.',
-        icon: ShieldX
-    }
-];
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function ProblemSection() {
+    const { t } = useLanguage();
+
+    const problemsList = [
+        {
+            title: t('problem.p1.title'),
+            desc: t('problem.p1.desc'),
+            icon: AlertCircle
+        },
+        {
+            title: t('problem.p2.title'),
+            desc: t('problem.p2.desc'),
+            icon: FileX
+        },
+        {
+            title: t('problem.p3.title'),
+            desc: t('problem.p3.desc'),
+            icon: ShieldX
+        }
+    ];
+
     return (
         <section className="py-24 bg-base-beige border-t border-base-dark/5 relative">
             <div className="container mx-auto px-6 max-w-7xl">
                 <div className="text-center mb-16 max-w-2xl mx-auto">
-                    <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">The Current State</span>
+                    <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">{t('problem.label')}</span>
                     <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-base-dark">
-                        The debt trap
+                        {t('problem.headline')}
                     </h2>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
-                    {problems.map((problem, idx) => {
+                    {problemsList.map((problem, idx) => {
                         const Icon = problem.icon;
                         return (
                             <motion.div

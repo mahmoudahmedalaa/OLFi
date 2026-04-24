@@ -3,42 +3,29 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
-
-const faqs = [
-    {
-        q: "How does the AI recommendation work?",
-        a: "Our algorithm assesses your total outstanding liabilities, calculates your Debt Burden Ratio (DBR), and cross-references it with live banking products to find optimizations. All without any human bias."
-    },
-    {
-        q: "Is OLFi a bank?",
-        a: "No, OLFi is an aggregator and intelligent orchestration platform. We map the market to find you the best refinance opportunities, but the actual loans are provided by UAE Central Bank regulated institutions."
-    },
-    {
-        q: "Do you offer Islamic solutions?",
-        a: "Yes. All our products are vetted to be fully Sharia-compliant, meaning we only match you with recognized Islamic finance options."
-    },
-    {
-        q: "Does using OLFi impact my credit score?",
-        a: "Checking your options on OLFi relies on soft-checks and algorithm estimates. Your AECB score will only undergo a hard-check once you officially submit your finalized application to the chosen bank."
-    },
-    {
-        q: "Are there hidden fees?",
-        a: "We do not charge you upfront fees to use the platform. We negotiate directly with the banks, acting as an acquisition partner."
-    }
-];
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function FAQAccordion() {
     const [open, setOpen] = useState<number | null>(0);
+    const { t } = useLanguage();
+
+    const faqsList = [
+        { q: t('faq.q1.q'), a: t('faq.q1.a') },
+        { q: t('faq.q2.q'), a: t('faq.q2.a') },
+        { q: t('faq.q3.q'), a: t('faq.q3.a') },
+        { q: t('faq.q4.q'), a: t('faq.q4.a') },
+        { q: t('faq.q5.q'), a: t('faq.q5.a') }
+    ];
 
     return (
         <section id="faq" className="py-32 bg-base-dark border-t border-white/5">
             <div className="container mx-auto px-6 max-w-3xl">
                 <h2 className="text-5xl font-bold tracking-tighter text-base-beige mb-16 text-center">
-                    FAQ
+                    {t('faq.headline')}
                 </h2>
 
                 <div className="flex flex-col gap-4">
-                    {faqs.map((faq, idx) => (
+                    {faqsList.map((faq, idx) => (
                         <div
                             key={idx}
                             className={`rounded-2xl border transition-colors duration-300 overflow-hidden ${open === idx ? 'bg-white/5 border-brand-teal/30' : 'bg-transparent border-white/10 hover:border-white/20'

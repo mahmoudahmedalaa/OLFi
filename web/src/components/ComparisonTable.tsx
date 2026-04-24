@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Check, Minus, X, Info } from 'lucide-react';
 
 const compareData = [
@@ -62,12 +62,12 @@ const compareData = [
     },
 ];
 
-const headerFadeUp = {
+const headerFadeUp: Variants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
-const rowVariants = {
+const rowVariants: Variants = {
     hidden: { opacity: 0, y: 15 },
     show: (i: number) => ({
         opacity: 1,
@@ -76,12 +76,12 @@ const rowVariants = {
     }),
 };
 
-const checkPop = {
+const checkPop: Variants = {
     hidden: { scale: 0.5, opacity: 0 },
     show: (i: number) => ({
         scale: 1,
         opacity: 1,
-        transition: { type: "spring", stiffness: 300, damping: 20, delay: i * 0.06 + 0.2 },
+        transition: { type: "spring" as const, stiffness: 300, damping: 20, delay: i * 0.06 + 0.2 },
     }),
 };
 

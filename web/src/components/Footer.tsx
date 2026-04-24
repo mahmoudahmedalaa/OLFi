@@ -26,7 +26,7 @@ export function Footer() {
             >
                 <motion.h2
                     variants={fadeUp}
-                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
                     className="text-5xl sm:text-7xl md:text-8xl lg:text-[110px] leading-[0.9] font-bold tracking-tighter text-base-beige mb-12 text-center uppercase break-words"
                 >
                     Ready to <br /> <span className="text-brand-teal italic">consolidate?</span>
@@ -34,7 +34,7 @@ export function Footer() {
 
                 <motion.div
                     variants={fadeUp}
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
                     className="flex justify-center"
                 >
                     <Link

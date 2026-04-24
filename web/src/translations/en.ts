@@ -59,5 +59,58 @@ export const en = {
         privacy: "Privacy Policy",
         terms: "Terms of Service",
         contact: "Contact"
+    },
+    stories: {
+        label: "Early Community",
+        headline: "Real stories from beta testers",
+        t1: { quote: "I'd been meaning to refinance for two years but always gave up on the paperwork. OLFi did it in 20 minutes. I'm saving AED 1,400 a month.", author: "Khalid A.", role: "Engineer, Dubai", initials: "KA" },
+        t2: { quote: "As a Muslim, finding a halal buyout always felt like guesswork. OLFi showed me three certified Islamic options in seconds. That alone was worth it.", author: "Sara A.", role: "Teacher, Abu Dhabi", initials: "SA" },
+        t3: { quote: "I had three loans from different banks. OLFi consolidated them into one and knocked AED 850 off my monthly payment. Couldn't believe how easy it was.", author: "Omar M.", role: "Marketing Manager, Sharjah", initials: "OM" }
+    },
+    faq: {
+        headline: "FAQ",
+        q1: { q: "How does the AI recommendation work?", a: "Our algorithm assesses your total outstanding liabilities, calculates your Debt Burden Ratio (DBR), and cross-references it with live banking products to find optimizations. All without any human bias." },
+        q2: { q: "Is OLFi a bank?", a: "No, OLFi is an aggregator and intelligent orchestration platform. We map the market to find you the best refinance opportunities, but the actual loans are provided by UAE Central Bank regulated institutions." },
+        q3: { q: "Do you offer Islamic solutions?", a: "Yes. All our products are vetted to be fully Sharia-compliant, meaning we only match you with recognized Islamic finance options." },
+        q4: { q: "Does using OLFi impact my credit score?", a: "Checking your options on OLFi relies on soft-checks and algorithm estimates. Your AECB score will only undergo a hard-check once you officially submit your finalized application to the chosen bank." },
+        q5: { q: "Are there hidden fees?", a: "We do not charge you upfront fees to use the platform. We negotiate directly with the banks, acting as an acquisition partner." }
+    },
+    waitlist: {
+        label: "Waitlist open · Pre-launch",
+        headlinePart1: "Be first in line",
+        headlinePart2: "when",
+        headlinePart3: "OLFi goes live",
+        description: "Join the waitlist now and unlock priority onboarding, a free one-time AECB credit scoring, and AED 100 cashback on your first referral",
+        placeholder: "you@example.ae",
+        btnJoin: "Join waitlist →",
+        btnJoining: "Joining...",
+        success: "✓ You're on the list. See you at launch.",
+        spamNotice: "No spam. One email when sandbox opens. Your data stays yours.",
+        perk1: { icon: "★", label: "Priority onboarding" },
+        perk2: { icon: "✓", label: "Free AECB score" },
+        perk3: { icon: "﷼", label: "AED 100 referral" },
+        countdown: { days: "Days", hours: "Hours", mins: "Mins", secs: "Secs" },
+        launchTarget: "Target UAE sandbox launch · Q4 2026"
+    },
+    islamicQa: {
+        label: "Islamic Finance Standard",
+        headlineLine1: "Riba-free",
+        headlineLine2: "By design",
+        description: "Our compliance engine pre-filters every refinancing option before it reaches you. Only products structured under recognized Islamic finance frameworks are surfaced. Never exceptions, never manual toggles.",
+        verifiedLabel: "100% Verified",
+        verifiedSub: "UAE Central Bank compliant structures only",
+        youAsked: "You asked",
+        question: "\"Are there halal buyout options for my ADCB loan?\"",
+        resultLabel: "OLFi found 3 Sharia-compliant offers",
+        offer1: { bank: "Dubai Islamic Bank", product: "Islamic Personal Finance", rate: "4.49%" },
+        offer2: { bank: "Al Hilal Bank", product: "Halal Cash Loan", rate: "4.85%" },
+        offer3: { bank: "Abu Dhabi Islamic Bank", product: "Islamic Refinance", rate: "5.10%" }
+    },
+    problem: {
+        label: "The Current State",
+        headline: "The debt trap",
+        p1: { title: "Trapped in high-profit rates", desc: "Overpaying monthly because restructuring is too murky to navigate manually." },
+        p2: { title: "Paperwork paralyses", desc: "Endless physical visits, stamps, and manual verifications across multiple branches." },
+        p3: { title: "Opaque Halal options", desc: "True Sharia-compliant choices are buried deep in bank portfolios or require tedious screening." }
     }
 };

@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function WaitlistCTA() {
+    const { t } = useLanguage();
     // Basic countdown logic to Q4 2026 (Oct 1, 2026 for illustration)
     const [timeLeft, setTimeLeft] = useState({
         days: 0,
@@ -81,22 +83,22 @@ export function WaitlistCTA() {
                     <div className="relative z-10">
                         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-8 mx-auto">
                             <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
-                            <span className="text-xs font-bold tracking-wide uppercase text-white">Waitlist open · Pre-launch</span>
+                            <span className="text-xs font-bold tracking-wide uppercase text-white">{t('waitlist.label')}</span>
                         </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-base-beige mb-6">
-                            Be first in line <br className="hidden sm:block" />
-                            when <em className="text-brand-teal font-medium not-italic">OLFi goes live</em>
+                            {t('waitlist.headlinePart1')} <br className="hidden sm:block" />
+                            {t('waitlist.headlinePart2')} <em className="text-brand-teal font-medium not-italic">{t('waitlist.headlinePart3')}</em>
                         </h2>
 
                         <p className="text-lg text-white/80 max-w-2xl mx-auto mb-10">
-                            Join the waitlist now and unlock priority onboarding, a free one-time AECB credit scoring, and AED 100 cashback on your first referral
+                            {t('waitlist.description')}
                         </p>
 
                         {/* Form */}
                         {submitted ? (
                             <div className="max-w-md mx-auto p-6 bg-brand-teal/10 border border-brand-teal/30 rounded-2xl text-brand-teal font-medium mb-12">
-                                ✓ You're on the list. See you at launch.
+                                {t('waitlist.success')}
                             </div>
                         ) : (
                             <>
@@ -106,12 +108,12 @@ export function WaitlistCTA() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="you@example.ae"
+                                        placeholder={t('waitlist.placeholder')}
                                         className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
                                         disabled={loading}
                                     />
                                     <button type="submit" disabled={loading} className="cursor-pointer bg-transparent text-base-beige border border-white/10 font-bold px-8 py-4 rounded-xl hover:bg-white hover:text-base-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                                        {loading ? 'Joining...' : 'Join waitlist →'}
+                                        {loading ? t('waitlist.btnJoining') : t('waitlist.btnJoin')}
                                     </button>
                                 </form>
                                 {errorMsg && <p className="text-red-400 text-sm mb-6">{errorMsg}</p>}
@@ -119,16 +121,16 @@ export function WaitlistCTA() {
                         )}
                         {!submitted && (
                             <p className="text-xs font-mono text-white/50 tracking-widest uppercase mb-12">
-                                No spam. One email when sandbox opens. Your data stays yours.
+                                {t('waitlist.spamNotice')}
                             </p>
                         )}
 
                         {/* Perks */}
                         <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
                             {[
-                                { icon: '★', label: 'Priority onboarding' },
-                                { icon: '✓', label: 'Free AECB score' },
-                                { icon: '﷼', label: 'AED 100 referral' },
+                                { icon: t('waitlist.perk1.icon'), label: t('waitlist.perk1.label') },
+                                { icon: t('waitlist.perk2.icon'), label: t('waitlist.perk2.label') },
+                                { icon: t('waitlist.perk3.icon'), label: t('waitlist.perk3.label') },
                             ].map((perk, i) => (
                                 <div key={i} className="flex items-center gap-2 text-sm text-base-beige/70">
                                     <div className="w-6 h-6 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal text-[10px]">
@@ -143,10 +145,10 @@ export function WaitlistCTA() {
                         <div className="flex justify-center">
                             <div className="inline-flex border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
                                 {[
-                                    { value: timeLeft.days, label: 'Days' },
-                                    { value: timeLeft.hours, label: 'Hours' },
-                                    { value: timeLeft.mins, label: 'Mins' },
-                                    { value: timeLeft.secs, label: 'Secs' },
+                                    { value: timeLeft.days, label: t('waitlist.countdown.days') },
+                                    { value: timeLeft.hours, label: t('waitlist.countdown.hours') },
+                                    { value: timeLeft.mins, label: t('waitlist.countdown.mins') },
+                                    { value: timeLeft.secs, label: t('waitlist.countdown.secs') },
                                 ].map((unit, i) => (
                                     <div key={i} className="flex flex-col items-center justify-center px-6 py-4 border-r border-white/5 last:border-0 min-w-[90px]">
                                         <span className="text-3xl font-display font-bold text-base-beige mb-1">{unit.value.toString().padStart(2, '0')}</span>
@@ -156,7 +158,7 @@ export function WaitlistCTA() {
                             </div>
                         </div>
                         <p className="text-xs font-mono text-brand-teal/60 tracking-widest uppercase mt-6">
-                            Target UAE sandbox launch · Q4 2026
+                            {t('waitlist.launchTarget')}
                         </p>
                     </div>
                 </motion.div>
