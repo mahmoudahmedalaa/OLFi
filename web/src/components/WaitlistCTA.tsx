@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { supabase } from '@/utils/supabase';
+import { getSupabase } from '@/utils/supabase';
 
 export function WaitlistCTA() {
     const { t } = useLanguage();
@@ -51,7 +51,8 @@ export function WaitlistCTA() {
         setErrorMsg('');
 
         try {
-            // Uses static import to ensure Next.js statically replaces NEXT_PUBLIC_ variables during the Vercel build
+            // Uses static import but lazy initialization to prevent SSR build crashes
+            const supabase = getSupabase();
             const { error } = await supabase.from('waitlist').insert([{ email }]);
 
             if (error && error.code !== '23505') { // 23505 is unique violation, meaning already on list, which we can treat as success
