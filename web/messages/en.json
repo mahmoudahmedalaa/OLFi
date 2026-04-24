@@ -113,6 +113,7 @@
         "headlinePart2": "when",
         "headlinePart3": "OLFi goes live",
         "description": "Join the waitlist now and unlock priority onboarding, a free one-time AECB credit scoring, and AED 100 cashback on your first referral",
+        "namePlaceholder": "Full Name",
         "placeholder": "you@example.ae",
         "btnJoin": "Join waitlist →",
         "btnJoining": "Joining...",
