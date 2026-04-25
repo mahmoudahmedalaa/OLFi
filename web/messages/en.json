@@ -13,7 +13,7 @@
         "headlineLine1": "Lower your",
         "headlineLine2": "loan payments",
         "headlineLine3": "Refinance smarter",
-        "subheadline": "OLFi aggregates Islamic finance loan offers from across the UAE into a one-stop shop. We soft score you with an OLFi score and use a bias-free AI engine to construct the perfect refinancing recommendation, giving you transparency and financial freedom.",
+        "subheadline": "OLFi aggregates Islamic finance offers into a single hub. We soft-score your profile and use bias-free AI to build your precise refinancing plan, granting you total transparency and financial freedom.",
         "joinWaitlist": "Join the waitlist →"
     },
     "features": {
@@ -164,10 +164,10 @@
     "olfiScore": {
         "label": "Alternative Data Profiling",
         "headline": "Your true financial health score",
-        "bullet1": "Aggregates data from BNPL platforms, utilities, and daily spending.",
-        "bullet2": "Analyzes behavior beyond traditional banking limits.",
-        "bullet3": "Paints a comprehensive picture of your true financial capability.",
-        "bullet4": "Secures the best refinancing offers through bias-free AI.",
+        "bullet1": "Aggregates utility, BNPL, and daily spending data",
+        "bullet2": "Analyzes behavior beyond traditional banking limits",
+        "bullet3": "Builds a complete picture of your financial capability",
+        "bullet4": "Secures top refinancing offers using bias-free AI",
         "partnerLabel": "Powered by data from our extensive partner network",
         "olfiScoreText": "Score",
         "disclaimer": "* The OLFi Score is an alternative credit profiling tool and does not replace your official AECB credit report."

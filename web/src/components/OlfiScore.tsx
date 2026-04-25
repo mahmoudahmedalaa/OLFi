@@ -8,12 +8,12 @@ export function OlfiScore() {
     const t = useTranslations('olfiScore');
 
     const logos = [
-        { name: 'Tabby', url: 'https://www.google.com/s2/favicons?domain=tabby.ai&sz=256', size: 'w-20 h-20', pos: 'top-[15%] left-[5%] lg:left-[10%]', delay: 0, anim: { y: [-5, 15, -5], x: [0, 10, 0], rotate: [-2, 2, -2] } },
-        { name: 'Tamara', url: 'https://www.google.com/s2/favicons?domain=tamara.co&sz=256', size: 'w-24 h-24', pos: 'bottom-[20%] right-[5%] lg:right-[10%]', delay: 1, anim: { y: [0, 20, 0], x: [0, -15, 0], rotate: [3, -3, 3] } },
-        { name: 'DEWA', url: 'https://www.google.com/s2/favicons?domain=dewa.gov.ae&sz=256', size: 'w-16 h-16', pos: 'top-[10%] right-[15%] lg:right-[20%]', delay: 0.5, anim: { y: [0, -15, 0], scale: [1, 1.05, 1] } },
-        { name: 'Etisalat', url: 'https://www.google.com/s2/favicons?domain=etisalat.ae&sz=256', size: 'w-16 h-16', pos: 'bottom-[10%] left-[10%] lg:left-[20%]', delay: 2, anim: { y: [10, -5, 10], x: [-5, 5, -5] } },
-        { name: 'Careem', url: 'https://www.google.com/s2/favicons?domain=careem.com&sz=256', size: 'w-20 h-20', pos: 'top-[45%] right-[2%] lg:right-[5%]', delay: 1.5, anim: { x: [0, -10, 0], y: [-5, 5, -5] } },
-        { name: 'Noon', url: 'https://www.google.com/s2/favicons?domain=noon.com&sz=256', size: 'w-16 h-16', pos: 'top-[50%] left-[2%] lg:left-[5%]', delay: 2.5, anim: { x: [0, 10, 0], y: [5, -5, 5] } }
+        { name: 'Tabby', url: '/assets/partners/tabby.png', invert: true, size: 'w-24 h-24', pos: 'top-[15%] left-[5%] lg:left-[10%]', delay: 0, anim: { y: [-5, 15, -5], x: [0, 10, 0], rotate: [-2, 2, -2] } },
+        { name: 'Tamara', url: '/assets/partners/tamara.png', size: 'w-28 h-28', pos: 'bottom-[20%] right-[3%] lg:right-[8%]', delay: 1, anim: { y: [0, 20, 0], x: [0, -15, 0], rotate: [3, -3, 3] } },
+        { name: 'DEWA', url: '/assets/partners/dewa.png', size: 'w-20 h-20', pos: 'top-[10%] right-[15%] lg:right-[20%]', delay: 0.5, anim: { y: [0, -15, 0], scale: [1, 1.05, 1] } },
+        { name: 'Etisalat', url: '/assets/partners/etisalat.svg', invert: true, size: 'w-20 h-20', pos: 'bottom-[10%] left-[10%] lg:left-[20%]', delay: 2, anim: { y: [10, -5, 10], x: [-5, 5, -5] } },
+        { name: 'Careem', url: '/assets/partners/careem.svg', size: 'w-24 h-24', pos: 'top-[45%] right-[2%] lg:right-[5%]', delay: 1.5, anim: { x: [0, -10, 0], y: [-5, 5, -5] } },
+        { name: 'Noon', url: '/assets/partners/noon.svg', invert: true, size: 'w-20 h-20', pos: 'top-[50%] left-[2%] lg:left-[5%]', delay: 2.5, anim: { x: [0, 10, 0], y: [5, -5, 5] } }
     ];
 
     return (
@@ -121,7 +121,7 @@ export function OlfiScore() {
                                 animate={logo.anim}
                                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: logo.delay }}
                             >
-                                <img src={logo.url} alt={logo.name} className="w-[80%] h-[80%] object-contain" />
+                                <img src={logo.url} alt={logo.name} className={`w-[85%] h-[85%] object-contain ${(logo as any).invert ? 'brightness-0 invert' : ''}`} />
                             </motion.div>
                         ))}
 
