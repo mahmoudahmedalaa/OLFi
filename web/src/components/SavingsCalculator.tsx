@@ -112,7 +112,7 @@ export function SavingsCalculator() {
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                            className="text-5xl lg:text-7xl font-bold tracking-tighter text-brand-teal mb-4"
+                            className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#4FD1C5] mb-4"
                         >
                             {formatCurrency(calculateSavings())}
                         </motion.div>

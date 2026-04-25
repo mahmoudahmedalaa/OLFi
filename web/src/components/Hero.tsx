@@ -57,7 +57,7 @@ export function Hero() {
 
                         <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1] text-base-beige">
                             {t('headlineLine1')} <br className="hidden sm:block" /> {t('headlineLine2')} <br />
-                            <em className="text-brand-teal italic font-medium">{t('headlineLine3')}</em>
+                            <em className="text-[#4FD1C5] italic font-medium">{t('headlineLine3')}</em>
                         </motion.h1>
 
                         <motion.p variants={fadeUp} className="text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">

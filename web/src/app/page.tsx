@@ -3,6 +3,7 @@ import { Hero } from '@/components/Hero';
 import { ProblemSection } from '@/components/ProblemSection';
 import { SavingsCalculator } from '@/components/SavingsCalculator';
 import { FeaturesAccordion } from '@/components/FeaturesAccordion';
+import { OlfiScore } from '@/components/OlfiScore';
 import { IslamicFinanceQA } from '@/components/IslamicFinanceQA';
 import { ComparisonTable } from '@/components/ComparisonTable';
 import { BetaTestersStories } from '@/components/BetaTestersStories';
@@ -19,6 +20,8 @@ export default function Home() {
       <SavingsCalculator />
       <FeaturesAccordion />
       <IslamicFinanceQA />
+
+      <OlfiScore />
       <ComparisonTable />
       <BetaTestersStories />
       <FAQAccordion />

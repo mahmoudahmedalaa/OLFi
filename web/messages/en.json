@@ -160,5 +160,16 @@
         "p2_desc": "Endless physical visits, stamps, and manual verifications across multiple branches.",
         "p3_title": "Opaque Halal options",
         "p3_desc": "True Sharia-compliant choices are buried deep in bank portfolios or require tedious screening."
+    },
+    "olfiScore": {
+        "label": "Alternative Data Profiling",
+        "headline": "Your true financial health score",
+        "bullet1": "Aggregates data from BNPL platforms, utilities, and daily spending.",
+        "bullet2": "Analyzes behavior beyond traditional banking limits.",
+        "bullet3": "Paints a comprehensive picture of your true financial capability.",
+        "bullet4": "Secures the best refinancing offers through bias-free AI.",
+        "partnerLabel": "Powered by data from our extensive partner network",
+        "olfiScoreText": "Score",
+        "disclaimer": "* The OLFi Score is an alternative credit profiling tool and does not replace your official AECB credit report."
     }
 }
