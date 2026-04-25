@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
@@ -41,33 +41,53 @@ export function FeaturesAccordion() {
 
     const [activeFeature, setActiveFeature] = useState(featuresList[0]);
 
+    const sectionRef = useRef<HTMLElement>(null);
+    const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
+
     return (
-        <section id="features" className="py-24 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
+        <section ref={sectionRef} id="features" className="py-24 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
             <div className="container mx-auto px-6 max-w-7xl">
                 {/* Renalta-style Subtle Box Wrapper */}
-                <div className="border border-base-dark/10 rounded-3xl overflow-hidden bg-base-beige grid lg:grid-cols-2 shadow-sm">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+                    className="border border-base-dark/10 rounded-3xl overflow-hidden bg-base-beige grid lg:grid-cols-2 shadow-sm"
+                >
 
                     {/* Left Column: Text & Tabs */}
                     <div className="p-8 lg:p-16 border-b lg:border-b-0 lg:border-r border-base-dark/10 flex flex-col justify-center gap-12">
-                        <div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : {}}
+                            transition={{ delay: 0.2, duration: 0.6 }}
+                        >
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter leading-tight mb-4">
                                 {t('headline')}
                             </h2>
                             <p className="text-lg text-base-dark/60 max-w-md">
                                 {t('subheadline')}
                             </p>
-                        </div>
+                        </motion.div>
 
                         <div className="flex flex-col gap-3">
                             {featuresList.map((feature) => (
                                 <button
                                     key={feature.id}
                                     onClick={() => setActiveFeature(feature)}
-                                    className={`text-left p-5 transition-all duration-300 rounded-xl border flex flex-col gap-1 ${activeFeature.id === feature.id
+                                    className={`text-left p-5 transition-all duration-300 rounded-xl border flex flex-col gap-1 relative overflow-hidden ${activeFeature.id === feature.id
                                         ? 'bg-white border-base-dark/10 shadow-sm'
                                         : 'bg-transparent border-transparent hover:border-base-dark/5'
                                         }`}
                                 >
+                                    {/* Active indicator bar */}
+                                    {activeFeature.id === feature.id && (
+                                        <motion.div
+                                            layoutId="activeTabIndicator"
+                                            className="absolute left-0 top-0 bottom-0 w-[3px] bg-brand-teal rounded-full"
+                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        />
+                                    )}
                                     <div className="flex items-center gap-3">
                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${activeFeature.id === feature.id ? 'bg-brand-teal text-white' : 'bg-base-dark/5 text-base-dark/60'}`}>
                                             {feature.num}
@@ -126,7 +146,7 @@ export function FeaturesAccordion() {
                         </motion.div>
                     </div>
 
-                </div>
+                </motion.div>
             </div>
         </section>
     );

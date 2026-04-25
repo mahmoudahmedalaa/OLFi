@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { getSupabase } from '@/utils/supabase';
 
@@ -138,20 +138,36 @@ export function WaitlistCTA() {
                         )}
 
                         {/* Perks */}
-                        <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="show"
+                            viewport={{ once: true }}
+                            variants={{
+                                hidden: {},
+                                show: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } }
+                            }}
+                            className="flex flex-wrap items-center justify-center gap-6 mb-12"
+                        >
                             {[
                                 { icon: t('perk1_icon'), label: t('perk1_label') },
                                 { icon: t('perk2_icon'), label: t('perk2_label') },
                                 { icon: t('perk3_icon'), label: t('perk3_label') },
                             ].map((perk, i) => (
-                                <div key={i} className="flex items-center gap-2 text-sm text-base-beige/70">
+                                <motion.div
+                                    key={i}
+                                    variants={{
+                                        hidden: { opacity: 0, y: 10 },
+                                        show: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                                    }}
+                                    className="flex items-center gap-2 text-sm text-base-beige/70"
+                                >
                                     <div className="w-6 h-6 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal text-[10px]">
                                         {perk.icon}
                                     </div>
                                     <span>{perk.label}</span>
-                                </div>
+                                </motion.div>
                             ))}
-                        </div>
+                        </motion.div>
 
                         {/* Countdown */}
                         <div className="flex justify-center">
@@ -163,7 +179,20 @@ export function WaitlistCTA() {
                                     { value: timeLeft.secs, label: t('countdown_secs') },
                                 ].map((unit, i) => (
                                     <div key={i} className="flex flex-col items-center justify-center px-6 py-4 border-r border-white/5 last:border-0 min-w-[90px]">
-                                        <span className="text-3xl font-display font-bold text-base-beige mb-1">{unit.value.toString().padStart(2, '0')}</span>
+                                        <div className="relative h-[36px] overflow-hidden">
+                                            <AnimatePresence mode="popLayout">
+                                                <motion.span
+                                                    key={unit.value}
+                                                    initial={{ y: -36, opacity: 0 }}
+                                                    animate={{ y: 0, opacity: 1 }}
+                                                    exit={{ y: 36, opacity: 0 }}
+                                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                                    className="text-3xl font-display font-bold text-base-beige block"
+                                                >
+                                                    {unit.value.toString().padStart(2, '0')}
+                                                </motion.span>
+                                            </AnimatePresence>
+                                        </div>
                                         <span className="text-[10px] font-mono text-white/50 tracking-[0.15em] uppercase">{unit.label}</span>
                                     </div>
                                 ))}

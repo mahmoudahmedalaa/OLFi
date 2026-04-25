@@ -4,17 +4,53 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
+const brands = [
+    { name: 'Tabby', accent: '#3CFFD0', short: 'TB' },
+    { name: 'Tamara', accent: '#FF6B9D', short: 'TM' },
+    { name: 'DEWA', accent: '#00A4EF', short: 'DW' },
+    { name: 'Etisalat', accent: '#FFD100', short: 'ET' },
+    { name: 'Careem', accent: '#4CAF50', short: 'CR' },
+    { name: 'Noon', accent: '#FFE134', short: 'NN' },
+    { name: 'ADCB', accent: '#C6A962', short: 'AD' },
+    { name: 'Emirates NBD', accent: '#E8584F', short: 'EN' },
+    { name: 'Wio', accent: '#7B61FF', short: 'WI' },
+    { name: 'Talabat', accent: '#FF5A00', short: 'TL' },
+];
+
+// Compute orbital positions in a circle around center
+function getOrbitalStyle(index: number, total: number, radius: number) {
+    const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    return {
+        left: `calc(50% + ${x}px - 40px)`,
+        top: `calc(50% + ${y}px - 20px)`,
+    };
+}
+
+// Per-chip floating animation — each chip gets a unique organic drift
+function getChipAnimation(index: number) {
+    const patterns = [
+        { y: [-6, 10, -6], x: [0, 8, 0], rotate: [-2, 2, -2] },
+        { y: [0, 14, 0], x: [0, -10, 0], rotate: [3, -3, 3] },
+        { y: [0, -12, 0], x: [5, -5, 5], scale: [1, 1.04, 1] },
+        { y: [8, -6, 8], x: [-6, 6, -6], rotate: [-1, 1, -1] },
+        { y: [-4, 8, -4], x: [0, -8, 0], rotate: [2, -2, 2] },
+        { y: [6, -8, 6], x: [4, -4, 4], scale: [1, 1.03, 1] },
+        { y: [0, 10, 0], x: [-8, 0, -8], rotate: [-3, 3, -3] },
+        { y: [-8, 6, -8], x: [6, 0, 6], rotate: [1, -1, 1] },
+        { y: [4, -10, 4], x: [0, 6, 0], scale: [1, 1.05, 1] },
+        { y: [-6, 12, -6], x: [-4, 4, -4], rotate: [2, -2, 2] },
+    ];
+    return patterns[index % patterns.length];
+}
+
 export function OlfiScore() {
     const t = useTranslations('olfiScore');
 
-    const logos = [
-        { name: 'Tabby', url: '/assets/partners/tabby.svg', size: 'w-24 h-24', pos: 'top-[15%] left-[5%] lg:left-[10%]', delay: 0, anim: { y: [-5, 15, -5], x: [0, 10, 0], rotate: [-2, 2, -2] } },
-        { name: 'Tamara', url: '/assets/partners/tamara.svg', size: 'w-28 h-28', pos: 'bottom-[20%] right-[3%] lg:right-[8%]', delay: 1, anim: { y: [0, 20, 0], x: [0, -15, 0], rotate: [3, -3, 3] } },
-        { name: 'DEWA', url: '/assets/partners/dewa.png', size: 'w-20 h-20', pos: 'top-[10%] right-[15%] lg:right-[20%]', delay: 0.5, anim: { y: [0, -15, 0], scale: [1, 1.05, 1] } },
-        { name: 'Etisalat', url: '/assets/partners/etisalat.png', size: 'w-20 h-20', pos: 'bottom-[10%] left-[10%] lg:left-[20%]', delay: 2, anim: { y: [10, -5, 10], x: [-5, 5, -5] } },
-        { name: 'Careem', url: '/assets/partners/careem.png', size: 'w-24 h-24', pos: 'top-[45%] right-[2%] lg:right-[5%]', delay: 1.5, anim: { x: [0, -10, 0], y: [-5, 5, -5] } },
-        { name: 'Noon', url: '/assets/partners/noon.svg', invert: true, size: 'w-20 h-20', pos: 'top-[50%] left-[2%] lg:left-[5%]', delay: 2.5, anim: { x: [0, 10, 0], y: [5, -5, 5] } }
-    ];
+    // Responsive radii: tighter on mobile, wider on large screens
+    const orbitRadiusDesktop = 220;
+    const orbitRadiusMobile = 160;
 
     return (
         <section className="py-24 bg-base-dark border-t border-white/5 text-base-beige relative font-sans overflow-hidden">
@@ -113,17 +149,89 @@ export function OlfiScore() {
                             />
                         </motion.div>
 
-                        {/* Orbiting / Scattered Logo Nodes */}
-                        {logos.map((logo, i) => (
-                            <motion.div
-                                key={i}
-                                className={`absolute ${logo.pos} ${logo.size} rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-3xl flex items-center justify-center shadow-2xl z-30 overflow-hidden p-4`}
-                                animate={logo.anim}
-                                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: logo.delay }}
-                            >
-                                <img src={logo.url} alt={logo.name} className={`w-[85%] h-[85%] object-contain ${(logo as any).invert ? 'brightness-0 invert' : ''}`} />
-                            </motion.div>
-                        ))}
+                        {/* Orbiting Glassmorphic Brand Chips */}
+                        {brands.map((brand, i) => {
+                            const desktopPos = getOrbitalStyle(i, brands.length, orbitRadiusDesktop);
+                            const mobilePos = getOrbitalStyle(i, brands.length, orbitRadiusMobile);
+                            const chipAnim = getChipAnimation(i);
+
+                            return (
+                                <motion.div
+                                    key={brand.name}
+                                    className="absolute z-30 hidden lg:flex"
+                                    style={desktopPos}
+                                    animate={chipAnim}
+                                    transition={{ duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                                >
+                                    <div
+                                        className="relative px-4 py-2 rounded-full bg-white/[0.06] border backdrop-blur-2xl flex items-center gap-2.5 cursor-default group transition-all duration-300 hover:bg-white/[0.12]"
+                                        style={{
+                                            borderColor: `${brand.accent}25`,
+                                            boxShadow: `0 0 20px ${brand.accent}10, inset 0 1px 0 rgba(255,255,255,0.06)`,
+                                        }}
+                                    >
+                                        {/* Accent dot */}
+                                        <div
+                                            className="w-2 h-2 rounded-full shrink-0"
+                                            style={{
+                                                backgroundColor: brand.accent,
+                                                boxShadow: `0 0 8px ${brand.accent}80`,
+                                            }}
+                                        />
+                                        {/* Brand name */}
+                                        <span
+                                            className="text-[11px] font-mono font-bold tracking-[0.15em] uppercase whitespace-nowrap"
+                                            style={{ color: brand.accent }}
+                                        >
+                                            {brand.name}
+                                        </span>
+                                        {/* Subtle hover glow */}
+                                        <div
+                                            className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                                            style={{ boxShadow: `0 0 30px ${brand.accent}20` }}
+                                        />
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+
+                        {/* Mobile: Show brand chips in a compact arranged layout */}
+                        {brands.map((brand, i) => {
+                            const mobilePos = getOrbitalStyle(i, brands.length, orbitRadiusMobile);
+                            const chipAnim = getChipAnimation(i);
+
+                            return (
+                                <motion.div
+                                    key={`m-${brand.name}`}
+                                    className="absolute z-30 flex lg:hidden"
+                                    style={mobilePos}
+                                    animate={chipAnim}
+                                    transition={{ duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+                                >
+                                    <div
+                                        className="relative px-2.5 py-1.5 rounded-full bg-white/[0.06] border backdrop-blur-2xl flex items-center gap-1.5"
+                                        style={{
+                                            borderColor: `${brand.accent}25`,
+                                            boxShadow: `0 0 12px ${brand.accent}10, inset 0 1px 0 rgba(255,255,255,0.06)`,
+                                        }}
+                                    >
+                                        <div
+                                            className="w-1.5 h-1.5 rounded-full shrink-0"
+                                            style={{
+                                                backgroundColor: brand.accent,
+                                                boxShadow: `0 0 6px ${brand.accent}80`,
+                                            }}
+                                        />
+                                        <span
+                                            className="text-[9px] font-mono font-bold tracking-[0.12em] uppercase whitespace-nowrap"
+                                            style={{ color: brand.accent }}
+                                        >
+                                            {brand.short}
+                                        </span>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
 
                         {/* Connecting Particles (Simulation of data flow) */}
                         <svg className="absolute inset-0 w-full h-full z-0 opacity-20 pointer-events-none">
