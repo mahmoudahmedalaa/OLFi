@@ -224,7 +224,7 @@ export function getHealthScore(dtiRatio: number): HealthScore {
     if (dtiRatio < 20) {
         return {
             score: 'excellent',
-            color: '#10B981', // emerald
+            color: '#011819', // brand teal
             label: 'Excellent',
             description: 'Your debt level is very manageable. You have strong financial health.',
             percentage: Math.max(90, 100 - dtiRatio),

@@ -59,8 +59,8 @@ const FEATURES: Record<string, FeatureConfig> = {
             },
             {
                 icon: 'flash-outline',
-                iconColor: '#10B981',
-                iconBg: '#10B98120',
+                iconColor: '#011819',
+                iconBg: '#01181920',
                 title: 'Instant Identity',
                 description: 'Your verified identity is securely stored. Apply to any bank with a single tap — no more uploading documents repeatedly.',
             },
@@ -68,15 +68,15 @@ const FEATURES: Record<string, FeatureConfig> = {
     },
     aecb_sync: {
         key: 'aecb_sync',
-        headerGradient: ['#059669', '#10B981'],
+        headerGradient: ['#0A2525', '#011819'],
         headerIcon: 'sync-outline',
         headerTitle: 'Bank Sync',
         headerSubtitle: 'Auto-Import Your Loans',
         slides: [
             {
                 icon: 'link-outline',
-                iconColor: '#10B981',
-                iconBg: '#10B98120',
+                iconColor: '#011819',
+                iconBg: '#01181920',
                 title: 'Connect Your Accounts',
                 description: 'Securely link your UAE bank accounts using Open Banking APIs. Your credentials are never stored — we use read-only access.',
             },
@@ -119,8 +119,8 @@ const FEATURES: Record<string, FeatureConfig> = {
             },
             {
                 icon: 'rocket-outline',
-                iconColor: '#10B981',
-                iconBg: '#10B98120',
+                iconColor: '#011819',
+                iconBg: '#01181920',
                 title: 'Instant Pre-Approval',
                 description: 'With your verified score, banks can pre-approve you instantly. Know your maximum loan amount and best rate before you apply.',
             },
@@ -454,7 +454,7 @@ export function ComingSoonCards() {
         {
             key: 'aecb_sync',
             icon: 'sync-outline',
-            gradient: ['#059669', '#10B981'] as [string, string],
+            gradient: ['#0A2525', '#011819'] as [string, string],
             title: 'Bank Sync',
             subtitle: 'Auto-import your loans',
         },

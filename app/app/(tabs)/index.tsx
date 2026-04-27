@@ -77,7 +77,7 @@ export default function DashboardScreen() {
       </GlassHeader>
 
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 32, paddingTop: 16 }}
+        contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -298,7 +298,7 @@ export default function DashboardScreen() {
                       marginBottom: 4,
                     }}
                   >
-                    Compare BuyOut Offers
+                    Compare OLFi Offers
                   </Text>
                   <Text
                     style={{

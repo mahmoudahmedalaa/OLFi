@@ -111,7 +111,7 @@ export default function SuccessModal({
                     >
                         {/* Gradient Header */}
                         <LinearGradient
-                            colors={['#10B981', '#059669']}
+                            colors={['#011819', '#0A2525']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={{
@@ -143,7 +143,7 @@ export default function SuccessModal({
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Ionicons name="checkmark" size={36} color="#10B981" />
+                                    <Ionicons name="checkmark" size={36} color="#011819" />
                                 </View>
                             </Animated.View>
 
@@ -226,7 +226,7 @@ export default function SuccessModal({
                                 activeOpacity={0.8}
                             >
                                 <LinearGradient
-                                    colors={['#10B981', '#14B8A6']}
+                                    colors={['#011819', '#0A2525']}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 0 }}
                                     style={{

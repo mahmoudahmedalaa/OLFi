@@ -23,7 +23,7 @@ export default function GlassHeader({ children, style }: GlassHeaderProps) {
                     tint={isDark ? "dark" : "light"}
                     style={[
                         StyleSheet.absoluteFill,
-                        { backgroundColor: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.4)' }
+                        { backgroundColor: isDark ? 'rgba(1, 24, 25, 0.6)' : 'rgba(225, 222, 209, 0.6)' }
                     ]}
                 />
             )}

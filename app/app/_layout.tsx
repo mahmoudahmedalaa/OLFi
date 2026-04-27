@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold } from '@expo-google-fonts/inter';
 
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
@@ -27,35 +28,35 @@ SplashScreen.preventAutoHideAsync();
 const BIOMETRIC_KEY = '@buyout_biometric_lock';
 
 // Custom navigation themes
-const BuyOutDarkTheme = {
+const OLFiDarkTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: '#10B981',
-    background: '#0F172A',
+    primary: '#011819',
+    background: '#011819',
     card: '#1E293B',
     text: '#F8FAFC',
     border: '#334155',
-    notification: '#10B981',
+    notification: '#011819',
   },
 };
 
-const BuyOutLightTheme = {
+const OLFiLightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
     primary: '#059669',
     background: '#FFFFFF',
     card: '#F8FAFC',
-    text: '#0F172A',
+    text: '#011819',
     border: '#E2E8F0',
     notification: '#059669',
   },
 };
 
 // ─── Auth Gate ────────────────────────────────────────────────────────
-// Redirects unauthenticated users to login, authenticated users to tabs
-// First-time users see onboarding before login
+// SIMPLIFIED: Only manages onboarding + auth state. No KYC/OB routing.
+// Post-auth flow (KYC → Biometric) is handled by screen-to-screen navigation.
 function useProtectedRoute(onboardingDone: boolean | null) {
   const { user, loading } = useAuth();
   const segments = useSegments();
@@ -68,14 +69,19 @@ function useProtectedRoute(onboardingDone: boolean | null) {
     const inOnboarding = segments[0] === ('onboarding' as any);
 
     if (!onboardingDone && !inOnboarding) {
-      // First time → show onboarding (even if signed in)
+      // First time → show onboarding
       router.replace('/onboarding' as any);
     } else if (onboardingDone && !user && !inAuthGroup && !inOnboarding) {
       // Onboarding done, not signed in → go to Login
       router.replace('/(auth)/login');
     } else if (onboardingDone && user && (inAuthGroup || inOnboarding)) {
-      // Onboarding done + signed in but still on auth/onboarding → go to Dashboard
-      router.replace('/(tabs)');
+      // Signed in and still in auth/onboarding → go to Dashboard
+      // BUT: only if not in a post-auth setup screen (KYC, biometric-setup)
+      const inKyc = segments.length > 1 && segments[1] === 'kyc';
+      const inBiometricSetup = segments.length > 1 && segments[1] === 'biometric-setup';
+      if (!inKyc && !inBiometricSetup) {
+        router.replace('/(tabs)');
+      }
     }
   }, [user, loading, segments, onboardingDone, router]);
 }
@@ -97,22 +103,18 @@ function RootLayoutInner() {
 
     const checkOnboarding = async () => {
       try {
-        // If user is logged in, check their per-user key first
         if (user) {
-          const userVal = await AsyncStorage.getItem(onboardingKey);
-          if (userVal === 'true') {
-            setOnboardingDone(true);
-            return;
+          // If we have a user, check their specific key first
+          let userVal = await AsyncStorage.getItem(onboardingKey);
+          if (userVal !== 'true') {
+            // Check device fallback — if device is true, user doesn't need to re-onboard
+            const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
+            if (deviceVal === 'true') {
+              userVal = 'true';
+              await AsyncStorage.setItem(onboardingKey, 'true');
+            }
           }
-          // Migrate device-level flag to per-user if it exists
-          const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
-          if (deviceVal === 'true') {
-            await AsyncStorage.setItem(onboardingKey, 'true');
-            setOnboardingDone(true);
-            return;
-          }
-          // New user on this device — needs onboarding
-          setOnboardingDone(false);
+          setOnboardingDone(userVal === 'true');
         } else {
           // No user — check device-level flag for pre-login onboarding
           const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
@@ -152,7 +154,7 @@ function RootLayoutInner() {
 
   const attemptBiometricUnlock = useCallback(async () => {
     const result = await LocalAuthentication.authenticateAsync({
-      promptMessage: 'Unlock BuyOut',
+      promptMessage: 'Unlock OLFi',
       fallbackLabel: 'Use Passcode',
     });
     if (result.success) {
@@ -160,7 +162,6 @@ function RootLayoutInner() {
     }
   }, []);
 
-  // Auto-prompt on lock
   useEffect(() => {
     if (biometricLocked === true) {
       attemptBiometricUnlock();
@@ -182,7 +183,7 @@ function RootLayoutInner() {
   return (
     <GluestackUIProvider mode={theme.isDark ? 'dark' : 'light'}>
       <NavThemeProvider
-        value={theme.isDark ? BuyOutDarkTheme : BuyOutLightTheme}
+        value={theme.isDark ? OLFiDarkTheme : OLFiLightTheme}
       >
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -251,7 +252,7 @@ function RootLayoutInner() {
             }}
           >
             <LinearGradient
-              colors={theme.isDark ? ['#0F172A', '#1E293B'] : ['#FFFFFF', '#F0FDF4']}
+              colors={theme.isDark ? ['#011819', '#0A2525'] : ['#E1DED1', '#EDE9DD']}
               style={{
                 flex: 1,
                 alignItems: 'center',
@@ -260,7 +261,7 @@ function RootLayoutInner() {
               }}
             >
               <Image
-                source={require('@/assets/images/icon.png')}
+                source={require('@/assets/images/olfi-icon.png')}
                 style={{
                   width: 80,
                   height: 80,
@@ -276,7 +277,7 @@ function RootLayoutInner() {
                   marginBottom: 8,
                 }}
               >
-                BuyOut is Locked
+                OLFi is Locked
               </Text>
               <Text
                 style={{
@@ -298,14 +299,14 @@ function RootLayoutInner() {
                   marginBottom: 32,
                 }}
               >
-                your debt, rewritten
+                Refinance smarter
               </Text>
               <TouchableOpacity
                 onPress={attemptBiometricUnlock}
                 activeOpacity={0.8}
               >
                 <LinearGradient
-                  colors={['#14B8A6', '#10B981']}
+                  colors={['#011819', '#0A2525']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={{
@@ -332,6 +333,18 @@ function RootLayoutInner() {
 }
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+  });
+
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider>

@@ -272,7 +272,7 @@ export default function LoansScreen() {
                         keyExtractor={(item) => item.id}
                         contentContainerStyle={{
                             paddingHorizontal: 20,
-                            paddingBottom: 32,
+                            paddingBottom: 100,
                             flexGrow: 1,
                         }}
                         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}

@@ -52,11 +52,11 @@ const darkTheme: Theme = {
         textDisabled: Colors.text.dark.disabled,
     },
     gradients: {
-        card: ['#1E293B', '#0F172A'],
-        cardElevated: ['#334155', '#1E293B'],
-        premium: ['#10B981', '#3B82F6'],
-        brand: ['#10B981', '#14B8A6'],
-        brandDark: ['#059669', '#0D9488'],
+        card: ['#0A2525', '#011819'],
+        cardElevated: ['#133030', '#0A2525'],
+        premium: ['#011819', '#011819'],
+        brand: ['#011819', '#0A2525'],
+        brandDark: ['#0A2525', '#234E52'],
     },
     isDark: true,
 };
@@ -74,11 +74,11 @@ const lightTheme: Theme = {
         textDisabled: Colors.text.light.disabled,
     },
     gradients: {
-        card: ['#F8FAFC', '#FFFFFF'],
-        cardElevated: ['#F1F5F9', '#F8FAFC'],
-        premium: ['#059669', '#0EA5E9'],
-        brand: ['#10B981', '#14B8A6'],
-        brandDark: ['#059669', '#0D9488'],
+        card: ['#EDE9DD', '#E1DED1'],
+        cardElevated: ['#D5D0C4', '#EDE9DD'],
+        premium: ['#0A2525', '#011819'],
+        brand: ['#011819', '#0A2525'],
+        brandDark: ['#0A2525', '#234E52'],
     },
     isDark: false,
 };
@@ -88,13 +88,13 @@ const STORAGE_KEY = '@buyout_theme';
 
 const ThemeContext = createContext<ThemeContextType>({
     theme: darkTheme,
-    mode: 'system',
+    mode: 'dark',
     setMode: () => { },
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const systemScheme = useSystemColorScheme();
-    const [mode, setModeState] = useState<ThemeMode>('system');
+    const [mode, setModeState] = useState<ThemeMode>('dark');
     const [loaded, setLoaded] = useState(false);
 
     // Load persisted preference on mount

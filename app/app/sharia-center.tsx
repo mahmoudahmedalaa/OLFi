@@ -95,7 +95,7 @@ export default function ShariaCenterScreen() {
                         Financial clarity, without compromise.
                     </Text>
                     <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)', lineHeight: 22 }}>
-                        Learn how BuyOut structures its refinancing offers to be 100% compliant with Islamic finance principles.
+                        Learn how OLFi structures its refinancing offers to be 100% compliant with Islamic finance principles.
                     </Text>
                 </LinearGradient>
 

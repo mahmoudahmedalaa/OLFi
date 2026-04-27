@@ -80,6 +80,31 @@ export default function ProfileScreen() {
         ]);
     };
 
+    const handleDeleteAccount = () => {
+        hapticWarning();
+        Alert.alert(
+            'Delete Account',
+            'Are you sure you want to permanently delete your account? This action cannot be undone and all your data will be cleared.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            const { error } = await supabase.rpc('delete_user_account');
+                            if (error) throw error;
+                            await signOut();
+                            Alert.alert('Account Deleted', 'Your account has been completely removed.');
+                        } catch (e: any) {
+                            Alert.alert('Error', e.message);
+                        }
+                    },
+                },
+            ]
+        );
+    };
+
     const displayName = (profile?.first_name && profile?.last_name)
         ? `${profile.first_name} ${profile.last_name}`
         : profile?.full_name || user?.email?.split('@')[0] || 'User';
@@ -107,7 +132,7 @@ export default function ProfileScreen() {
             </GlassHeader>
 
             <ScrollView
-                contentContainerStyle={{ paddingBottom: 32, paddingTop: 16 }}
+                contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl
@@ -274,8 +299,8 @@ export default function ProfileScreen() {
                     <MenuSection
                         title="SUPPORT"
                         items={[
-                            { icon: 'help-circle-outline', label: 'Help & FAQ', onPress: () => Alert.alert('Help & FAQ', 'Visit buyout.ae/help for answers to common questions.') },
-                            { icon: 'chatbubble-outline', label: 'Contact Us', onPress: () => Alert.alert('Contact Us', 'Email us at support@buyout.ae') },
+                            { icon: 'help-circle-outline', label: 'Help & FAQ', onPress: () => Alert.alert('Help & FAQ', 'Visit olfi.ae/help for answers to common questions.') },
+                            { icon: 'chatbubble-outline', label: 'Contact Us', onPress: () => Alert.alert('Contact Us', 'Email us at support@olfi.ae') },
                             { icon: 'document-text-outline', label: 'Privacy Policy', onPress: () => router.push('/privacy-policy' as any) },
                         ]}
                         theme={theme}
@@ -322,6 +347,34 @@ export default function ProfileScreen() {
                             Sign Out
                         </Text>
                     </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={handleDeleteAccount}
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 8,
+                            padding: 16,
+                            marginTop: 16,
+                            backgroundColor: 'transparent',
+                            borderRadius: BorderRadius.md,
+                            borderWidth: 1,
+                            borderColor: `${Colors.error}40`,
+                        }}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="trash-outline" size={20} color={theme.colors.textSecondary} />
+                        <Text
+                            style={{
+                                fontSize: 15,
+                                fontWeight: '600',
+                                color: theme.colors.textSecondary,
+                            }}
+                        >
+                            Delete Account
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
                 {/* Version */}
@@ -333,7 +386,7 @@ export default function ProfileScreen() {
                         marginTop: 24,
                     }}
                 >
-                    BuyOut v1.0.0
+                    OLFi v1.0.0
                 </Text>
             </ScrollView>
         </View>

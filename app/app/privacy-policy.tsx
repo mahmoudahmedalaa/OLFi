@@ -77,14 +77,14 @@ We never sell your personal data to third parties for marketing purposes.`,
 • **Withdraw Consent**: Opt out of data processing at any time
 • **Object**: Challenge automated decision-making
 
-To exercise these rights, contact us at privacy@buyout.ae`,
+To exercise these rights, contact us at privacy@olfi.ae`,
     },
     {
         title: 'Contact Information',
         icon: 'mail-outline',
-        content: `**Data Controller**: BuyOut Technologies LLC
-**Email**: privacy@buyout.ae
-**General Support**: support@buyout.ae
+        content: `**Data Controller**: OLFi Technologies LLC
+**Email**: privacy@olfi.ae
+**General Support**: support@olfi.ae
 **Address**: Dubai, United Arab Emirates
 
 This policy was last updated on February 2025.`,

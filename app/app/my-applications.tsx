@@ -196,7 +196,7 @@ export default function MyApplicationsScreen() {
                             style={{ marginTop: 24 }}
                         >
                             <LinearGradient
-                                colors={['#10B981', '#14B8A6']}
+                                colors={['#011819', '#0A2525']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
                                 style={{

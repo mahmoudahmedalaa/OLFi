@@ -263,7 +263,7 @@ export default function LoanDetailScreen() {
                             icon="cash-outline"
                             label="Monthly EMI"
                             value={formatAED(loan.monthly_emi)}
-                            color="#10B981"
+                            color="#011819"
                             theme={theme}
                         />
                         <StatCard

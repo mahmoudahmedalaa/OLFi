@@ -56,7 +56,7 @@ export default function LoginScreen() {
             if (!emailToUse || !passwordToUse) return;
 
             const result = await LocalAuthentication.authenticateAsync({
-                promptMessage: 'Log in to BuyOut',
+                promptMessage: 'Log in to OLFi',
                 fallbackLabel: 'Use Passcode',
             });
 
@@ -67,7 +67,7 @@ export default function LoginScreen() {
                 // IF successful, _layout will transition automatically
             }
         } catch (e: any) {
-            console.log(e);
+            // Silently caught as UI propagates errors independently
         } finally {
             setLoading(false);
         }
@@ -92,7 +92,7 @@ export default function LoginScreen() {
                     }
                 }
             } catch (e) {
-                console.log('Biometric check failed', e);
+                // Biometrics omitted safely for production
             }
         };
         checkBiometricAvailability();
@@ -116,7 +116,7 @@ export default function LoginScreen() {
                     {/* Logo & Welcome */}
                     <View style={{ alignItems: 'center', marginTop: 48, marginBottom: 40 }}>
                         <Image
-                            source={require('@/assets/images/icon.png')}
+                            source={require('@/assets/images/olfi-icon.png')}
                             style={{
                                 width: 72,
                                 height: 72,
@@ -133,18 +133,6 @@ export default function LoginScreen() {
                             }}
                         >
                             Welcome back
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 14,
-                                fontWeight: '500',
-                                color: Colors.brand.teal,
-                                textAlign: 'center',
-                                fontStyle: 'italic',
-                                letterSpacing: 0.3,
-                            }}
-                        >
-                            your debt, rewritten
                         </Text>
                     </View>
 

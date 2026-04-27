@@ -483,7 +483,7 @@ export default function OfferDetailsScreen() {
                                     style={{ marginTop: 16 }}
                                 >
                                     <LinearGradient
-                                        colors={['#10B981', '#14B8A6']}
+                                        colors={['#011819', '#0A2525']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 0 }}
                                         style={{
@@ -546,7 +546,7 @@ export default function OfferDetailsScreen() {
                 >
                     <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting}>
                         <LinearGradient
-                            colors={submitting ? ['#94A3B8', '#64748B'] : ['#10B981', '#059669']}
+                            colors={submitting ? ['#94A3B8', '#64748B'] : ['#011819', '#0A2525']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{

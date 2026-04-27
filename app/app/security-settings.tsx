@@ -149,7 +149,7 @@ export default function SecuritySettingsScreen() {
                                             );
                                         } catch (e: any) {
                                             console.error('Failed to delete account:', e);
-                                            Alert.alert('Error', 'Failed to delete account. Please try again or contact support@buyout.ae');
+                                            Alert.alert('Error', 'Failed to delete account. Please try again or contact support@olfi.ae');
                                         }
                                     },
                                 },
@@ -287,7 +287,7 @@ export default function SecuritySettingsScreen() {
 
                         <TouchableOpacity onPress={handleChangePassword} disabled={changingPw} activeOpacity={0.8}>
                             <LinearGradient
-                                colors={['#10B981', '#059669']}
+                                colors={['#011819', '#0A2525']}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
                                 style={{

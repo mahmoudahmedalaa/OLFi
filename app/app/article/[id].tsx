@@ -118,7 +118,7 @@ const ARTICLE_DATA: Record<string, ArticleContent> = {
             },
             {
                 heading: 'Commercial Finance',
-                body: 'Institutions like BuyOut partner with banks that offer commercial finance. Because banks are businesses, they must generate profit. They achieve this ethically through trade structures (like Murabaha, Ijarah, or Wakalah) rather than through lending cash (Qard Hasan).'
+                body: 'Institutions like OLFi partner with banks that offer commercial finance. Because banks are businesses, they must generate profit. They achieve this ethically through trade structures (like Murabaha, Ijarah, or Wakalah) rather than through lending cash (Qard Hasan).'
             }
         ]
     },
@@ -155,7 +155,7 @@ const ARTICLE_DATA: Record<string, ArticleContent> = {
             },
             {
                 heading: 'Why It Matters',
-                body: 'This regulation prevents individuals from becoming over-leveraged and drowning in debt they cannot service. BuyOut helps you calculate your DBR and find refinance offers that consolidate your payments to keep you safely below this 50% threshold, ensuring your financial wellbeing.'
+                body: 'This regulation prevents individuals from becoming over-leveraged and drowning in debt they cannot service. OLFi helps you calculate your DBR and find refinance offers that consolidate your payments to keep you safely below this 50% threshold, ensuring your financial wellbeing.'
             }
         ]
     }
@@ -241,7 +241,7 @@ export default function ArticleScreen() {
                 }}>
                     <Ionicons name="information-circle" size={20} color={theme.colors.textTertiary} style={{ marginRight: 12, marginTop: 2 }} />
                     <Text style={{ flex: 1, fontSize: 13, color: theme.colors.textSecondary, lineHeight: 18 }}>
-                        This article is provided for educational purposes only to help you understand the structures used by our partner institutions. BuyOut is an aggregator and credit broker, acting to connect you with Sharia-compliant products.
+                        This article is provided for educational purposes only to help you understand the structures used by our partner institutions. OLFi is an aggregator and credit broker, acting to connect you with Sharia-compliant products.
                     </Text>
                 </View>
 

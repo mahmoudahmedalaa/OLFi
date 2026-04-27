@@ -60,7 +60,11 @@ export default function OfferList({
         <>
             {/* Best Rate Banner */}
             {bestProduct && (
-                <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+                <TouchableOpacity
+                    style={{ paddingHorizontal: 20, marginBottom: 20 }}
+                    activeOpacity={0.9}
+                    onPress={() => router.push({ pathname: '/offer-details' as any, params: { productId: bestProduct.id } })}
+                >
                     <LinearGradient
                         colors={theme.gradients.premium}
                         start={{ x: 0, y: 0 }}
@@ -68,6 +72,8 @@ export default function OfferList({
                         style={{
                             borderRadius: BorderRadius.lg,
                             padding: 20,
+                            borderWidth: 1,
+                            borderColor: `${Colors.brand.emerald}40`,
                         }}
                     >
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
@@ -82,8 +88,17 @@ export default function OfferList({
                         <Text style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
                             {bestProduct.name} from {bestProduct.bank?.name}
                         </Text>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)' }}>
+                            <Text style={{ fontSize: 14, color: Colors.brand.emeraldLight, fontWeight: '600' }}>
+                                View Deal
+                            </Text>
+                            <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.1)', alignItems: 'center', justifyContent: 'center' }}>
+                                <Ionicons name="arrow-forward" size={14} color="#fff" />
+                            </View>
+                        </View>
                     </LinearGradient>
-                </View>
+                </TouchableOpacity>
             )}
 
             {/* Offer Cards */}

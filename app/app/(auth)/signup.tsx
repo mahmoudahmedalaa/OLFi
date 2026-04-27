@@ -44,35 +44,18 @@ export default function SignupScreen() {
             Alert.alert('Error', 'Password must be at least 6 characters');
             return;
         }
-        setLoading(true);
-        try {
-            // Pass name as metadata so it's available immediately via user_metadata
-            const { error } = await signUp(email, password, firstName.trim(), lastName.trim());
-            if (error) {
-                Alert.alert('Signup Error', error.message);
-            } else {
-                // Also save to profiles table for richer queries
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    await supabase.from('profiles').upsert({
-                        id: user.id,
-                        first_name: firstName.trim(),
-                        last_name: lastName.trim(),
-                        full_name: `${firstName.trim()} ${lastName.trim()}`,
-                        email: email,
-                    });
-                }
-                Alert.alert(
-                    'Welcome!',
-                    `Account created successfully, ${firstName.trim()}! Let\u2019s get you started.`,
-                );
-                // Auth gate will redirect based on per-user onboarding status
+
+        // Pass to OTP for verification before actual sign-up
+        router.push({
+            pathname: '/(auth)/otp',
+            params: {
+                action: 'signup',
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                email: email.trim(),
+                password: password,
             }
-        } catch (e: any) {
-            Alert.alert('Error', e.message);
-        } finally {
-            setLoading(false);
-        }
+        });
     };
 
     return (
@@ -105,7 +88,7 @@ export default function SignupScreen() {
                     {/* Logo & Header */}
                     <View style={{ alignItems: 'center', marginBottom: 32 }}>
                         <Image
-                            source={require('@/assets/images/icon.png')}
+                            source={require('@/assets/images/olfi-icon.png')}
                             style={{
                                 width: 72,
                                 height: 72,
@@ -122,17 +105,6 @@ export default function SignupScreen() {
                             }}
                         >
                             Create account
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 14,
-                                fontWeight: '500',
-                                color: Colors.brand.teal,
-                                fontStyle: 'italic',
-                                letterSpacing: 0.3,
-                            }}
-                        >
-                            your debt, rewritten
                         </Text>
                     </View>
 

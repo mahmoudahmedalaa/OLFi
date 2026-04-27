@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "BuyOut app",
+    "name": "OLFi",
     "slug": "buyout",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/olfi-icon.png",
     "scheme": "buyout",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "buildNumber": "10",
+      "buildNumber": "15",
       "bundleIdentifier": "com.mahmoudahmedalaa.buyout",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Authenticate securely with Face ID to access your financial data",
@@ -38,19 +38,27 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo-transparent.png",
-          "imageWidth": 200,
+          "image": "./assets/images/olfi-logo.png",
+          "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#0F172A",
+          "backgroundColor": "#011819",
           "dark": {
-            "backgroundColor": "#0F172A"
+            "backgroundColor": "#011819"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "db73324a-056c-4824-9690-fa732e105b9a"
+      }
+    },
+    "owner": "mahmoudahmedalaa"
   }
 }

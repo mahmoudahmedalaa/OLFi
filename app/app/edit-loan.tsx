@@ -228,7 +228,7 @@ export default function EditLoanScreen() {
                 }}>
                     <TouchableOpacity onPress={handleSave} disabled={saving} activeOpacity={0.8}>
                         <LinearGradient
-                            colors={['#10B981', '#059669']}
+                            colors={['#011819', '#0A2525']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{
