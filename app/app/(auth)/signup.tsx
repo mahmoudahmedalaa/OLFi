@@ -18,6 +18,8 @@ import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 import { supabase } from '@/lib/supabase';
 
 export default function SignupScreen() {
@@ -30,6 +32,7 @@ export default function SignupScreen() {
     const [loading, setLoading] = useState(false);
     const { signUp } = useAuth();
     const { theme } = useTheme();
+    const { t } = useLanguage();
 
     const handleSignup = async () => {
         if (!firstName.trim() || !lastName.trim() || !email || !password || !confirmPassword) {
@@ -85,6 +88,11 @@ export default function SignupScreen() {
                         />
                     </TouchableOpacity>
 
+                    {/* Language Switcher */}
+                    <View style={{ alignItems: 'flex-end', marginTop: 16 }}>
+                        <LanguageToggle />
+                    </View>
+
                     {/* Logo & Header */}
                     <View style={{ alignItems: 'center', marginBottom: 32 }}>
                         <Image
@@ -104,7 +112,7 @@ export default function SignupScreen() {
                                 marginBottom: 8,
                             }}
                         >
-                            Create account
+                            {t('auth.signup')}
                         </Text>
                     </View>
 
@@ -112,7 +120,7 @@ export default function SignupScreen() {
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                         <View style={{ flex: 1 }}>
                             <InputField
-                                label="First Name"
+                                label={t('auth.firstName')}
                                 icon="person-outline"
                                 placeholder="Mahmoud"
                                 value={firstName}
@@ -122,7 +130,7 @@ export default function SignupScreen() {
                         </View>
                         <View style={{ flex: 1 }}>
                             <InputField
-                                label="Last Name"
+                                label={t('auth.lastName')}
                                 icon="person-outline"
                                 placeholder="Ahmed"
                                 value={lastName}
@@ -134,7 +142,7 @@ export default function SignupScreen() {
 
                     {/* Email */}
                     <InputField
-                        label="Email"
+                        label={t('auth.email')}
                         icon="mail-outline"
                         placeholder="your@email.com"
                         value={email}
@@ -153,7 +161,7 @@ export default function SignupScreen() {
                             marginBottom: 8,
                         }}
                     >
-                        Password
+                        {t('auth.password')}
                     </Text>
                     <View
                         style={{
@@ -234,7 +242,7 @@ export default function SignupScreen() {
                                         color: '#fff',
                                     }}
                                 >
-                                    Create Account
+                                    {t('auth.signup')}
                                 </Text>
                             )}
                         </LinearGradient>
@@ -266,9 +274,9 @@ export default function SignupScreen() {
                         }}
                     >
                         <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-                            Already have an account?
+                            {t('auth.haveAccount')}
                         </Text>
-                        <TouchableOpacity onPress={() => router.back()}>
+                        <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
                             <Text
                                 style={{
                                     fontSize: 14,
@@ -276,7 +284,7 @@ export default function SignupScreen() {
                                     color: Colors.brand.emerald,
                                 }}
                             >
-                                Sign In
+                                {t('auth.signIn')}
                             </Text>
                         </TouchableOpacity>
                     </View>

@@ -134,7 +134,7 @@ export default function MyApplicationsScreen() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.brand.emerald} />
-                <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
+
             </SafeAreaView>
         );
     }
@@ -273,7 +273,7 @@ export default function MyApplicationsScreen() {
                                                 New Offer
                                             </Text>
                                             <Text style={{ fontSize: 14, fontWeight: '600', color: theme.colors.textPrimary }} numberOfLines={1}>
-                                                {bankName} {isIslamic && '☪'}
+                                                {bankName}
                                             </Text>
                                         </View>
                                     </View>

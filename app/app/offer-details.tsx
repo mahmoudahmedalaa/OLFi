@@ -19,7 +19,7 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { trackOfferViewed } from '@/lib/analytics';
 import SavingsChart from '@/components/SavingsChart';
-import ShariaBadge from '@/components/ui/ShariaBadge';
+
 import InfoBottomSheet from '@/components/ui/InfoBottomSheet';
 import {
     calculateRefinanceOffer,
@@ -187,7 +187,7 @@ export default function OfferDetailsScreen() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.brand.emerald} />
-                <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
+
             </SafeAreaView>
         );
     }
@@ -221,7 +221,7 @@ export default function OfferDetailsScreen() {
                         <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginRight: 8 }}>
                             {product.bank?.name}
                         </Text>
-                        {product.bank?.is_islamic && <ShariaBadge size="small" variant="glass" />}
+
                     </View>
                 </View>
             </View>

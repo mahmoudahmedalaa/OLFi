@@ -1,29 +1,19 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useTheme } from '@/lib/theme-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuth } from '@/lib/auth-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function KYCStep1() {
     const { theme } = useTheme();
-    const { user } = useAuth();
-
-    const handleSkip = async () => {
-        if (user) {
-            await AsyncStorage.setItem(`buyout_kyc_completed_${user.id}`, 'true');
-        }
-        router.replace('/(auth)/biometric-setup' as any);
-    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
             <View style={{ flex: 1, padding: 24, justifyContent: 'space-between' }}>
                 <View>
-                    <View style={{ height: 32 }} /> {/* Empty space for top instead of X button */}
+                    <View style={{ height: 32 }} />
 
                     <View style={{ alignItems: 'center', marginVertical: 32 }}>
                         <View style={{
@@ -52,7 +42,6 @@ export default function KYCStep1() {
                     </View>
                 </View>
 
-                {/* Dummy Action */}
                 <TouchableOpacity onPress={() => router.push('/(auth)/kyc/face' as any)} activeOpacity={0.8}>
                     <LinearGradient
                         colors={['#011819', '#0A2525']}
@@ -62,13 +51,6 @@ export default function KYCStep1() {
                     >
                         <Text style={{ fontSize: 18, fontWeight: '700', color: '#fff' }}>Scan ID Now</Text>
                     </LinearGradient>
-                </TouchableOpacity>
-
-                {/* Early Adopter Skip */}
-                <TouchableOpacity onPress={handleSkip} activeOpacity={0.8} style={{ alignItems: 'center' }}>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textSecondary }}>
-                        Skip for now (Early Adopter)
-                    </Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>

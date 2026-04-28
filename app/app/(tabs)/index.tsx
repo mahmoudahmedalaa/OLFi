@@ -9,11 +9,12 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 
 import { useDashboardData } from '@/hooks/useDashboardData';
-import GlassHeader from '@/components/ui/GlassHeader';
 import { DebtSummaryCard } from '@/components/dashboard/DebtSummaryCard';
 import { FinancialHealthCard } from '@/components/dashboard/FinancialHealthCard';
 import { QuickActionCard } from '@/components/dashboard/QuickActionCard';
@@ -21,6 +22,8 @@ import { LoanPreviewCard } from '@/components/dashboard/LoanPreviewCard';
 
 export default function DashboardScreen() {
   const { theme } = useTheme();
+  const { t, isRtl } = useLanguage();
+  const insets = useSafeAreaInsets();
   const {
     loading,
     refreshing,
@@ -37,47 +40,21 @@ export default function DashboardScreen() {
     fetchLoans,
   } = useDashboardData();
 
+  // Build avatar initials from first name
+  const initials = firstName
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.bg }}>
-      {/* Glass Header */}
-      <GlassHeader style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View>
-          <Text style={{ fontSize: 13, color: theme.colors.textSecondary, fontWeight: '500' }}>
-            Good {getGreeting()} 👋
-          </Text>
-          <Text style={{ fontSize: 24, fontWeight: '700', color: theme.colors.textPrimary, marginTop: 2 }}>
-            {firstName}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 22,
-            backgroundColor: theme.colors.card,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-          }}
-          onPress={() => router.push('/notifications' as any)}
-        >
-          <Ionicons name="notifications-outline" size={20} color={theme.colors.textPrimary} />
-          {unreadCount > 0 && (
-            <View style={{
-              position: 'absolute', top: 6, right: 6, width: 16, height: 16, borderRadius: 8,
-              backgroundColor: theme.colors.textPrimary, alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff' }}>
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      </GlassHeader>
-
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
+        contentContainerStyle={{
+          paddingTop: insets.top + Spacing.md,
+          paddingBottom: 100,
+        }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -90,8 +67,88 @@ export default function DashboardScreen() {
           />
         }
       >
-        {/* Total Debt Summary Card */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+        {/* ── Inline Greeting Row ── */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: Spacing.xl,
+            marginBottom: Spacing.xl,
+          }}
+        >
+          {/* Avatar */}
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: Colors.brand.emerald + '20',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: Spacing.md,
+            }}
+          >
+            <Text
+              style={{
+                ...Typography.captionBold,
+                color: Colors.brand.emerald,
+              }}
+            >
+              {initials}
+            </Text>
+          </View>
+
+          {/* Greeting Text */}
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                ...Typography.caption,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              {t('dashboard.greeting')} 👋
+            </Text>
+            <Text
+              style={{
+                ...Typography.h1,
+                color: theme.colors.textPrimary,
+                marginTop: 2,
+              }}
+            >
+              {firstName}
+            </Text>
+          </View>
+
+          {/* Notification Bell */}
+          <TouchableOpacity
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 22,
+              backgroundColor: theme.colors.card,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+            }}
+            onPress={() => router.push('/notifications' as any)}
+          >
+            <Ionicons name="notifications-outline" size={20} color={theme.colors.textPrimary} />
+            {unreadCount > 0 && (
+              <View style={{
+                position: 'absolute', top: 6, right: 6, width: 16, height: 16, borderRadius: 8,
+                backgroundColor: Colors.error, alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff' }}>
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* ── Total Debt Summary Card ── */}
+        <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing.xl }}>
           <DebtSummaryCard
             theme={theme}
             loading={loading}
@@ -101,19 +158,18 @@ export default function DashboardScreen() {
           />
         </View>
 
-        {/* Quick Actions */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
+        {/* ── Quick Actions ── */}
+        <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing['2xl'] }}>
           <Text
             style={{
-              fontSize: 17,
-              fontWeight: '600',
+              ...Typography.h3,
               color: theme.colors.textPrimary,
-              marginBottom: 16,
+              marginBottom: Spacing.lg,
             }}
           >
             Quick Actions
           </Text>
-          <View style={{ flexDirection: 'row', gap: 12 }}>
+          <View style={{ flexDirection: 'row', gap: Spacing.md }}>
             <QuickActionCard
               icon="add-circle"
               label="Add Finance"
@@ -145,20 +201,19 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        {/* Active Loans Preview */}
-        <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
+        {/* ── Active Loans Preview ── */}
+        <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing['2xl'] }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: 16,
+              marginBottom: Spacing.lg,
             }}
           >
             <Text
               style={{
-                fontSize: 17,
-                fontWeight: '600',
+                ...Typography.h3,
                 color: theme.colors.textPrimary,
               }}
             >
@@ -168,8 +223,7 @@ export default function DashboardScreen() {
               <TouchableOpacity onPress={() => router.push('/(tabs)/loans')}>
                 <Text
                   style={{
-                    fontSize: 13,
-                    fontWeight: '600',
+                    ...Typography.captionBold,
                     color: Colors.brand.emerald,
                   }}
                 >
@@ -180,7 +234,7 @@ export default function DashboardScreen() {
           </View>
 
           {loading ? (
-            <View style={{ backgroundColor: theme.colors.card, borderRadius: BorderRadius.lg, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: theme.colors.border }}>
+            <View style={{ backgroundColor: theme.colors.card, borderRadius: BorderRadius.lg, padding: Spacing.xl, marginBottom: Spacing.lg, borderWidth: 1, borderColor: theme.colors.border }}>
               <Text style={{ color: theme.colors.textSecondary }}>Loading financing...</Text>
             </View>
           ) : activeLoans.length === 0 ? (
@@ -189,7 +243,7 @@ export default function DashboardScreen() {
               style={{
                 backgroundColor: theme.colors.card,
                 borderRadius: BorderRadius.lg,
-                padding: 24,
+                padding: Spacing['2xl'],
                 alignItems: 'center',
                 borderWidth: 1,
                 borderColor: theme.colors.border,
@@ -200,19 +254,18 @@ export default function DashboardScreen() {
               <Ionicons name="add-circle-outline" size={36} color={Colors.brand.emerald} />
               <Text
                 style={{
-                  fontSize: 15,
-                  fontWeight: '600',
+                  ...Typography.bodyBold,
                   color: theme.colors.textPrimary,
-                  marginTop: 12,
+                  marginTop: Spacing.md,
                 }}
               >
                 Add your first finance
               </Text>
               <Text
                 style={{
-                  fontSize: 13,
+                  ...Typography.caption,
                   color: theme.colors.textSecondary,
-                  marginTop: 4,
+                  marginTop: Spacing.xs,
                   textAlign: 'center',
                 }}
               >
@@ -227,7 +280,7 @@ export default function DashboardScreen() {
                   : 0;
               return (
                 <View key={loan.id}>
-                  {i > 0 && <View style={{ height: 12 }} />}
+                  {i > 0 && <View style={{ height: Spacing.md }} />}
                   <LoanPreviewCard
                     bankName={loan.bank_name || 'Unknown Bank'}
                     type={formatLoanType(loan.loan_type)}
@@ -246,15 +299,14 @@ export default function DashboardScreen() {
           )}
         </View>
 
-        {/* Financial Health Report Card */}
+        {/* ── Financial Health Report Card ── */}
         {activeLoans.length > 0 && (
-          <View style={{ paddingHorizontal: 20, marginBottom: 24 }}>
+          <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing['2xl'] }}>
             <Text
               style={{
-                fontSize: 17,
-                fontWeight: '600',
+                ...Typography.h3,
                 color: theme.colors.textPrimary,
-                marginBottom: 16,
+                marginBottom: Spacing.lg,
               }}
             >
               Financial Health
@@ -271,9 +323,9 @@ export default function DashboardScreen() {
           </View>
         )}
 
-        {/* Refinance CTA */}
+        {/* ── Refinance CTA ── */}
         {totalDebt > 0 && (
-          <View style={{ paddingHorizontal: 20 }}>
+          <View style={{ paddingHorizontal: Spacing.xl }}>
             <TouchableOpacity
               activeOpacity={0.9}
               onPress={() => router.push('/(tabs)/offers')}
@@ -284,7 +336,7 @@ export default function DashboardScreen() {
                 end={{ x: 1, y: 0 }}
                 style={{
                   borderRadius: BorderRadius.xl,
-                  padding: 20,
+                  padding: Spacing.xl,
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}
@@ -292,17 +344,17 @@ export default function DashboardScreen() {
                 <View style={{ flex: 1 }}>
                   <Text
                     style={{
-                      fontSize: 17,
+                      ...Typography.h3,
                       fontWeight: '700',
                       color: '#fff',
-                      marginBottom: 4,
+                      marginBottom: Spacing.xs,
                     }}
                   >
                     Compare OLFi Offers
                   </Text>
                   <Text
                     style={{
-                      fontSize: 13,
+                      ...Typography.caption,
                       color: 'rgba(255,255,255,0.8)',
                     }}
                   >

@@ -109,7 +109,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const setMode = (newMode: ThemeMode) => {
         setModeState(newMode);
-        AsyncStorage.setItem(STORAGE_KEY, newMode);
+        AsyncStorage.setItem(STORAGE_KEY, newMode).catch(() => { });
     };
 
     const resolvedIsDark = useMemo(() => {

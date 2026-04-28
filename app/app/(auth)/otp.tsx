@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     View,
     Text,
@@ -27,17 +29,17 @@ export default function OTPScreen() {
     const email = (params.email as string) || '';
     const password = (params.password as string) || '';
 
-    const [code, setCode] = useState(['', '', '', '']);
+    const [code, setCode] = useState(['', '', '', '', '', '']);
     const [loading, setLoading] = useState(false);
-    const { signUp } = useAuth();
+    const { signUp, setPostAuthSetupPending } = useAuth();
     const { theme } = useTheme();
     const inputs = useRef<Array<TextInput | null>>([]);
 
-    // For mocking OTP, if they type 1111 we simulate error, else success.
+    // Mock OTP: 123456 = success, anything else = error
     const handleVerify = async () => {
         const otpStr = code.join('');
-        if (otpStr.length < 4) {
-            Alert.alert('Error', 'Please enter the 4-digit code.');
+        if (otpStr.length < 6) {
+            Alert.alert('Error', 'Please enter the 6-digit code.');
             return;
         }
 
@@ -45,16 +47,20 @@ export default function OTPScreen() {
         // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        if (otpStr === '1111') {
+        if (otpStr !== '123456') {
             setLoading(false);
-            Alert.alert('Error', 'Invalid code, please try again.');
+            Alert.alert('Invalid Code', 'Incorrect code. Use 123456 for TestFlight testing.');
             return;
         }
 
         if (action === 'signup') {
+            // Gate dashboard redirect early so the auth listener doesn't route away when session is created
+            setPostAuthSetupPending(true);
             try {
                 const { error } = await signUp(email, password, firstName, lastName);
                 if (error) {
+                    setPostAuthSetupPending(false);
+                    setLoading(false);
                     Alert.alert('Signup Error', error.message);
                 } else {
                     const { data: { user } } = await supabase.auth.getUser();
@@ -68,13 +74,16 @@ export default function OTPScreen() {
                         });
                     }
                     // Navigate to KYC step 1 (post-auth setup flow)
+                    // Note: do NOT setLoading(false) here — component will unmount
                     router.replace('/(auth)/kyc/step1' as any);
                 }
-            } catch (e: any) {
-                Alert.alert('Error', e.message);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : 'An unexpected error occurred';
+                setPostAuthSetupPending(false);
+                setLoading(false);
+                Alert.alert('Error', message);
             }
         }
-        setLoading(false);
     };
 
     const handleTextChange = (text: string, index: number) => {
@@ -83,16 +92,17 @@ export default function OTPScreen() {
         setCode(newCode);
 
         // Auto focus next
-        if (text && index < 3) {
+        if (text && index < 5) {
             inputs.current[index + 1]?.focus();
         }
     };
 
-    const handleKeyPress = (e: any, index: number) => {
+    const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
         if (e.nativeEvent.key === 'Backspace' && !code[index] && index > 0) {
             inputs.current[index - 1]?.focus();
         }
     };
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -128,7 +138,7 @@ export default function OTPScreen() {
                             letterSpacing: -0.5,
                         }}
                     >
-                        Enter 4-digit code
+                        Enter 6-digit code
                     </Text>
                     <Text
                         style={{
@@ -144,19 +154,19 @@ export default function OTPScreen() {
                         </Text>
                     </Text>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 48 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10, marginBottom: 48 }}>
                         {code.map((digit, index) => (
                             <TextInput
                                 key={index}
                                 ref={(ref) => { inputs.current[index] = ref; }}
                                 style={{
-                                    width: 64,
-                                    height: 72,
+                                    width: 48,
+                                    height: 64,
                                     backgroundColor: theme.colors.card,
                                     borderRadius: BorderRadius.md,
                                     borderWidth: 1,
                                     borderColor: digit ? Colors.brand.teal : theme.colors.border,
-                                    fontSize: 32,
+                                    fontSize: 28,
                                     fontWeight: '600',
                                     color: theme.colors.textPrimary,
                                     textAlign: 'center',
@@ -173,11 +183,11 @@ export default function OTPScreen() {
 
                     <TouchableOpacity
                         onPress={handleVerify}
-                        disabled={loading || code.join('').length < 4}
+                        disabled={loading || code.join('').length < 6}
                         activeOpacity={0.8}
                     >
                         <LinearGradient
-                            colors={code.join('').length < 4 ? [theme.colors.card, theme.colors.card] : theme.gradients.brand}
+                            colors={code.join('').length < 6 ? [theme.colors.card, theme.colors.card] : theme.gradients.brand}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{
@@ -194,7 +204,7 @@ export default function OTPScreen() {
                                     style={{
                                         fontSize: 17,
                                         fontWeight: '600',
-                                        color: code.join('').length < 4 ? theme.colors.textDisabled : '#fff',
+                                        color: code.join('').length < 6 ? theme.colors.textDisabled : '#fff',
                                     }}
                                 >
                                     Verify & Continue
@@ -203,41 +213,6 @@ export default function OTPScreen() {
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={{ marginTop: 24, alignItems: 'center' }}
-                        onPress={async () => {
-                            setLoading(true);
-                            if (action === 'signup') {
-                                try {
-                                    const { error } = await signUp(email, password, firstName, lastName);
-                                    if (error) {
-                                        Alert.alert('Signup Error', error.message);
-                                    } else {
-                                        const { data: { user } } = await supabase.auth.getUser();
-                                        if (user) {
-                                            await supabase.from('profiles').upsert({
-                                                id: user.id,
-                                                first_name: firstName,
-                                                last_name: lastName,
-                                                full_name: `${firstName} ${lastName}`,
-                                                email: email,
-                                            });
-                                        }
-                                        router.replace('/(auth)/kyc/step1' as any);
-                                    }
-                                } catch (e: any) {
-                                    Alert.alert('Error', e.message);
-                                }
-                            } else {
-                                router.replace('/(auth)/kyc/step1' as any);
-                            }
-                            setLoading(false);
-                        }}
-                    >
-                        <Text style={{ fontSize: 15, color: theme.colors.textPrimary, fontWeight: '600' }}>
-                            Skip Verification (Test Mode)
-                        </Text>
-                    </TouchableOpacity>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

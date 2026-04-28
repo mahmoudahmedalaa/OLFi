@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Spacing } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { router } from 'expo-router';
 import { formatAED } from '@/lib/refinance-calculator';
@@ -19,8 +19,8 @@ export default function ConsolidationOffers({ consolidationOffers }: Consolidati
     if (consolidationOffers.length === 0) return null;
 
     return (
-        <View style={{ marginBottom: 24 }}>
-            <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+        <View style={{ marginBottom: Spacing['2xl'] }}>
+            <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing.lg }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Ionicons name="git-merge" size={18} color={Colors.brand.emerald} />
                     <Text
@@ -39,7 +39,7 @@ export default function ConsolidationOffers({ consolidationOffers }: Consolidati
             </View>
 
             {consolidationOffers.map((offer, idx) => (
-                <View key={offer.productId} style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+                <View key={offer.productId} style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing.lg }}>
                     <TouchableOpacity
                         activeOpacity={0.8}
                         onPress={() =>
@@ -62,7 +62,7 @@ export default function ConsolidationOffers({ consolidationOffers }: Consolidati
                             end={{ x: 1, y: 0 }}
                             style={{
                                 borderRadius: BorderRadius.lg,
-                                padding: 20,
+                                padding: Spacing.xl,
                                 borderWidth: idx === 0 ? 0 : 1,
                                 borderColor: theme.colors.border,
                             }}

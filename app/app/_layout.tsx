@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider as NavThemeProvider } from '@rea
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, TouchableOpacity, Image, LogBox } from 'react-native';
 import 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +16,7 @@ import { useFonts, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_7
 import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
+import { LanguageProvider, useLanguage } from '@/lib/language-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import '@/global.css';
 
@@ -25,7 +26,8 @@ LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
-const BIOMETRIC_KEY = '@buyout_biometric_lock';
+const BIOMETRIC_KEY_PREFIX = '@olfi_biometric_lock_';
+const POST_AUTH_SETUP_KEY = '@olfi_post_auth_setup_pending';
 
 // Custom navigation themes
 const OLFiDarkTheme = {
@@ -55,10 +57,11 @@ const OLFiLightTheme = {
 };
 
 // ─── Auth Gate ────────────────────────────────────────────────────────
-// SIMPLIFIED: Only manages onboarding + auth state. No KYC/OB routing.
-// Post-auth flow (KYC → Biometric) is handled by screen-to-screen navigation.
+// Manages onboarding + auth state + post-auth setup gating.
+// The postAuthSetupPending flag prevents premature redirect to dashboard
+// while the user is going through KYC → Biometric setup after signup.
 function useProtectedRoute(onboardingDone: boolean | null) {
-  const { user, loading } = useAuth();
+  const { user, loading, postAuthSetupPending } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -68,30 +71,34 @@ function useProtectedRoute(onboardingDone: boolean | null) {
     const inAuthGroup = segments[0] === '(auth)';
     const inOnboarding = segments[0] === ('onboarding' as any);
 
-    if (!onboardingDone && !inOnboarding) {
-      // First time → show onboarding
-      router.replace('/onboarding' as any);
-    } else if (onboardingDone && !user && !inAuthGroup && !inOnboarding) {
-      // Onboarding done, not signed in → go to Login
-      router.replace('/(auth)/login');
-    } else if (onboardingDone && user && (inAuthGroup || inOnboarding)) {
-      // Signed in and still in auth/onboarding → go to Dashboard
-      // BUT: only if not in a post-auth setup screen (KYC, biometric-setup)
-      const inKyc = segments.length > 1 && segments[1] === 'kyc';
-      const inBiometricSetup = segments.length > 1 && segments[1] === 'biometric-setup';
-      if (!inKyc && !inBiometricSetup) {
-        router.replace('/(tabs)');
+    const doRouting = async () => {
+      if (!onboardingDone && !inOnboarding) {
+        // Double-check AsyncStorage to prevent race condition:
+        // handleGetStarted writes the flag but the state hasn't re-synced yet
+        const freshVal = await AsyncStorage.getItem('buyout_onboarding_completed');
+        if (freshVal === 'true') return; // flag was just set, don't redirect back
+        router.replace('/onboarding' as any);
+      } else if (onboardingDone && !user && !inAuthGroup && !inOnboarding) {
+        router.replace('/(auth)/login');
+      } else if (onboardingDone && user && (inAuthGroup || inOnboarding)) {
+        if (!postAuthSetupPending) {
+          router.replace('/(tabs)');
+        }
       }
-    }
-  }, [user, loading, segments, onboardingDone, router]);
+    };
+
+    doRouting();
+  }, [user, loading, segments, onboardingDone, postAuthSetupPending, router]);
 }
 
 function RootLayoutInner() {
   const { theme } = useTheme();
-  const { loading, user } = useAuth();
+  const { isRtl } = useLanguage();
+  const { loading, user, postAuthSetupPending, setPostAuthSetupPending } = useAuth();
   const segments = useSegments();
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
   const [biometricLocked, setBiometricLocked] = useState<boolean | null>(null);
+  const [unlockAttemptInProgress, setUnlockAttemptInProgress] = useState(false);
 
   // Per-user onboarding key: each user gets their own flag
   const onboardingKey = user
@@ -137,22 +144,47 @@ function RootLayoutInner() {
     }
   }, [segments, onboardingKey]);
 
-  // ─── Biometric Lock ────────────────────────────────────────────────
+  // Listen for setup completion (clear flag when navigating away from auth)
   useEffect(() => {
-    if (loading || !user) {
+    if (segments[0] === '(tabs)' && postAuthSetupPending) {
+      // User reached dashboard — clear the pending flag
+      setPostAuthSetupPending(false);
+    }
+  }, [segments, postAuthSetupPending, setPostAuthSetupPending]);
+
+  // ─── Biometric Lock ────────────────────────────────────────────────
+  // Use a ref to ensure biometric check only fires once per user session.
+  // We intentionally do NOT include postAuthSetupPending in the dependency array
+  // because toggling it (e.g. when open-banking completes) would re-trigger
+  // the check and show the lock screen again right after onboarding.
+  const biometricCheckedForUser = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
       setBiometricLocked(false);
+      biometricCheckedForUser.current = null;
       return;
     }
-    AsyncStorage.getItem(BIOMETRIC_KEY).then((val) => {
-      if (val === 'true') {
-        setBiometricLocked(true);
-      } else {
+    // Skip if we've already run this check for this user
+    if (biometricCheckedForUser.current === user.id) return;
+    biometricCheckedForUser.current = user.id;
+
+    // Don't lock during post-auth setup — read latest value from storage directly
+    AsyncStorage.getItem('@olfi_post_auth_setup_pending').then((pending) => {
+      if (pending === 'true') {
         setBiometricLocked(false);
+        return;
       }
+      const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user.id}`;
+      return AsyncStorage.getItem(userBiometricKey).then((val) => {
+        setBiometricLocked(val === 'true');
+      });
     }).catch(() => setBiometricLocked(false));
   }, [loading, user]);
 
   const attemptBiometricUnlock = useCallback(async () => {
+    setUnlockAttemptInProgress(true);
     const result = await LocalAuthentication.authenticateAsync({
       promptMessage: 'Unlock OLFi',
       fallbackLabel: 'Use Passcode',
@@ -160,6 +192,7 @@ function RootLayoutInner() {
     if (result.success) {
       setBiometricLocked(false);
     }
+    setUnlockAttemptInProgress(false);
   }, []);
 
   useEffect(() => {
@@ -185,59 +218,61 @@ function RootLayoutInner() {
       <NavThemeProvider
         value={theme.isDark ? OLFiDarkTheme : OLFiLightTheme}
       >
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="add-loan"
-            options={{ presentation: 'modal', title: 'Add Loan' }}
-          />
-          <Stack.Screen
-            name="offer-details"
-            options={{ presentation: 'modal', title: 'Offer Details' }}
-          />
-          <Stack.Screen
-            name="edit-loan"
-            options={{ presentation: 'modal', title: 'Edit Loan' }}
-          />
-          <Stack.Screen
-            name="loan-detail"
-            options={{ presentation: 'modal', title: 'Loan Details', headerShown: false }}
-          />
-          <Stack.Screen
-            name="calculator"
-            options={{ presentation: 'modal', title: 'Calculator', headerShown: false }}
-          />
-          <Stack.Screen
-            name="edit-profile"
-            options={{ presentation: 'modal', title: 'Edit Profile', headerShown: false }}
-          />
-          <Stack.Screen
-            name="notification-settings"
-            options={{ presentation: 'modal', title: 'Notifications', headerShown: false }}
-          />
-          <Stack.Screen
-            name="security-settings"
-            options={{ presentation: 'modal', title: 'Security', headerShown: false }}
-          />
-          <Stack.Screen
-            name="my-applications"
-            options={{ presentation: 'modal', title: 'My Applications', headerShown: false }}
-          />
-          <Stack.Screen
-            name="notifications"
-            options={{ presentation: 'modal', title: 'Notifications' }}
-          />
-          <Stack.Screen
-            name="onboarding"
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: 'modal', title: 'Modal' }}
-          />
-        </Stack>
-        <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+        <View style={{ flex: 1, direction: isRtl ? 'rtl' : 'ltr' }}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="add-loan"
+              options={{ presentation: 'modal', title: 'Add Loan' }}
+            />
+            <Stack.Screen
+              name="offer-details"
+              options={{ presentation: 'modal', title: 'Offer Details' }}
+            />
+            <Stack.Screen
+              name="edit-loan"
+              options={{ presentation: 'modal', title: 'Edit Loan' }}
+            />
+            <Stack.Screen
+              name="loan-detail"
+              options={{ presentation: 'modal', title: 'Loan Details', headerShown: false }}
+            />
+            <Stack.Screen
+              name="calculator"
+              options={{ presentation: 'modal', title: 'Calculator', headerShown: false }}
+            />
+            <Stack.Screen
+              name="edit-profile"
+              options={{ presentation: 'modal', title: 'Edit Profile', headerShown: false }}
+            />
+            <Stack.Screen
+              name="notification-settings"
+              options={{ presentation: 'modal', title: 'Notifications', headerShown: false }}
+            />
+            <Stack.Screen
+              name="security-settings"
+              options={{ presentation: 'modal', title: 'Security', headerShown: false }}
+            />
+            <Stack.Screen
+              name="my-applications"
+              options={{ presentation: 'modal', title: 'My Applications', headerShown: false }}
+            />
+            <Stack.Screen
+              name="notifications"
+              options={{ presentation: 'modal', title: 'Notifications' }}
+            />
+            <Stack.Screen
+              name="onboarding"
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+            <Stack.Screen
+              name="modal"
+              options={{ presentation: 'modal', title: 'Modal' }}
+            />
+          </Stack>
+          <StatusBar style={theme.isDark ? 'light' : 'dark'} />
+        </View>
 
         {/* ─── Biometric Lock Overlay ─────────────────────────────── */}
         {biometricLocked && (
@@ -249,10 +284,13 @@ function RootLayoutInner() {
               right: 0,
               bottom: 0,
               zIndex: 9999,
+              // While unlock is in progress (Face ID sheet open), stay invisible
+              opacity: unlockAttemptInProgress ? 0 : 1,
             }}
+            pointerEvents={unlockAttemptInProgress ? 'none' : 'auto'}
           >
             <LinearGradient
-              colors={theme.isDark ? ['#011819', '#0A2525'] : ['#E1DED1', '#EDE9DD']}
+              colors={theme.gradients.card}
               style={{
                 flex: 1,
                 alignItems: 'center',
@@ -289,24 +327,13 @@ function RootLayoutInner() {
               >
                 Authenticate with Face ID or Touch ID to access your financial data
               </Text>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '500',
-                  color: Colors.brand.teal,
-                  fontStyle: 'italic',
-                  letterSpacing: 0.3,
-                  marginBottom: 32,
-                }}
-              >
-                Refinance smarter
-              </Text>
+              <View style={{ marginBottom: 32 }} />
               <TouchableOpacity
                 onPress={attemptBiometricUnlock}
                 activeOpacity={0.8}
               >
                 <LinearGradient
-                  colors={['#011819', '#0A2525']}
+                  colors={theme.gradients.brand}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={{
@@ -347,13 +374,15 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <AuthProvider>
-          <BottomSheetModalProvider>
-            <RootLayoutInner />
-          </BottomSheetModalProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <BottomSheetModalProvider>
+              <RootLayoutInner />
+            </BottomSheetModalProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </GestureHandlerRootView>
   );
 }

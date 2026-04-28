@@ -8,6 +8,7 @@ interface FormInputProps {
     value: string;
     onChangeText: (text: string) => void;
     keyboardType?: 'numeric' | 'default';
+    editable?: boolean;
 }
 
 export default function FormInput({
@@ -16,6 +17,7 @@ export default function FormInput({
     value,
     onChangeText,
     keyboardType,
+    editable = true,
 }: FormInputProps) {
     return (
         <View
@@ -40,6 +42,7 @@ export default function FormInput({
                 value={value}
                 onChangeText={onChangeText}
                 keyboardType={keyboardType || 'default'}
+                editable={editable}
             />
         </View>
     );

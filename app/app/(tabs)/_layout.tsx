@@ -4,10 +4,12 @@ import { View, Platform, StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Colors } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 import { trackScreen } from '@/lib/analytics';
 
 export default function TabLayout() {
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <Tabs
@@ -49,7 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
+          title: t('tabs.dashboard'),
           tabBarIcon: ({ color, focused }) => (
             <View style={{ alignItems: 'center' }}>
               {focused && (
@@ -76,7 +78,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="loans"
         options={{
-          title: 'Loans',
+          title: t('tabs.loans'),
           tabBarIcon: ({ color, focused }) => (
             <View style={{ alignItems: 'center' }}>
               {focused && (
@@ -103,7 +105,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="offers"
         options={{
-          title: 'Offers',
+          title: t('tabs.offers'),
           tabBarIcon: ({ color, focused }) => (
             <View style={{ alignItems: 'center' }}>
               {focused && (
@@ -130,7 +132,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('tabs.profile'),
           tabBarIcon: ({ color, focused }) => (
             <View style={{ alignItems: 'center' }}>
               {focused && (

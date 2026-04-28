@@ -85,7 +85,7 @@ export default function InfoBottomSheet({
                 )}
 
                 {footerText && (
-                    <Text style={{ fontSize: 14, color: theme.colors.textTertiary, fontStyle: 'italic', textAlign: 'center', marginTop: 'auto', marginBottom: 20 }}>
+                    <Text style={{ fontSize: 14, color: theme.colors.textTertiary, textAlign: 'center', marginTop: 'auto', marginBottom: 20 }}>
                         {footerText}
                     </Text>
                 )}

@@ -12,8 +12,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
-import { Colors, BorderRadius, Typography } from '@/lib/constants';
+import { Colors, BorderRadius, Typography, Spacing } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 import { supabase } from '@/lib/supabase';
 import { ComingSoonCards } from '@/components/coming-soon-modal';
 import { hapticLight, hapticWarning } from '@/lib/haptics';
@@ -30,6 +31,7 @@ interface Profile {
 export default function ProfileScreen() {
     const { user, signOut } = useAuth();
     const { theme, mode, setMode } = useTheme();
+    const { language, setLanguage } = useLanguage();
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -122,8 +124,7 @@ export default function ProfileScreen() {
             <GlassHeader>
                 <Text
                     style={{
-                        fontSize: 24,
-                        fontWeight: '700',
+                        ...Typography.h1,
                         color: theme.colors.textPrimary,
                     }}
                 >
@@ -132,7 +133,7 @@ export default function ProfileScreen() {
             </GlassHeader>
 
             <ScrollView
-                contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
+                contentContainerStyle={{ paddingBottom: 100, paddingTop: Spacing.lg }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl
@@ -147,22 +148,22 @@ export default function ProfileScreen() {
             >
 
                 {/* User Card */}
-                <View style={{ paddingHorizontal: 20, marginBottom: 24, marginTop: 8 }}>
+                <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing['2xl'], marginTop: Spacing.sm }}>
                     <LinearGradient
                         colors={theme.gradients.card}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={{
                             borderRadius: BorderRadius.xl,
-                            padding: 24,
+                            padding: Spacing['2xl'],
                             borderWidth: 1,
                             borderColor: theme.colors.border,
                         }}
                     >
                         {loading ? (
-                            <ActivityIndicator color={Colors.brand.emerald} style={{ paddingVertical: 16 }} />
+                            <ActivityIndicator color={Colors.brand.emerald} style={{ paddingVertical: Spacing.lg }} />
                         ) : (
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.lg }}>
                                 <LinearGradient
                                     colors={theme.gradients.brand}
                                     style={{
@@ -271,6 +272,72 @@ export default function ProfileScreen() {
                                         }}
                                     >
                                         {m}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+
+                    {/* Language Toggle */}
+                    <Text
+                        style={{
+                            fontSize: 13,
+                            fontWeight: '600',
+                            color: theme.colors.textTertiary,
+                            textTransform: 'uppercase',
+                            letterSpacing: 0.5,
+                            marginTop: 16,
+                            marginBottom: 12,
+                        }}
+                    >
+                        Language / اللغة
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            backgroundColor: theme.colors.card,
+                            borderRadius: BorderRadius.md,
+                            padding: 4,
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                        }}
+                    >
+                        {(['en', 'ar'] as const).map((lang) => {
+                            const isActive = language === lang;
+                            const label = lang === 'en' ? 'English' : 'العربية';
+                            const icon = lang === 'en' ? 'language-outline' : 'text-outline';
+                            return (
+                                <TouchableOpacity
+                                    key={lang}
+                                    onPress={async () => {
+                                        hapticLight();
+                                        await setLanguage(lang);
+                                    }}
+                                    style={{
+                                        flex: 1,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 6,
+                                        paddingVertical: 10,
+                                        borderRadius: BorderRadius.sm,
+                                        backgroundColor: isActive ? Colors.brand.teal : 'transparent',
+                                    }}
+                                    activeOpacity={0.7}
+                                >
+                                    <Ionicons
+                                        name={icon as any}
+                                        size={16}
+                                        color={isActive ? '#fff' : theme.colors.textSecondary}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 13,
+                                            fontWeight: '600',
+                                            color: isActive ? '#fff' : theme.colors.textSecondary,
+                                        }}
+                                    >
+                                        {label}
                                     </Text>
                                 </TouchableOpacity>
                             );

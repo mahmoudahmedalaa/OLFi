@@ -27,9 +27,10 @@ import Animated, {
     Easing,
 } from 'react-native-reanimated';
 import { useAuth } from '@/lib/auth-context';
+import { useLanguage } from '@/lib/language-context';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const SLIDE_DURATION = 5000; // 5s per slide
 
 // ─── Brand Colors ──────────────────────────────────────────────────
 const B = {
@@ -44,45 +45,38 @@ const B = {
     dim: 'rgba(255,255,255,0.35)',
 };
 
-// ─── Slide Data ────────────────────────────────────────────────────
-const SLIDES = [
+// Slides are now generated inside the component to use the `t` translation function
+const getSlides = (t: any) => [
     {
         bg: ['#0a1628', '#0F172A'] as [string, string],
         accent: B.emerald,
-        headline: 'Take Control of\nYour Finances',
-        sub: 'OLFi analyzes your debt portfolio and finds you better deals — saving you thousands in interest',
+        headline: t('onboarding.slide1.title'),
+        sub: t('onboarding.slide1.desc'),
     },
     {
         bg: ['#0F172A', '#0f2a1e'] as [string, string],
         accent: B.teal,
-        headline: 'See All Your\nDebt in One Place',
-        sub: 'Connect your accounts to get a complete picture of your loans, credit cards, and payment obligations',
+        headline: t('onboarding.slide2.title'),
+        sub: t('onboarding.slide2.desc'),
     },
     {
         bg: ['#0F172A', '#0a1f17'] as [string, string],
         accent: B.emerald,
-        headline: 'Switch to Smarter\nRefinancing',
-        sub: 'We compare conventional rates against Sharia-compliant Murābaḥa alternatives — you choose what\'s best',
+        headline: t('onboarding.slide3.title'),
+        sub: t('onboarding.slide3.desc'),
     },
     {
         bg: ['#0F172A', '#0f1a2a'] as [string, string],
         accent: B.blue,
-        headline: 'Your OLFi Score\nUnlocks Better Offers',
-        sub: 'Our AI-powered scoring system goes beyond credit bureaus — using Open Banking data for a fairer financial profile',
+        headline: t('onboarding.slide4.title'),
+        sub: t('onboarding.slide4.desc'),
     },
 ];
 
 // ─── Slide Visual Components ───────────────────────────────────────
 
 function Slide1Visual() {
-    // Radial starburst pattern
-    const rays = Array.from({ length: 18 }, (_, i) => {
-        const angle = (i / 18) * 360;
-        const len = 100 + Math.random() * 100;
-        const colors = [B.emerald, B.teal, B.blue];
-        return { angle, len, color: colors[i % 3] };
-    });
-
+    // Abstract modern Fintech dashboard card
     return (
         <View style={{
             position: 'absolute',
@@ -92,32 +86,99 @@ function Slide1Visual() {
             alignItems: 'center',
             justifyContent: 'center',
         }}>
-            {rays.map((ray, i) => (
-                <View
-                    key={i}
-                    style={{
-                        position: 'absolute',
-                        left: '50%',
-                        top: '50%',
-                        width: 1.5,
-                        height: ray.len,
-                        backgroundColor: `${ray.color}44`,
-                        transform: [
-                            { translateX: -0.75 },
-                            { rotate: `${ray.angle}deg` },
-                        ],
-                        transformOrigin: 'top center',
-                        opacity: 0.6,
-                    }}
-                />
-            ))}
-            {/* Center glow */}
-            <View style={{
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-                backgroundColor: `${B.emerald}15`,
-            }} />
+            {/* Background floating elements */}
+            <Animated.View
+                entering={FadeIn.delay(100).duration(800)}
+                style={{
+                    position: 'absolute',
+                    width: 140,
+                    height: 140,
+                    borderRadius: 70,
+                    backgroundColor: `${B.teal}11`,
+                    top: '20%',
+                    right: '10%'
+                }}
+            />
+            <Animated.View
+                entering={FadeIn.delay(300).duration(800)}
+                style={{
+                    position: 'absolute',
+                    width: 200,
+                    height: 200,
+                    borderRadius: 100,
+                    backgroundColor: `${B.emerald}11`,
+                    bottom: '10%',
+                    left: '-10%'
+                }}
+            />
+
+            {/* Central Card */}
+            <Animated.View
+                entering={SlideInRight.delay(200).duration(600).springify()}
+                style={{
+                    width: '75%',
+                    backgroundColor: B.navyMid,
+                    borderRadius: 20,
+                    padding: 24,
+                    borderWidth: 1,
+                    borderColor: 'rgba(16, 185, 129, 0.3)', // Emerald border
+                    shadowColor: B.emerald,
+                    shadowOffset: { width: 0, height: 10 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 20,
+                    zIndex: 2,
+                }}
+            >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                    <View style={{ width: 40, height: 40, borderRadius: 10, backgroundColor: `${B.emerald}20`, alignItems: 'center', justifyContent: 'center' }}>
+                        <Ionicons name="pie-chart" size={20} color={B.emerald} />
+                    </View>
+                    <View style={{ backgroundColor: `${B.emerald}15`, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 }}>
+                        <Text style={{ fontSize: 12, fontWeight: '700', color: B.emerald }}>+24% Savings</Text>
+                    </View>
+                </View>
+
+                <Text style={{ fontSize: 13, color: B.muted, marginBottom: 8, fontWeight: '500' }}>Total Debt Portfolio</Text>
+                <Text style={{ fontSize: 26, fontWeight: '900', color: '#fff', marginBottom: 24, letterSpacing: -0.5 }}>AED 125,400</Text>
+
+                {/* Mock Bar Chart */}
+                <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', height: 60, gap: 10 }}>
+                    {[0.4, 0.7, 0.5, 0.9, 0.6, 1.0].map((val, i) => (
+                        <Animated.View key={i} entering={FadeIn.delay(400 + (i * 100)).duration(500)} style={{ flex: 1, height: `${val * 100}%`, backgroundColor: i === 5 ? B.emerald : B.navyLt, borderRadius: 4 }} />
+                    ))}
+                </View>
+            </Animated.View>
+
+            {/* Floating overlay card */}
+            <Animated.View
+                entering={SlideInLeft.delay(500).duration(600).springify()}
+                style={{
+                    position: 'absolute',
+                    bottom: '15%',
+                    right: '8%',
+                    backgroundColor: B.navy,
+                    padding: 16,
+                    borderRadius: 16,
+                    borderWidth: 1,
+                    borderColor: B.navyLt,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 12,
+                    zIndex: 3,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 8 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 15,
+                }}
+            >
+                <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: `${B.teal}20`, alignItems: 'center', justifyContent: 'center' }}>
+                    <Ionicons name="trending-up" size={16} color={B.teal} />
+                </View>
+                <View>
+                    <Text style={{ fontSize: 12, color: B.muted, fontWeight: '500' }}>Credit Score</Text>
+                    <Text style={{ fontSize: 16, fontWeight: '800', color: '#fff' }}>742 <Text style={{ color: B.teal, fontSize: 12, fontWeight: '600' }}>↑</Text></Text>
+                </View>
+            </Animated.View>
         </View>
     );
 }
@@ -243,9 +304,13 @@ function Slide3Visual() {
                 paddingVertical: 10,
                 borderWidth: 1,
                 borderColor: `${B.emerald}25`,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6
             }}>
+                <Ionicons name="shield-checkmark" size={14} color={B.emerald} />
                 <Text style={{ fontSize: 12, color: B.emerald, fontWeight: '700', textAlign: 'center' }}>
-                    ☪️  AAOIFI Certified Sharia-Compliant
+                    AAOIFI Certified Sharia-Compliant
                 </Text>
             </View>
         </View>
@@ -319,38 +384,15 @@ const SLIDE_VISUALS = [Slide1Visual, Slide2Visual, Slide3Visual, Slide4Visual];
 
 export default function OnboardingScreen() {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const progressAnim = useRef(new RNAnimated.Value(0)).current;
-    const intervalRef = useRef<number | null>(null);
     const { user } = useAuth();
+    const { t, isRtl } = useLanguage();
 
+    const SLIDES = React.useMemo(() => getSlides(t), [t]);
     const slide = SLIDES[currentSlide];
     const SlideVisual = SLIDE_VISUALS[currentSlide];
 
-    // Progress bar animation
-    useEffect(() => {
-        progressAnim.setValue(0);
-        const start = Date.now();
-
-        const tick = () => {
-            const elapsed = Date.now() - start;
-            const pct = Math.min(elapsed / SLIDE_DURATION, 1);
-            progressAnim.setValue(pct);
-            if (pct < 1) {
-                intervalRef.current = requestAnimationFrame(tick);
-            } else {
-                setCurrentSlide((s) => (s + 1) % SLIDES.length);
-            }
-        };
-
-        intervalRef.current = requestAnimationFrame(tick);
-        return () => {
-            if (intervalRef.current) cancelAnimationFrame(intervalRef.current);
-        };
-    }, [currentSlide]);
-
     // Navigation
     const goToSlide = (index: number) => {
-        if (intervalRef.current) cancelAnimationFrame(intervalRef.current);
         setCurrentSlide(index);
     };
 
@@ -359,7 +401,7 @@ export default function OnboardingScreen() {
         if (x < SCREEN_WIDTH * 0.3) {
             goToSlide(Math.max(currentSlide - 1, 0));
         } else if (x > SCREEN_WIDTH * 0.7) {
-            goToSlide((currentSlide + 1) % SLIDES.length);
+            goToSlide(Math.min(currentSlide + 1, SLIDES.length - 1));
         }
     };
 
@@ -393,47 +435,7 @@ export default function OnboardingScreen() {
                 style={{ flex: 1 }}
             >
                 <SafeAreaView style={{ flex: 1 }}>
-                    {/* ── Story Progress Bars ────────────────────────── */}
-                    <View style={{
-                        flexDirection: 'row',
-                        gap: 4,
-                        paddingHorizontal: 16,
-                        marginTop: 8,
-                    }}>
-                        {SLIDES.map((_, i) => (
-                            <View
-                                key={i}
-                                style={{
-                                    flex: 1,
-                                    height: 2.5,
-                                    borderRadius: 2,
-                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                    overflow: 'hidden',
-                                }}
-                            >
-                                {i < currentSlide ? (
-                                    <View style={{
-                                        height: '100%',
-                                        width: '100%',
-                                        backgroundColor: '#fff',
-                                        borderRadius: 2,
-                                    }} />
-                                ) : i === currentSlide ? (
-                                    <RNAnimated.View style={{
-                                        height: '100%',
-                                        backgroundColor: '#fff',
-                                        borderRadius: 2,
-                                        width: progressAnim.interpolate({
-                                            inputRange: [0, 1],
-                                            outputRange: ['0%', '100%'],
-                                        }),
-                                    }} />
-                                ) : null}
-                            </View>
-                        ))}
-                    </View>
-
-                    {/* ── Header: Logo + Brand ───────────────────────── */}
+                    {/* ── Header: Logo & Language Toggle ───────────────────────── */}
                     <View style={{
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -441,42 +443,11 @@ export default function OnboardingScreen() {
                         paddingHorizontal: 20,
                         paddingTop: 16,
                     }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                            <Image
-                                source={require('@/assets/images/olfi-icon.png')}
-                                style={{ width: 36, height: 36, borderRadius: 10 }}
-                            />
-                            <Text style={{
-                                color: '#fff',
-                                fontSize: 22,
-                                fontWeight: '900',
-                                letterSpacing: -0.5,
-                            }}>
-                                OLFi
-                            </Text>
-                        </View>
-                        {/* Language pills (visual only) */}
-                        <View style={{ flexDirection: 'row', gap: 4 }}>
-                            {[['EN', true], ['عر', false]].map(([label, active]) => (
-                                <View
-                                    key={label as string}
-                                    style={{
-                                        paddingHorizontal: 10,
-                                        paddingVertical: 5,
-                                        borderRadius: 8,
-                                        backgroundColor: active ? B.emerald : 'rgba(255,255,255,0.1)',
-                                    }}
-                                >
-                                    <Text style={{
-                                        fontSize: 11,
-                                        fontWeight: '700',
-                                        color: active ? '#fff' : 'rgba(255,255,255,0.55)',
-                                    }}>
-                                        {label as string}
-                                    </Text>
-                                </View>
-                            ))}
-                        </View>
+                        <Image
+                            source={require('@/assets/images/olfi-icon.png')}
+                            style={{ width: 52, height: 52, borderRadius: 14 }}
+                        />
+                        <LanguageToggle />
                     </View>
 
                     {/* ── Dot Indicators ──────────────────────────────── */}
@@ -506,7 +477,7 @@ export default function OnboardingScreen() {
                     </View>
 
                     {/* ── Content ─────────────────────────────────────── */}
-                    <View style={{ paddingHorizontal: 28, paddingBottom: Platform.OS === 'ios' ? 16 : 24 }}>
+                    <View style={{ paddingHorizontal: 28, paddingBottom: Platform.OS === 'ios' ? 16 : 24, direction: isRtl ? 'rtl' : 'ltr' }}>
                         <Text style={{
                             color: '#fff',
                             fontSize: 30,
@@ -514,6 +485,8 @@ export default function OnboardingScreen() {
                             lineHeight: 38,
                             letterSpacing: -0.5,
                             marginBottom: 12,
+                            textAlign: isRtl ? 'right' : 'left',
+                            writingDirection: isRtl ? 'rtl' : 'ltr',
                         }}>
                             {slide.headline}
                         </Text>
@@ -522,6 +495,8 @@ export default function OnboardingScreen() {
                             fontSize: 14,
                             lineHeight: 22,
                             marginBottom: 28,
+                            textAlign: isRtl ? 'right' : 'left',
+                            writingDirection: isRtl ? 'rtl' : 'ltr',
                         }}>
                             {slide.sub}
                         </Text>
@@ -552,7 +527,7 @@ export default function OnboardingScreen() {
                                     fontWeight: '800',
                                     color: '#fff',
                                 }}>
-                                    {isLastSlide ? 'Get Started' : 'Next'}
+                                    {isLastSlide ? t('onboarding.getStarted') : t('onboarding.next')}
                                 </Text>
                             </LinearGradient>
                         </TouchableOpacity>
@@ -567,9 +542,9 @@ export default function OnboardingScreen() {
                             }}
                         >
                             <Text style={{ fontSize: 14, color: B.muted }}>
-                                Already have an account?{' '}
+                                {t('auth.haveAccount')}{' '}
                                 <Text style={{ color: B.emerald, fontWeight: '700' }}>
-                                    Sign In
+                                    {t('auth.signIn')}
                                 </Text>
                             </Text>
                         </TouchableOpacity>

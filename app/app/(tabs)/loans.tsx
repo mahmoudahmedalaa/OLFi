@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
+import { useLanguage } from '@/lib/language-context';
 import { supabase } from '@/lib/supabase';
 import CircularProgress from '@/components/ui/CircularProgress';
 import Skeleton from '@/components/ui/Skeleton';
@@ -48,6 +49,7 @@ export default function LoansScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { theme } = useTheme();
     const { user } = useAuth();
+    const { t, isRtl } = useLanguage();
 
     const fetchLoans = useCallback(async () => {
         if (!user) return;
@@ -120,12 +122,11 @@ export default function LoansScreen() {
             >
                 <Text
                     style={{
-                        fontSize: 24,
-                        fontWeight: '700',
+                        ...Typography.h1,
                         color: theme.colors.textPrimary,
                     }}
                 >
-                    My Loans
+                    {t('loans.title')}
                 </Text>
             </GlassHeader>
 
@@ -134,11 +135,11 @@ export default function LoansScreen() {
                 <View
                     style={{
                         flexDirection: 'row',
-                        gap: 24,
-                        marginTop: 16,
-                        marginBottom: 16,
-                        paddingVertical: 12,
-                        paddingHorizontal: 20,
+                        gap: Spacing['2xl'],
+                        marginTop: Spacing.lg,
+                        marginBottom: Spacing.lg,
+                        paddingVertical: Spacing.md,
+                        paddingHorizontal: Spacing.xl,
                         backgroundColor: theme.colors.card,
                         borderRadius: BorderRadius.md,
                         borderWidth: 1,
@@ -148,20 +149,19 @@ export default function LoansScreen() {
                     <View style={{ flex: 1 }}>
                         <Text
                             style={{
-                                fontSize: 11,
+                                ...Typography.overline,
                                 color: theme.colors.textTertiary,
                                 textTransform: 'uppercase',
-                                letterSpacing: 0.5,
                             }}
                         >
-                            Total Debt
+                            {t('loans.totalDebt')}
                         </Text>
                         <Text
                             style={{
-                                fontSize: 17,
+                                ...Typography.h3,
                                 fontWeight: '700',
                                 color: theme.colors.textPrimary,
-                                marginTop: 4,
+                                marginTop: Spacing.xs,
                             }}
                         >
                             AED {totalDebt.toLocaleString()}
@@ -171,20 +171,19 @@ export default function LoansScreen() {
                     <View style={{ flex: 1 }}>
                         <Text
                             style={{
-                                fontSize: 11,
+                                ...Typography.overline,
                                 color: theme.colors.textTertiary,
                                 textTransform: 'uppercase',
-                                letterSpacing: 0.5,
                             }}
                         >
-                            Monthly EMIs
+                            {t('loans.monthlyPayments')}
                         </Text>
                         <Text
                             style={{
-                                fontSize: 17,
+                                ...Typography.h3,
                                 fontWeight: '700',
                                 color: theme.colors.textPrimary,
-                                marginTop: 4,
+                                marginTop: Spacing.xs,
                             }}
                         >
                             AED {totalEmi.toLocaleString()}
@@ -194,19 +193,19 @@ export default function LoansScreen() {
             )}
 
             {/* Filter Pills */}
-            <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+            <View style={{ paddingHorizontal: Spacing.xl, marginTop: Spacing.lg, marginBottom: Spacing.lg }}>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8 }}
+                    contentContainerStyle={{ gap: Spacing.sm }}
                 >
                     {filters.map((filter) => (
                         <TouchableOpacity
                             key={filter.key}
                             onPress={() => setActiveFilter(filter.key)}
                             style={{
-                                paddingHorizontal: 16,
-                                paddingVertical: 8,
+                                paddingHorizontal: Spacing.lg,
+                                paddingVertical: Spacing.sm,
                                 borderRadius: 20,
                                 backgroundColor:
                                     activeFilter === filter.key
@@ -218,8 +217,7 @@ export default function LoansScreen() {
                         >
                             <Text
                                 style={{
-                                    fontSize: 13,
-                                    fontWeight: '600',
+                                    ...Typography.captionBold,
                                     color:
                                         activeFilter === filter.key
                                             ? '#fff'
@@ -297,7 +295,9 @@ export default function LoansScreen() {
                                         marginTop: 16,
                                     }}
                                 >
-                                    {activeFilter === 'all' ? 'No loans yet' : `No ${activeFilter} loans`}
+                                    {activeFilter === 'all'
+                                        ? t('loans.noLoans')
+                                        : `No ${activeFilter} loans`}
                                 </Text>
                                 <Text
                                     style={{
@@ -307,7 +307,7 @@ export default function LoansScreen() {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {activeFilter === 'all' ? 'Tap + to add your first loan' : 'Try changing the filter'}
+                                    {activeFilter === 'all' ? t('loans.noLoansDesc') : 'Try changing the filter'}
                                 </Text>
                             </View>
                         }

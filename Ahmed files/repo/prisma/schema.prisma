@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  name        String
+  phone       String    @unique
+  email       String    @unique
+  otpCode     String?
+  otpExpiry   DateTime?
+  kycStatus   KycStatus @default(PENDING)
+  lang        String    @default("en")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  debts        Debt[]
+  applications Application[]
+  score        OlfiScore?
+
+  @@map("users")
+}
+
+model Debt {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  bank      String
+  amount    Float
+  rate      Float
+  emi       Float
+  remaining Int
+  color     String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("debts")
+}
+
+model Offer {
+  id           String  @id @default(cuid())
+  bank         String
+  type         String
+  apr          Float
+  monthly      Float
+  saving       Float
+  score        Int
+  approvalDays Int
+  tenure       Int
+  color        String
+  featured     Boolean @default(false)
+
+  applications Application[]
+
+  @@map("offers")
+}
+
+model Application {
+  id            String        @id @default(cuid())
+  userId        String
+  offerId       String
+  bank          String
+  type          String
+  color         String
+  status        AppStatus     @default(PENDING)
+  ref           String        @unique
+  amount        Float
+  newEmi        Float
+  saving        Float
+  apr           Float
+  tenure        Int
+  appliedDate   DateTime      @default(now())
+  acceptedDate  DateTime?
+  declinedDate  DateTime?
+  declineReason String?
+  paidMonths    Int           @default(0)
+  nextPayment   DateTime?
+  nextAmount    Float?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offer    Offer     @relation(fields: [offerId], references: [id])
+  payments Payment[]
+
+  @@map("applications")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  applicationId String
+  month         String
+  amount        Float
+  principal     Float
+  profit        Float
+  balance       Float
+  status        PaymentStatus @default(UPCOMING)
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model OlfiScore {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  olfiScore     Int      @default(724)
+  cbuaeScore    Int      @default(718)
+  loanRepayment Int      @default(88)
+  creditCard    Int      @default(72)
+  billPayments  Int      @default(90)
+  cashFlow      Int      @default(68)
+  employment    Int      @default(95)
+  spending      Int      @default(74)
+  dbr           Int      @default(61)
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("olfi_scores")
+}
+
+enum KycStatus {
+  PENDING
+  PARTIAL
+  COMPLETE
+}
+
+enum AppStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum PaymentStatus {
+  UPCOMING
+  PAID
+  OVERDUE
+}

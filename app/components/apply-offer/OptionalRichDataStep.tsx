@@ -27,7 +27,7 @@ export function OptionalRichDataStep({
                 Boost Your Application
             </Text>
             <Text style={{ ...Typography.body, color: theme.colors.textSecondary, marginBottom: 24 }}>
-                Optional — but dramatically improves your approval odds
+                Optional, but dramatically improves your approval odds
             </Text>
 
             {/* Why Card */}

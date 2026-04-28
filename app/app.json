@@ -38,7 +38,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/olfi-logo.png",
+          "image": "./assets/images/olfi-splash-hq.png",
           "imageWidth": 180,
           "resizeMode": "contain",
           "backgroundColor": "#011819",

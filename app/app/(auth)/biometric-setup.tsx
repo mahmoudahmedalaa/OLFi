@@ -17,11 +17,12 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 import { useAuth } from '@/lib/auth-context';
 
-const BIOMETRIC_KEY = '@buyout_biometric_lock';
+const BIOMETRIC_KEY_PREFIX = '@olfi_biometric_lock_';
+const POST_AUTH_SETUP_KEY = '@olfi_post_auth_setup_pending';
 
 export default function BiometricSetupScreen() {
     const { theme } = useTheme();
-    const { user } = useAuth();
+    const { user, setPostAuthSetupPending } = useAuth();
     const [loading, setLoading] = useState(false);
 
     const handleEnable = useCallback(async () => {
@@ -45,7 +46,8 @@ export default function BiometricSetupScreen() {
             });
 
             if (result.success) {
-                await AsyncStorage.setItem(BIOMETRIC_KEY, 'true');
+                const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user?.id}`;
+                await AsyncStorage.setItem(userBiometricKey, 'true');
 
                 // Save credentials for biometric auto-login
                 const email = user?.email;
@@ -58,7 +60,8 @@ export default function BiometricSetupScreen() {
                     } catch { }
                 }
 
-                router.replace('/(tabs)' as any);
+                // Navigate to open banking — postAuthSetupPending cleared there
+                router.replace('/(auth)/open-banking' as any);
             }
         } catch (e: any) {
             Alert.alert('Error', e.message || 'Failed to enable biometric authentication');
@@ -67,8 +70,9 @@ export default function BiometricSetupScreen() {
         }
     }, [user]);
 
-    const handleSkip = () => {
-        router.replace('/(tabs)' as any);
+    const handleSkip = async () => {
+        // Navigate to open banking — postAuthSetupPending cleared there
+        router.replace('/(auth)/open-banking' as any);
     };
 
     return (

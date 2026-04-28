@@ -17,8 +17,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
-import { useTheme } from '@/lib/theme-context';
+import { ThemeProvider, useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 import { supabase } from '@/lib/supabase';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,6 +33,7 @@ export default function LoginScreen() {
     const [hasBiometricOption, setHasBiometricOption] = useState(false);
     const { signIn } = useAuth();
     const { theme } = useTheme();
+    const { t } = useLanguage();
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -76,7 +79,10 @@ export default function LoginScreen() {
     useEffect(() => {
         const checkBiometricAvailability = async () => {
             try {
-                const isEnabled = await AsyncStorage.getItem('@buyout_biometric_lock');
+                // Check if any biometric lock is enabled (device-level check for login auto-prompt)
+                const savedEmail = await SecureStore.getItemAsync('saved_email');
+                // We can't know the user ID yet, so we check saved credentials exist
+                const isEnabled = savedEmail ? 'true' : null; // Will be validated below
                 if (isEnabled !== 'true') return;
 
                 const compatible = await LocalAuthentication.hasHardwareAsync();
@@ -113,8 +119,13 @@ export default function LoginScreen() {
                     keyboardShouldPersistTaps="handled"
                     showsVerticalScrollIndicator={false}
                 >
+                    {/* Language Switcher */}
+                    <View style={{ alignItems: 'flex-end', marginTop: 16 }}>
+                        <LanguageToggle />
+                    </View>
+
                     {/* Logo & Welcome */}
-                    <View style={{ alignItems: 'center', marginTop: 48, marginBottom: 40 }}>
+                    <View style={{ alignItems: 'center', marginTop: 24, marginBottom: 40 }}>
                         <Image
                             source={require('@/assets/images/olfi-icon.png')}
                             style={{
@@ -132,7 +143,7 @@ export default function LoginScreen() {
                                 marginBottom: 8,
                             }}
                         >
-                            Welcome back
+                            {t('auth.welcomeBack')}
                         </Text>
                     </View>
 
@@ -145,7 +156,7 @@ export default function LoginScreen() {
                             marginBottom: 8,
                         }}
                     >
-                        Email
+                        {t('auth.email')}
                     </Text>
                     <View
                         style={{
@@ -190,7 +201,7 @@ export default function LoginScreen() {
                             marginBottom: 8,
                         }}
                     >
-                        Password
+                        {t('auth.password')}
                     </Text>
                     <View
                         style={{
@@ -255,7 +266,7 @@ export default function LoginScreen() {
                                         color: '#fff',
                                     }}
                                 >
-                                    Sign In
+                                    {t('auth.signIn')}
                                 </Text>
                             )}
                         </LinearGradient>
@@ -330,7 +341,7 @@ export default function LoginScreen() {
                                 color: Colors.brand.emerald,
                             }}
                         >
-                            Forgot Password?
+                            {t('auth.forgotPassword')}
                         </Text>
                     </TouchableOpacity>
 
@@ -350,7 +361,7 @@ export default function LoginScreen() {
                                 marginHorizontal: 16,
                             }}
                         >
-                            or
+                            {t('auth.or')}
                         </Text>
                         <View style={{ flex: 1, height: 1, backgroundColor: theme.colors.border }} />
                     </View>
@@ -378,7 +389,7 @@ export default function LoginScreen() {
                                 color: theme.colors.textPrimary,
                             }}
                         >
-                            Continue with Apple
+                            {t('auth.continueWithApple')}
                         </Text>
                     </TouchableOpacity>
 
@@ -392,7 +403,7 @@ export default function LoginScreen() {
                         }}
                     >
                         <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-                            Don&apos;t have an account?
+                            {t('auth.noAccount')}
                         </Text>
                         <TouchableOpacity onPress={() => router.push('/(auth)/signup')}>
                             <Text
@@ -402,7 +413,7 @@ export default function LoginScreen() {
                                     color: Colors.brand.emerald,
                                 }}
                             >
-                                Sign Up
+                                {t('auth.signup')}
                             </Text>
                         </TouchableOpacity>
                     </View>

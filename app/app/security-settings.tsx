@@ -21,7 +21,7 @@ import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
-const BIOMETRIC_KEY = '@buyout_biometric_lock';
+const BIOMETRIC_KEY_PREFIX = '@olfi_biometric_lock_';
 
 export default function SecuritySettingsScreen() {
     const { theme } = useTheme();
@@ -34,10 +34,12 @@ export default function SecuritySettingsScreen() {
 
     // Load persisted biometric preference
     useEffect(() => {
-        AsyncStorage.getItem(BIOMETRIC_KEY).then((val) => {
+        if (!user) return;
+        const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user.id}`;
+        AsyncStorage.getItem(userBiometricKey).then((val) => {
             setBiometrics(val === 'true');
         });
-    }, []);
+    }, [user]);
 
     const handleBiometricToggle = async (newValue: boolean) => {
         if (newValue) {
@@ -58,7 +60,8 @@ export default function SecuritySettingsScreen() {
             });
             if (result.success) {
                 setBiometrics(true);
-                await AsyncStorage.setItem(BIOMETRIC_KEY, 'true');
+                const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user?.id}`;
+                await AsyncStorage.setItem(userBiometricKey, 'true');
 
                 const savedPwd = await SecureStore.getItemAsync('saved_password');
                 if (!savedPwd) {
@@ -77,7 +80,8 @@ export default function SecuritySettingsScreen() {
             });
             if (result.success) {
                 setBiometrics(false);
-                await AsyncStorage.setItem(BIOMETRIC_KEY, 'false');
+                const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user?.id}`;
+                await AsyncStorage.setItem(userBiometricKey, 'false');
             }
             // If cancelled/failed, toggle stays ON
         }

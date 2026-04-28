@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     ActivityIndicator,
     RefreshControl,
+    TouchableOpacity,
     Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '@/lib/constants';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors, Spacing, Typography, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 // Hooks
@@ -17,30 +20,35 @@ import { useOffersData } from '@/hooks/useOffersData';
 
 // Components
 import AddLoanBanner from '@/components/offers/AddLoanBanner';
-import FilterChips from '@/components/offers/FilterChips';
-import PersonalizedRecommendations from '@/components/offers/PersonalizedRecommendations';
+import FilterModal from '@/components/offers/FilterModal';
 import LoanSelection from '@/components/offers/LoanSelection';
 import ConsolidationOffers from '@/components/offers/ConsolidationOffers';
 import OfferList from '@/components/offers/OfferList';
 
 export default function OffersScreen() {
     const { theme } = useTheme();
+    const { t, isRtl } = useLanguage();
+    const [showFilterModal, setShowFilterModal] = useState(false);
 
     const {
         selectedOffer,
         setSelectedOffer,
+        products,
         userLoans,
         recommendations,
         loading,
         refreshing,
         setRefreshing,
         activeFilters,
+        selectedBanks,
         selectedLoanIds,
         consolidationOffers,
         filteredProducts,
         toggleLoanSelection,
         selectAllLoans,
         toggleFilter,
+        toggleBank,
+        clearAllFilters,
         loadAll,
     } = useOffersData();
 
@@ -49,33 +57,63 @@ export default function OffersScreen() {
         await loadAll();
     }, [loadAll, setRefreshing]);
 
-    // Find overall best rate among filtered products
-    const bestRate = React.useMemo(() => {
-        if (filteredProducts.length === 0) return null;
-        return Math.min(
-            ...filteredProducts
-                .map((p) => p.interest_rate_min)
-                .filter((r): r is number => r !== null)
-        );
-    }, [filteredProducts]);
-
-    const bestProduct = React.useMemo(() => {
-        if (bestRate === null) return undefined;
-        return filteredProducts.find((p) => p.interest_rate_min === bestRate);
-    }, [filteredProducts, bestRate]);
+    const totalActiveFilters = activeFilters.length + selectedBanks.length;
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]} edges={['top']}>
             {/* Header */}
             <View style={[styles.header, { backgroundColor: theme.colors.bg }]}>
-                <View>
+                <View style={{ flex: 1 }}>
                     <Text style={[styles.greeting, { color: theme.colors.textSecondary }]}>
-                        Marketplace
+                        {t('offers.subtitle')}
                     </Text>
                     <Text style={[styles.title, { color: theme.colors.textPrimary }]}>
-                        Best Offers
+                        {t('offers.title')}
                     </Text>
                 </View>
+                <TouchableOpacity
+                    onPress={() => setShowFilterModal(true)}
+                    activeOpacity={0.7}
+                    style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: BorderRadius.md,
+                        backgroundColor: totalActiveFilters > 0
+                            ? `${Colors.brand.emerald}15`
+                            : theme.colors.card,
+                        borderWidth: 1,
+                        borderColor: totalActiveFilters > 0
+                            ? Colors.brand.emerald
+                            : theme.colors.border,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Ionicons
+                        name="options-outline"
+                        size={20}
+                        color={totalActiveFilters > 0 ? Colors.brand.emerald : theme.colors.textSecondary}
+                    />
+                    {totalActiveFilters > 0 && (
+                        <View
+                            style={{
+                                position: 'absolute',
+                                top: -4,
+                                right: -4,
+                                width: 18,
+                                height: 18,
+                                borderRadius: 9,
+                                backgroundColor: Colors.brand.emerald,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>
+                                {totalActiveFilters}
+                            </Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
             </View>
 
             <Animated.ScrollView
@@ -91,9 +129,6 @@ export default function OffersScreen() {
                 }
                 entering={FadeInUp.duration(600).springify()}
             >
-                {/* Search / Filters */}
-                <FilterChips activeFilters={activeFilters} toggleFilter={toggleFilter} />
-
                 {loading ? (
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator size="large" color={Colors.brand.emerald} />
@@ -106,9 +141,6 @@ export default function OffersScreen() {
                         {/* Banner if user has no loans */}
                         <AddLoanBanner userLoans={userLoans} loading={loading} />
 
-                        {/* Recommendation engine results */}
-                        <PersonalizedRecommendations recommendations={recommendations} />
-
                         {/* Consolidation Section */}
                         <LoanSelection
                             userLoans={userLoans}
@@ -118,18 +150,30 @@ export default function OffersScreen() {
                         />
                         <ConsolidationOffers consolidationOffers={consolidationOffers} />
 
-                        {/* General Market Offers */}
+                        {/* All Products */}
                         <OfferList
                             filteredProducts={filteredProducts}
+                            recommendations={recommendations}
                             activeFilters={activeFilters}
-                            bestRate={bestRate}
-                            bestProduct={bestProduct}
+                            selectedBanks={selectedBanks}
                             selectedOffer={selectedOffer}
                             setSelectedOffer={setSelectedOffer}
                         />
                     </>
                 )}
             </Animated.ScrollView>
+
+            {/* Filter Modal */}
+            <FilterModal
+                visible={showFilterModal}
+                onClose={() => setShowFilterModal(false)}
+                activeFilters={activeFilters}
+                toggleFilter={toggleFilter}
+                selectedBanks={selectedBanks}
+                toggleBank={toggleBank}
+                products={products}
+                onClearAll={clearAllFilters}
+            />
         </SafeAreaView>
     );
 }
@@ -139,14 +183,16 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        paddingHorizontal: 20,
-        paddingTop: Platform.OS === 'android' ? 20 : 10,
-        paddingBottom: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: Spacing.xl,
+        paddingTop: Platform.OS === 'android' ? Spacing.xl : 10,
+        paddingBottom: Spacing.xl,
     },
     greeting: {
-        fontSize: 15,
+        ...Typography.body,
         fontWeight: '500',
-        marginBottom: 4,
+        marginBottom: Spacing.xs,
     },
     title: {
         fontSize: 28,
@@ -165,8 +211,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     loadingText: {
-        marginTop: 16,
-        fontSize: 15,
+        marginTop: Spacing.lg,
+        ...Typography.body,
         fontWeight: '500',
     },
 });
