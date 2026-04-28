@@ -3,7 +3,6 @@ import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
-import { LinearGradient } from 'expo-linear-gradient';
 
 interface IngestionOptionCardProps {
     icon: keyof typeof Ionicons.glyphMap;
@@ -26,42 +25,27 @@ export default function IngestionOptionCard({
 
     const content = (
         <View style={styles.contentContainer}>
-            <View style={[styles.iconContainer, isPrimary ? { backgroundColor: 'rgba(255,255,255,0.2)' } : { backgroundColor: theme.colors.bg }]}>
-                <Ionicons name={icon} size={24} color={isPrimary ? '#fff' : Colors.brand.emerald} />
+            <View style={[styles.iconContainer, { backgroundColor: isPrimary ? `${Colors.brand.emerald}15` : theme.colors.bg }]}>
+                <Ionicons name={icon} size={24} color={Colors.brand.emerald} />
             </View>
             <View style={styles.textContainer}>
                 <View style={styles.titleRow}>
-                    <Text style={[styles.title, isPrimary ? { color: '#fff' } : { color: theme.colors.textPrimary }]}>
+                    <Text style={[styles.title, { color: theme.colors.textPrimary }]}>
                         {title}
                     </Text>
                     {tag && (
-                        <View style={[styles.tag, { backgroundColor: isPrimary ? 'rgba(255,255,255,0.2)' : theme.colors.border }]}>
-                            <Text style={[styles.tagText, isPrimary ? { color: '#fff' } : { color: theme.colors.textSecondary }]}>{tag}</Text>
+                        <View style={[styles.tag, { backgroundColor: isPrimary ? `${Colors.brand.emerald}15` : theme.colors.border }]}>
+                            <Text style={[styles.tagText, { color: isPrimary ? Colors.brand.emerald : theme.colors.textSecondary }]}>{tag}</Text>
                         </View>
                     )}
                 </View>
-                <Text style={[styles.description, isPrimary ? { color: 'rgba(255,255,255,0.8)' } : { color: theme.colors.textSecondary }]}>
+                <Text style={[styles.description, { color: theme.colors.textSecondary }]}>
                     {description}
                 </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={isPrimary ? 'rgba(255,255,255,0.5)' : theme.colors.textTertiary} />
+            <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
         </View>
     );
-
-    if (isPrimary) {
-        return (
-            <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.touchable}>
-                <LinearGradient
-                    colors={theme.gradients.brand}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.gradientCard}
-                >
-                    {content}
-                </LinearGradient>
-            </TouchableOpacity>
-        );
-    }
 
     return (
         <TouchableOpacity
@@ -79,9 +63,6 @@ const styles = StyleSheet.create({
         borderRadius: BorderRadius.xl,
         marginBottom: Spacing.lg,
         overflow: 'hidden',
-    },
-    gradientCard: {
-        padding: Spacing.xl,
     },
     contentContainer: {
         flexDirection: 'row',

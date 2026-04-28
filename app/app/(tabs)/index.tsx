@@ -19,6 +19,7 @@ import { DebtSummaryCard } from '@/components/dashboard/DebtSummaryCard';
 import { FinancialHealthCard } from '@/components/dashboard/FinancialHealthCard';
 import { QuickActionCard } from '@/components/dashboard/QuickActionCard';
 import { LoanPreviewCard } from '@/components/dashboard/LoanPreviewCard';
+import { ScoreFlipCard } from '@/components/dashboard/ScoreFlipCard';
 
 export default function DashboardScreen() {
   const { theme } = useTheme();
@@ -146,6 +147,9 @@ export default function DashboardScreen() {
             )}
           </TouchableOpacity>
         </View>
+
+        {/* ── Dynamic Flip Score Card ── */}
+        <ScoreFlipCard />
 
         {/* ── Total Debt Summary Card ── */}
         <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing.xl }}>
