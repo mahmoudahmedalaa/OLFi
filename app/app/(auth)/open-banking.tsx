@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/lib/auth-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, BorderRadius } from '@/lib/constants';
+import { supabase } from '@/lib/supabase';
 
 // ─── Bank data ────────────────────────────────────────────────────────────────
 
@@ -50,6 +51,7 @@ function MockLoginModal({ visible, bank, onSuccess, onDismiss }: MockLoginModalP
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [step, setStep] = useState<'login' | 'consent'>('login');
     const spinAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -57,6 +59,7 @@ function MockLoginModal({ visible, bank, onSuccess, onDismiss }: MockLoginModalP
             setUsername('');
             setPassword('');
             setLoading(false);
+            setStep('login');
         }
     }, [visible]);
 
@@ -114,62 +117,120 @@ function MockLoginModal({ visible, bank, onSuccess, onDismiss }: MockLoginModalP
                             ))}
                         </View>
 
-                        {/* Inputs */}
-                        <Text style={[styles.inputLabel, { color: theme.colors.textSecondary }]}>Online Banking Username</Text>
-                        <TextInput
-                            style={[styles.input, { backgroundColor: theme.colors.bg, borderColor: theme.colors.border, color: theme.colors.textPrimary }]}
-                            placeholder="Enter your username"
-                            placeholderTextColor={theme.colors.textTertiary}
-                            value={username}
-                            onChangeText={setUsername}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                        />
+                        {step === 'login' ? (
+                            <>
+                                {/* Inputs */}
+                                <Text style={[styles.inputLabel, { color: theme.colors.textSecondary }]}>Online Banking Username</Text>
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: theme.colors.bg, borderColor: theme.colors.border, color: theme.colors.textPrimary }]}
+                                    placeholder="Enter your username"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                    value={username}
+                                    onChangeText={setUsername}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                />
 
-                        <Text style={[styles.inputLabel, { color: theme.colors.textSecondary }]}>Password</Text>
-                        <TextInput
-                            style={[styles.input, { backgroundColor: theme.colors.bg, borderColor: theme.colors.border, color: theme.colors.textPrimary }]}
-                            placeholder="Enter your password"
-                            placeholderTextColor={theme.colors.textTertiary}
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry
-                        />
+                                <Text style={[styles.inputLabel, { color: theme.colors.textSecondary }]}>Password</Text>
+                                <TextInput
+                                    style={[styles.input, { backgroundColor: theme.colors.bg, borderColor: theme.colors.border, color: theme.colors.textPrimary }]}
+                                    placeholder="Enter your password"
+                                    placeholderTextColor={theme.colors.textTertiary}
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry
+                                />
 
-                        <Text style={{ fontSize: 11, color: theme.colors.textTertiary, textAlign: 'center', marginTop: 4, marginBottom: 20, lineHeight: 16 }}>
-                            Your credentials are never stored. OLFi only receives read-only account data via{' '}
-                            <Text style={{ fontWeight: '700' }}>Lean Technologies</Text>
-                            , licensed by CBUAE
-                        </Text>
+                                <Text style={{ fontSize: 11, color: theme.colors.textTertiary, textAlign: 'center', marginTop: 4, marginBottom: 20, lineHeight: 16 }}>
+                                    Your credentials are never stored. OLFi only receives read-only account data via{' '}
+                                    <Text style={{ fontWeight: '700' }}>Lean Technologies</Text>
+                                    , licensed by CBUAE
+                                </Text>
 
-                        {/* Connect button */}
-                        <TouchableOpacity
-                            onPress={() => { if (!loading) setLoading(true); }}
-                            disabled={loading || !username || !password}
-                            activeOpacity={0.8}
-                            style={{ opacity: (!username || !password || loading) ? 0.5 : 1 }}
-                        >
-                            <LinearGradient
-                                colors={['#011819', '#0A2525']}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                                style={styles.connectBtn}
-                            >
-                                {loading ? (
-                                    <>
-                                        <Animated.View style={{ transform: [{ rotate: spin }] }}>
-                                            <Ionicons name="sync" size={18} color="#fff" />
-                                        </Animated.View>
-                                        <Text style={styles.connectBtnText}>Connecting…</Text>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Ionicons name="lock-closed" size={18} color="#fff" />
-                                        <Text style={styles.connectBtnText}>Connect securely</Text>
-                                    </>
-                                )}
-                            </LinearGradient>
-                        </TouchableOpacity>
+                                {/* Next button */}
+                                <TouchableOpacity
+                                    onPress={() => setStep('consent')}
+                                    disabled={!username || !password}
+                                    activeOpacity={0.8}
+                                    style={{ opacity: (!username || !password) ? 0.5 : 1 }}
+                                >
+                                    <LinearGradient
+                                        colors={['#011819', '#0A2525']}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={styles.connectBtn}
+                                    >
+                                        <Text style={styles.connectBtnText}>Next</Text>
+                                        <Ionicons name="arrow-forward" size={18} color="#fff" />
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <>
+                                {/* Consent UI */}
+                                <View style={{ marginBottom: 24, paddingVertical: 10 }}>
+                                    <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                                        <Ionicons name="shield-checkmark" size={40} color={Colors.brand.emerald} style={{ marginBottom: 10 }} />
+                                        <Text style={{ fontSize: 18, fontWeight: '800', color: theme.colors.textPrimary, textAlign: 'center' }}>
+                                            Approve Connection
+                                        </Text>
+                                    </View>
+                                    <Text style={{ fontSize: 13, color: theme.colors.textSecondary, lineHeight: 20, marginBottom: 20 }}>
+                                        By continuing, you allow <Text style={{ fontWeight: '700', color: theme.colors.textPrimary }}>Lean Technologies</Text> to securely share the following read-only data from your <Text style={{ fontWeight: '700', color: theme.colors.textPrimary }}>{bank?.name}</Text> account with OLFi:
+                                    </Text>
+
+                                    <View style={{ gap: 14, marginBottom: 20, paddingHorizontal: 4 }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                                            <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: `${Colors.brand.emerald}15`, alignItems: 'center', justifyContent: 'center' }}>
+                                                <Ionicons name="wallet" size={16} color={Colors.brand.emerald} />
+                                            </View>
+                                            <Text style={{ fontSize: 14, color: theme.colors.textPrimary, fontWeight: '600' }}>Account Balances</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                                            <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: `${Colors.brand.emerald}15`, alignItems: 'center', justifyContent: 'center' }}>
+                                                <Ionicons name="list" size={16} color={Colors.brand.emerald} />
+                                            </View>
+                                            <Text style={{ fontSize: 14, color: theme.colors.textPrimary, fontWeight: '600' }}>Recent Transactions</Text>
+                                        </View>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                                            <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: `${Colors.brand.emerald}15`, alignItems: 'center', justifyContent: 'center' }}>
+                                                <Ionicons name="document-text" size={16} color={Colors.brand.emerald} />
+                                            </View>
+                                            <Text style={{ fontSize: 14, color: theme.colors.textPrimary, fontWeight: '600' }}>Active Liabilities & Loans</Text>
+                                        </View>
+                                    </View>
+                                </View>
+
+                                {/* Connect button */}
+                                <TouchableOpacity
+                                    onPress={() => { if (!loading) setLoading(true); }}
+                                    disabled={loading}
+                                    activeOpacity={0.8}
+                                    style={{ opacity: loading ? 0.5 : 1 }}
+                                >
+                                    <LinearGradient
+                                        colors={['#011819', '#0A2525']}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={styles.connectBtn}
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                                                    <Ionicons name="sync" size={18} color="#fff" />
+                                                </Animated.View>
+                                                <Text style={styles.connectBtnText}>Connecting…</Text>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Ionicons name="lock-closed" size={18} color="#fff" />
+                                                <Text style={styles.connectBtnText}>Approve & Connect</Text>
+                                            </>
+                                        )}
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </>
+                        )}
                     </View>
                 </View>
             </KeyboardAvoidingView>
@@ -214,6 +275,47 @@ export default function OpenBankingScreen() {
     const handleComplete = async () => {
         if (user) {
             await AsyncStorage.setItem(`buyout_ob_completed_${user.id}`, 'true');
+
+            if (connectedBanks.size > 0) {
+                // Seed mock data before navigating
+                const banksToSeed = UAE_BANKS.filter(b => connectedBanks.has(b.id));
+                const loansToInsert = [];
+                for (const bank of banksToSeed) {
+                    const isCreditCard = Math.random() > 0.5;
+                    if (isCreditCard) {
+                        loansToInsert.push({
+                            user_id: user.id,
+                            bank_name: bank.shortName,
+                            loan_type: 'Credit Card',
+                            original_amount: 50000,
+                            remaining_amount: Math.floor(Math.random() * 30000) + 15000,
+                            interest_rate: 39.9,
+                            monthly_emi: Math.floor(Math.random() * 2000) + 1000,
+                            status: 'active'
+                        });
+                    } else {
+                        loansToInsert.push({
+                            user_id: user.id,
+                            bank_name: bank.shortName,
+                            loan_type: 'Personal Loan',
+                            original_amount: 200000,
+                            remaining_amount: Math.floor(Math.random() * 100000) + 50000,
+                            interest_rate: 8.5,
+                            monthly_emi: Math.floor(Math.random() * 3000) + 2000,
+                            status: 'active'
+                        });
+                    }
+                }
+                if (loansToInsert.length > 0) {
+                    try {
+                        await supabase.from('user_loans').insert(loansToInsert);
+                        // Also arbitrarily set the salary in profiles to 35000 if needed for realistic health scores
+                        await supabase.from('profiles').update({ salary: 35000 }).eq('id', user.id);
+                    } catch (e) {
+                        console.error('Failed to seed mock loans:', e);
+                    }
+                }
+            }
         }
         setPostAuthSetupPending(false);
         router.replace('/(tabs)');
