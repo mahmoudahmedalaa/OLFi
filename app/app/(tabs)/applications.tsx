@@ -297,8 +297,8 @@ const styles = StyleSheet.create({
     timelineStep: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
-        height: 24,
+        paddingBottom: 28,
+        position: 'relative',
     },
     timelineDot: {
         width: 12,
@@ -309,10 +309,10 @@ const styles = StyleSheet.create({
     },
     timelineLine: {
         position: 'absolute',
-        top: 24, // below the dot
+        top: 14,
         left: 5,
         width: 2,
-        height: 24,
+        bottom: -2,
         zIndex: 1,
     },
     timelineLabel: {

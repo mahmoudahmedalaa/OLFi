@@ -70,7 +70,7 @@ export function FinancialHealthCard({
                             <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 2, flexDirection: 'row', alignItems: 'center' }}>
                                 <TermTooltip
                                     term="Debt-to-Income Ratio (DTI)"
-                                    short="DTI"
+                                    short="Debt-to-Income (DTI)"
                                     definition="Your total monthly debt payments divided by your gross monthly income. UAE banks typically approve financing up to 50% DTI."
                                     labelStyle={{ fontSize: 13, color: theme.colors.textSecondary }}
                                 />{' '}{dtiRatio}%
@@ -136,8 +136,8 @@ export function FinancialHealthCard({
                 <View style={{ flex: 1, backgroundColor: `${theme.colors.cardElevated}`, borderRadius: BorderRadius.md, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: theme.colors.border }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                         <TermTooltip
-                            term="Financing Cost"
-                            definition="The total interest / profit you pay on top of the original amount borrowed. Refinancing at a lower rate directly reduces this."
+                            term="Total Profit Paid"
+                            definition="The total profit amount you pay on top of the original amount borrowed. Refinancing at a lower rate directly reduces this."
                             labelStyle={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.colors.textTertiary }}
                         />
                     </View>
