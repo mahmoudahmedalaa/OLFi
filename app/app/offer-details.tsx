@@ -19,7 +19,8 @@ import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { trackOfferViewed } from '@/lib/analytics';
 import SavingsChart from '@/components/SavingsChart';
-import ShariaBadge from '@/components/ui/ShariaBadge';
+import { TermTooltip } from '@/components/ui/TermTooltip';
+
 import InfoBottomSheet from '@/components/ui/InfoBottomSheet';
 import {
     calculateRefinanceOffer,
@@ -187,7 +188,7 @@ export default function OfferDetailsScreen() {
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={Colors.brand.emerald} />
-                <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 12, letterSpacing: 0.3 }}>your debt, rewritten</Text>
+
             </SafeAreaView>
         );
     }
@@ -221,7 +222,7 @@ export default function OfferDetailsScreen() {
                         <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginRight: 8 }}>
                             {product.bank?.name}
                         </Text>
-                        {product.bank?.is_islamic && <ShariaBadge size="small" variant="glass" />}
+
                     </View>
                 </View>
             </View>
@@ -410,8 +411,29 @@ export default function OfferDetailsScreen() {
                                             </View>
 
                                             <View style={{ flexDirection: 'row', gap: 12 }}>
-                                                <SavingsPill label="New EMI" value={formatAED(selectedResult.newEmi)} theme={theme} />
-                                                <SavingsPill label="New Profit Rate" value={`${selectedResult.newRate}%`} theme={theme} />
+                                                <SavingsPill
+                                                    label={
+                                                        <TermTooltip
+                                                            term="New Monthly EMI"
+                                                            short="New EMI"
+                                                            definition="Equated Monthly Instalment — your new fixed monthly repayment if you refinance with this product."
+                                                            labelStyle={{ fontSize: 10, color: theme.colors.textTertiary }}
+                                                        />
+                                                    }
+                                                    value={formatAED(selectedResult.newEmi)}
+                                                    theme={theme}
+                                                />
+                                                <SavingsPill
+                                                    label={
+                                                        <TermTooltip
+                                                            term="New Profit Rate"
+                                                            definition="The annual profit rate you would pay under the new Islamic finance facility, lower than your current rate."
+                                                            labelStyle={{ fontSize: 10, color: theme.colors.textTertiary }}
+                                                        />
+                                                    }
+                                                    value={`${selectedResult.newRate}%`}
+                                                    theme={theme}
+                                                />
                                                 {selectedResult.breakEvenMonths > 0 && (
                                                     <SavingsPill label="Break-Even" value={`${selectedResult.breakEvenMonths}mo`} theme={theme} />
                                                 )}
@@ -451,8 +473,32 @@ export default function OfferDetailsScreen() {
                                             Current vs New
                                         </Text>
 
-                                        <CompareRow label="Profit Rate" current={`${selectedLoan.interest_rate}%`} newVal={`${selectedResult.newRate}%`} theme={theme} improved />
-                                        <CompareRow label="Monthly EMI" current={formatAED(selectedLoan.monthly_emi)} newVal={formatAED(selectedResult.newEmi)} theme={theme} improved />
+                                        <CompareRow
+                                            label={
+                                                <TermTooltip
+                                                    term="Profit Rate"
+                                                    definition="Annual profit rate on the Islamic finance facility, agreed upfront and fixed for the tenure."
+                                                    labelStyle={{ fontSize: 13, color: theme.colors.textTertiary }}
+                                                />
+                                            }
+                                            current={`${selectedLoan.interest_rate}%`}
+                                            newVal={`${selectedResult.newRate}%`}
+                                            theme={theme}
+                                            improved
+                                        />
+                                        <CompareRow
+                                            label={
+                                                <TermTooltip
+                                                    term="Monthly EMI"
+                                                    definition="Equated Monthly Instalment — your total fixed monthly payment covering profit and principal."
+                                                    labelStyle={{ fontSize: 13, color: theme.colors.textTertiary }}
+                                                />
+                                            }
+                                            current={formatAED(selectedLoan.monthly_emi)}
+                                            newVal={formatAED(selectedResult.newEmi)}
+                                            theme={theme}
+                                            improved
+                                        />
                                         <CompareRow label="Remaining" current={`${estimateRemainingMonths(selectedLoan.remaining_amount, selectedLoan.monthly_emi, selectedLoan.interest_rate)}mo`} newVal={`${selectedResult.newTenureMonths}mo`} theme={theme} isLast />
                                     </View>
                                 </View>
@@ -483,7 +529,7 @@ export default function OfferDetailsScreen() {
                                     style={{ marginTop: 16 }}
                                 >
                                     <LinearGradient
-                                        colors={['#10B981', '#14B8A6']}
+                                        colors={['#011819', '#0A2525']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 0 }}
                                         style={{
@@ -546,7 +592,7 @@ export default function OfferDetailsScreen() {
                 >
                     <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting}>
                         <LinearGradient
-                            colors={submitting ? ['#94A3B8', '#64748B'] : ['#10B981', '#059669']}
+                            colors={submitting ? ['#94A3B8', '#64748B'] : ['#011819', '#0A2525']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{
@@ -627,7 +673,7 @@ function DetailRow({ label, value, theme, icon, isLast = false, onInfoPress }: {
     );
 }
 
-function SavingsPill({ label, value, theme }: { label: string; value: string; theme: any }) {
+function SavingsPill({ label, value, theme }: { label: React.ReactNode; value: string; theme: any }) {
     return (
         <View style={{
             flex: 1,
@@ -637,14 +683,18 @@ function SavingsPill({ label, value, theme }: { label: string; value: string; th
             paddingHorizontal: 12,
             alignItems: 'center',
         }}>
-            <Text style={{ fontSize: 10, color: theme.colors.textTertiary, marginBottom: 2 }}>{label}</Text>
+            <View style={{ marginBottom: 2 }}>
+                {typeof label === 'string' ? (
+                    <Text style={{ fontSize: 10, color: theme.colors.textTertiary }}>{label}</Text>
+                ) : label}
+            </View>
             <Text style={{ fontSize: 14, fontWeight: '700', color: Colors.brand.emerald }}>{value}</Text>
         </View>
     );
 }
 
 function CompareRow({ label, current, newVal, theme, improved = false, isLast = false }: {
-    label: string;
+    label: React.ReactNode;
     current: string;
     newVal: string;
     theme: any;
@@ -659,7 +709,11 @@ function CompareRow({ label, current, newVal, theme, improved = false, isLast = 
             borderBottomWidth: isLast ? 0 : 1,
             borderBottomColor: theme.colors.border,
         }}>
-            <Text style={{ flex: 1, fontSize: 13, color: theme.colors.textTertiary }}>{label}</Text>
+            {typeof label === 'string' ? (
+                <Text style={{ flex: 1, fontSize: 13, color: theme.colors.textTertiary }}>{label}</Text>
+            ) : (
+                <View style={{ flex: 1 }}>{label}</View>
+            )}
             <Text style={{
                 fontSize: 14,
                 color: theme.colors.textSecondary,

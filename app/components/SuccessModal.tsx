@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { TermTooltip } from '@/components/ui/TermTooltip';
 
 const { width } = Dimensions.get('window');
 
@@ -111,7 +112,7 @@ export default function SuccessModal({
                     >
                         {/* Gradient Header */}
                         <LinearGradient
-                            colors={['#10B981', '#059669']}
+                            colors={['#011819', '#0A2525']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={{
@@ -143,7 +144,7 @@ export default function SuccessModal({
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Ionicons name="checkmark" size={36} color="#10B981" />
+                                    <Ionicons name="checkmark" size={36} color="#011819" />
                                 </View>
                             </Animated.View>
 
@@ -155,7 +156,7 @@ export default function SuccessModal({
                                     marginBottom: 4,
                                 }}
                             >
-                                Loan Added!
+                                Debt Added!
                             </Text>
                             <Text
                                 style={{
@@ -214,6 +215,7 @@ export default function SuccessModal({
                                 />
                                 <SummaryRow
                                     label="Monthly EMI"
+                                    tooltip="Equated Monthly Instalment — your fixed monthly repayment covering principal and profit."
                                     value={`AED ${loanSummary.emi.toLocaleString()}`}
                                     theme={theme}
                                     isLast
@@ -226,7 +228,7 @@ export default function SuccessModal({
                                 activeOpacity={0.8}
                             >
                                 <LinearGradient
-                                    colors={['#10B981', '#14B8A6']}
+                                    colors={['#011819', '#0A2525']}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 0 }}
                                     style={{
@@ -284,11 +286,13 @@ function SummaryRow({
     value,
     theme,
     isLast = false,
+    tooltip,
 }: {
     label: string;
     value: string;
     theme: ReturnType<typeof useTheme>['theme'];
     isLast?: boolean;
+    tooltip?: string;
 }) {
     return (
         <View
@@ -301,14 +305,22 @@ function SummaryRow({
                 borderBottomColor: theme.colors.border,
             }}
         >
-            <Text
-                style={{
-                    fontSize: 13,
-                    color: theme.colors.textTertiary,
-                }}
-            >
-                {label}
-            </Text>
+            {tooltip ? (
+                <TermTooltip
+                    term={label}
+                    definition={tooltip}
+                    labelStyle={{ fontSize: 13, color: theme.colors.textTertiary }}
+                />
+            ) : (
+                <Text
+                    style={{
+                        fontSize: 13,
+                        color: theme.colors.textTertiary,
+                    }}
+                >
+                    {label}
+                </Text>
+            )}
             <Text
                 style={{
                     fontSize: 14,

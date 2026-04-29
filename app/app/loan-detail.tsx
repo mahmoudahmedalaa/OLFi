@@ -18,6 +18,7 @@ import { supabase } from '@/lib/supabase';
 import { formatAED, estimateRemainingMonths } from '@/lib/refinance-calculator';
 import CircularProgress from '@/components/ui/CircularProgress';
 import Skeleton from '@/components/ui/Skeleton';
+import { TermTooltip } from '@/components/ui/TermTooltip';
 
 interface LoanDetail {
     id: string;
@@ -212,8 +213,14 @@ export default function LoanDetailScreen() {
                                 <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary }}>
                                     {loan.bank_name || 'Unknown Bank'}
                                 </Text>
-                                <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginTop: 2 }}>
-                                    {formatType(loan.loan_type)} Finance • {loan.interest_rate}% Profit Rate
+                                <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginTop: 2, flexDirection: 'row', alignItems: 'center' }}>
+                                    {formatType(loan.loan_type)} Finance •{' '}
+                                    <TermTooltip
+                                        term="Profit Rate"
+                                        definition="The annual profit rate on your Islamic finance facility. Unlike conventional interest, this is a fixed agreed cost of the product — not compound interest."
+                                        labelStyle={{ fontSize: 14, color: theme.colors.textSecondary }}
+                                    />
+                                    {' '}{loan.interest_rate}%
                                 </Text>
                             </View>
                             <View style={{
@@ -262,8 +269,9 @@ export default function LoanDetailScreen() {
                         <StatCard
                             icon="cash-outline"
                             label="Monthly EMI"
+                            tooltip="Equated Monthly Instalment — your fixed monthly repayment covering both the original amount and the profit portion of your facility."
                             value={formatAED(loan.monthly_emi)}
-                            color="#10B981"
+                            color="#011819"
                             theme={theme}
                         />
                         <StatCard
@@ -278,6 +286,7 @@ export default function LoanDetailScreen() {
                         <StatCard
                             icon="trending-up-outline"
                             label="Profit Rate"
+                            tooltip="The annual profit rate agreed with your lender. Refinancing to a lower rate with OLFi can meaningfully reduce your total repayment."
                             value={`${loan.interest_rate}%`}
                             color="#F59E0B"
                             theme={theme}
@@ -371,12 +380,14 @@ function StatCard({
     value,
     color,
     theme,
+    tooltip,
 }: {
     icon: keyof typeof Ionicons.glyphMap;
     label: string;
     value: string;
     color: string;
     theme: any;
+    tooltip?: string;
 }) {
     return (
         <View style={{
@@ -398,9 +409,17 @@ function StatCard({
             }}>
                 <Ionicons name={icon} size={16} color={color} />
             </View>
-            <Text style={{ fontSize: 11, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                {label}
-            </Text>
+            {tooltip ? (
+                <TermTooltip
+                    term={label}
+                    definition={tooltip}
+                    labelStyle={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 }}
+                />
+            ) : (
+                <Text style={{ fontSize: 11, color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                    {label}
+                </Text>
+            )}
             <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary, marginTop: 2 }}>
                 {value}
             </Text>

@@ -53,6 +53,7 @@ export function useOffersData() {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [activeFilters, setActiveFilters] = useState<string[]>([]);
+    const [selectedBanks, setSelectedBanks] = useState<string[]>([]);
     const [selectedLoanIds, setSelectedLoanIds] = useState<Set<string>>(new Set());
     const [consolidationOffers, setConsolidationOffers] = useState<(RefinanceResult & { productData?: BankProduct })[]>([]);
 
@@ -77,6 +78,19 @@ export function useOffersData() {
         setActiveFilters((prev) =>
             prev.includes(key) ? prev.filter((f) => f !== key) : [...prev, key]
         );
+    }, []);
+
+    const toggleBank = useCallback((bankName: string) => {
+        setSelectedBanks((prev) =>
+            prev.includes(bankName)
+                ? prev.filter((b) => b !== bankName)
+                : [...prev, bankName]
+        );
+    }, []);
+
+    const clearAllFilters = useCallback(() => {
+        setActiveFilters([]);
+        setSelectedBanks([]);
     }, []);
 
     const fetchProducts = useCallback(async () => {
@@ -234,15 +248,17 @@ export function useOffersData() {
     }, [selectedLoanIds, userLoans, products]);
 
     const filteredProducts = products.filter((p) => {
+        // Bank filter
+        if (selectedBanks.length > 0) {
+            if (!p.bank?.name || !selectedBanks.includes(p.bank.name)) return false;
+        }
+
+        // Feature filters
         for (const filter of activeFilters) {
-            if (filter === 'sharia') {
-                if (!p.bank?.is_islamic) return false;
-            } else {
-                const featureMatch = p.features?.some((f) =>
-                    f.toLowerCase().includes(filter.replace(/_/g, ' '))
-                );
-                if (!featureMatch) return false;
-            }
+            const featureMatch = p.features?.some((f) =>
+                f.toLowerCase().includes(filter.replace(/_/g, ' '))
+            );
+            if (!featureMatch) return false;
         }
         return true;
     });
@@ -257,12 +273,15 @@ export function useOffersData() {
         refreshing,
         setRefreshing,
         activeFilters,
+        selectedBanks,
         selectedLoanIds,
         consolidationOffers,
         filteredProducts,
         toggleLoanSelection,
         selectAllLoans,
         toggleFilter,
+        toggleBank,
+        clearAllFilters,
         loadAll,
     };
 }

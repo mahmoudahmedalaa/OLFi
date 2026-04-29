@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
+import { useLanguage } from '@/lib/language-context';
 import { supabase } from '@/lib/supabase';
 import CircularProgress from '@/components/ui/CircularProgress';
 import Skeleton from '@/components/ui/Skeleton';
@@ -35,11 +36,7 @@ interface UserLoan {
     status: LoanStatus;
 }
 
-const filters: { key: 'all' | LoanStatus; label: string }[] = [
-    { key: 'all', label: 'All' },
-    { key: 'active', label: 'Active' },
-    { key: 'completed', label: 'Completed' },
-];
+// Filter labels are resolved dynamically in the component via t()
 
 export default function LoansScreen() {
     const [activeFilter, setActiveFilter] = useState<'all' | LoanStatus>('all');
@@ -48,6 +45,7 @@ export default function LoansScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { theme } = useTheme();
     const { user } = useAuth();
+    const { t, isRtl } = useLanguage();
 
     const fetchLoans = useCallback(async () => {
         if (!user) return;
@@ -75,12 +73,12 @@ export default function LoansScreen() {
 
     const handleDelete = (loan: UserLoan) => {
         Alert.alert(
-            'Delete Loan',
-            `Remove "${loan.bank_name || 'Unknown'} - ${formatType(loan.loan_type)}"?`,
+            t('debts.deleteTitle'),
+            `${t('debts.deleteMessage')} "${loan.bank_name || 'Unknown'} - ${formatType(loan.loan_type)}"?`,
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Delete',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -120,12 +118,11 @@ export default function LoansScreen() {
             >
                 <Text
                     style={{
-                        fontSize: 24,
-                        fontWeight: '700',
+                        ...Typography.h1,
                         color: theme.colors.textPrimary,
                     }}
                 >
-                    My Loans
+                    {t('debts.title')}
                 </Text>
             </GlassHeader>
 
@@ -134,11 +131,11 @@ export default function LoansScreen() {
                 <View
                     style={{
                         flexDirection: 'row',
-                        gap: 24,
-                        marginTop: 16,
-                        marginBottom: 16,
-                        paddingVertical: 12,
-                        paddingHorizontal: 20,
+                        gap: Spacing['2xl'],
+                        marginTop: Spacing.lg,
+                        marginBottom: Spacing.lg,
+                        paddingVertical: Spacing.md,
+                        paddingHorizontal: Spacing.xl,
                         backgroundColor: theme.colors.card,
                         borderRadius: BorderRadius.md,
                         borderWidth: 1,
@@ -148,20 +145,19 @@ export default function LoansScreen() {
                     <View style={{ flex: 1 }}>
                         <Text
                             style={{
-                                fontSize: 11,
+                                ...Typography.overline,
                                 color: theme.colors.textTertiary,
                                 textTransform: 'uppercase',
-                                letterSpacing: 0.5,
                             }}
                         >
-                            Total Debt
+                            {t('debts.totalDebt')}
                         </Text>
                         <Text
                             style={{
-                                fontSize: 17,
+                                ...Typography.h3,
                                 fontWeight: '700',
                                 color: theme.colors.textPrimary,
-                                marginTop: 4,
+                                marginTop: Spacing.xs,
                             }}
                         >
                             AED {totalDebt.toLocaleString()}
@@ -171,20 +167,19 @@ export default function LoansScreen() {
                     <View style={{ flex: 1 }}>
                         <Text
                             style={{
-                                fontSize: 11,
+                                ...Typography.overline,
                                 color: theme.colors.textTertiary,
                                 textTransform: 'uppercase',
-                                letterSpacing: 0.5,
                             }}
                         >
-                            Monthly EMIs
+                            {t('debts.monthlyPayments')}
                         </Text>
                         <Text
                             style={{
-                                fontSize: 17,
+                                ...Typography.h3,
                                 fontWeight: '700',
                                 color: theme.colors.textPrimary,
-                                marginTop: 4,
+                                marginTop: Spacing.xs,
                             }}
                         >
                             AED {totalEmi.toLocaleString()}
@@ -194,19 +189,19 @@ export default function LoansScreen() {
             )}
 
             {/* Filter Pills */}
-            <View style={{ paddingHorizontal: 20, marginBottom: 16 }}>
+            <View style={{ paddingHorizontal: Spacing.xl, marginTop: Spacing.lg, marginBottom: Spacing.lg }}>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 8 }}
+                    contentContainerStyle={{ gap: Spacing.sm }}
                 >
-                    {filters.map((filter) => (
+                    {([{ key: 'all' as const, label: t('common.all') }, { key: 'active' as const, label: t('common.active') }, { key: 'completed' as const, label: t('common.completed') }]).map((filter) => (
                         <TouchableOpacity
                             key={filter.key}
                             onPress={() => setActiveFilter(filter.key)}
                             style={{
-                                paddingHorizontal: 16,
-                                paddingVertical: 8,
+                                paddingHorizontal: Spacing.lg,
+                                paddingVertical: Spacing.sm,
                                 borderRadius: 20,
                                 backgroundColor:
                                     activeFilter === filter.key
@@ -218,8 +213,7 @@ export default function LoansScreen() {
                         >
                             <Text
                                 style={{
-                                    fontSize: 13,
-                                    fontWeight: '600',
+                                    ...Typography.captionBold,
                                     color:
                                         activeFilter === filter.key
                                             ? '#fff'
@@ -272,7 +266,7 @@ export default function LoansScreen() {
                         keyExtractor={(item) => item.id}
                         contentContainerStyle={{
                             paddingHorizontal: 20,
-                            paddingBottom: 32,
+                            paddingBottom: 120,
                             flexGrow: 1,
                         }}
                         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
@@ -297,7 +291,9 @@ export default function LoansScreen() {
                                         marginTop: 16,
                                     }}
                                 >
-                                    {activeFilter === 'all' ? 'No loans yet' : `No ${activeFilter} loans`}
+                                    {activeFilter === 'all'
+                                        ? t('debts.noDebts')
+                                        : t('debts.noFiltered')}
                                 </Text>
                                 <Text
                                     style={{
@@ -307,7 +303,7 @@ export default function LoansScreen() {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {activeFilter === 'all' ? 'Tap + to add your first loan' : 'Try changing the filter'}
+                                    {activeFilter === 'all' ? t('debts.noDebtsDesc') : t('debts.tryFilter')}
                                 </Text>
                             </View>
                         }
@@ -357,7 +353,7 @@ export default function LoansScreen() {
                                                         marginTop: 2,
                                                     }}
                                                 >
-                                                    {formatType(item.loan_type)} • {item.interest_rate}% Profit Rate
+                                                    {formatType(item.loan_type)} • {item.interest_rate}%
                                                 </Text>
                                             </View>
                                             <StatusBadge status={item.status} />
@@ -380,7 +376,7 @@ export default function LoansScreen() {
                                                         letterSpacing: 0.5,
                                                     }}
                                                 >
-                                                    Remaining
+                                                    {t('debts.balance')}
                                                 </Text>
                                                 <Text
                                                     style={{
@@ -402,7 +398,7 @@ export default function LoansScreen() {
                                                         letterSpacing: 0.5,
                                                     }}
                                                 >
-                                                    Monthly EMI
+                                                    {t('debts.monthly')}
                                                 </Text>
                                                 <Text
                                                     style={{
@@ -428,7 +424,7 @@ export default function LoansScreen() {
                                             <View style={{ flex: 1 }}>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                                                     <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}>
-                                                        {Math.round(progress * 100)}% Repaid
+                                                        {Math.round(progress * 100)}%
                                                     </Text>
                                                     <Text style={{ fontSize: 13, color: theme.colors.textSecondary }}>
                                                         of AED {item.original_amount.toLocaleString()}
@@ -460,7 +456,7 @@ export default function LoansScreen() {
                                             activeOpacity={0.7}
                                         >
                                             <Ionicons name="create-outline" size={16} color={Colors.brand.emerald} />
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>Edit</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>{t('common.edit')}</Text>
                                         </TouchableOpacity>
                                         <View style={{ width: 1, backgroundColor: theme.colors.border }} />
                                         <TouchableOpacity
@@ -469,7 +465,7 @@ export default function LoansScreen() {
                                             activeOpacity={0.7}
                                         >
                                             <Ionicons name="trash-outline" size={16} color={Colors.error} />
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.error }}>Delete</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.error }}>{t('common.delete')}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>

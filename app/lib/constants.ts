@@ -1,5 +1,5 @@
 /**
- * BuyOut Design Tokens
+ * OLFi Design Tokens
  * 
  * Central source of truth for colors, spacing, and typography.
  * Used for inline styles when NativeWind classes aren't sufficient (e.g., LinearGradient).
@@ -9,27 +9,27 @@
 export const Colors = {
     // Brand palette — fintech premium, dark-first
     brand: {
-        emerald: '#10B981',
-        emeraldLight: '#34D399',
-        emeraldDark: '#059669',
-        teal: '#14B8A6',
-        tealLight: '#2DD4BF',
-        tealDark: '#0D9488',
+        emerald: '#10B981',      // Emerald 500
+        emeraldLight: '#34D399', // Emerald 400
+        emeraldDark: '#047857',  // Emerald 700
+        teal: '#14B8A6',         // Teal 500
+        tealLight: '#2DD4BF',    // Teal 400
+        tealDark: '#0F766E',     // Teal 700
     },
 
     // Backgrounds
     dark: {
-        primary: '#0F172A',    // Slate 900 — main bg
-        secondary: '#1E293B',  // Slate 800 — cards
-        tertiary: '#334155',   // Slate 700 — elevated surfaces
-        surface: '#475569',    // Slate 600 — inputs/borders
+        primary: '#011819',
+        secondary: '#0A2525',
+        tertiary: '#133030',
+        surface: '#1B3B3B',
     },
 
     light: {
-        primary: '#FFFFFF',
-        secondary: '#F8FAFC',  // Slate 50
-        tertiary: '#F1F5F9',   // Slate 100
-        surface: '#E2E8F0',    // Slate 200
+        primary: '#E1DED1',
+        secondary: '#EDE9DD',
+        tertiary: '#D5D0C4',
+        surface: '#C8C3B7',
     },
 
     // Semantic
@@ -41,26 +41,26 @@ export const Colors = {
     // Text
     text: {
         dark: {
-            primary: '#F8FAFC',
-            secondary: '#94A3B8',
-            tertiary: '#64748B',
+            primary: '#E1DED1',
+            secondary: '#C8C3B7',
+            tertiary: '#94A3B8',
             disabled: '#475569',
         },
         light: {
-            primary: '#0F172A',
-            secondary: '#475569',
-            tertiary: '#94A3B8',
-            disabled: '#CBD5E1',
+            primary: '#011819',
+            secondary: '#133030',
+            tertiary: '#4A5568',
+            disabled: '#A0AEC0',
         },
     },
 
     // Gradients (for LinearGradient)
     gradients: {
-        brand: ['#10B981', '#14B8A6'],
-        brandDark: ['#059669', '#0D9488'],
-        card: ['#1E293B', '#0F172A'],
-        cardElevated: ['#334155', '#1E293B'],
-        premium: ['#10B981', '#3B82F6'],
+        brand: ['#011819', '#0A2525'],
+        brandDark: ['#0A2525', '#234E52'],
+        card: ['#0A2525', '#011819'],
+        cardElevated: ['#133030', '#0A2525'],
+        premium: ['#011819', '#011819'],
     },
 } as const;
 

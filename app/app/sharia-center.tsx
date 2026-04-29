@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { useTheme } from '@/lib/theme-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { LinearGradient } from 'expo-linear-gradient';
-import ShariaBadge from '@/components/ui/ShariaBadge';
+
 
 const KNOWLEDGE_ARTICLES = [
     {
@@ -89,13 +89,13 @@ export default function ShariaCenterScreen() {
                 >
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Ionicons name="book" size={32} color="rgba(255,255,255,0.9)" />
-                        <ShariaBadge variant="glass" />
+
                     </View>
                     <Text style={{ fontSize: 24, fontWeight: '800', color: '#fff', marginTop: 16, marginBottom: 8 }}>
                         Financial clarity, without compromise.
                     </Text>
                     <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.8)', lineHeight: 22 }}>
-                        Learn how BuyOut structures its refinancing offers to be 100% compliant with Islamic finance principles.
+                        Learn how OLFi structures its refinancing offers to be 100% compliant with Islamic finance principles.
                     </Text>
                 </LinearGradient>
 

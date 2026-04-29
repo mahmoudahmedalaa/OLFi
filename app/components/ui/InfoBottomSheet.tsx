@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet , Platform } from 'react-native';
 import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useTheme } from '@/lib/theme-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { BlurView } from 'expo-blur';
-import { Platform } from 'react-native';
 
 interface InfoBottomSheetProps {
     bottomSheetRef: React.RefObject<any>;
@@ -85,7 +84,7 @@ export default function InfoBottomSheet({
                 )}
 
                 {footerText && (
-                    <Text style={{ fontSize: 14, color: theme.colors.textTertiary, fontStyle: 'italic', textAlign: 'center', marginTop: 'auto', marginBottom: 20 }}>
+                    <Text style={{ fontSize: 14, color: theme.colors.textTertiary, textAlign: 'center', marginTop: 'auto', marginBottom: 20 }}>
                         {footerText}
                     </Text>
                 )}

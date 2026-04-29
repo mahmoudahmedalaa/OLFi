@@ -18,6 +18,8 @@ import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
 import { supabase } from '@/lib/supabase';
 
 export default function SignupScreen() {
@@ -30,6 +32,7 @@ export default function SignupScreen() {
     const [loading, setLoading] = useState(false);
     const { signUp } = useAuth();
     const { theme } = useTheme();
+    const { t } = useLanguage();
 
     const handleSignup = async () => {
         if (!firstName.trim() || !lastName.trim() || !email || !password || !confirmPassword) {
@@ -44,35 +47,18 @@ export default function SignupScreen() {
             Alert.alert('Error', 'Password must be at least 6 characters');
             return;
         }
-        setLoading(true);
-        try {
-            // Pass name as metadata so it's available immediately via user_metadata
-            const { error } = await signUp(email, password, firstName.trim(), lastName.trim());
-            if (error) {
-                Alert.alert('Signup Error', error.message);
-            } else {
-                // Also save to profiles table for richer queries
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    await supabase.from('profiles').upsert({
-                        id: user.id,
-                        first_name: firstName.trim(),
-                        last_name: lastName.trim(),
-                        full_name: `${firstName.trim()} ${lastName.trim()}`,
-                        email: email,
-                    });
-                }
-                Alert.alert(
-                    'Welcome!',
-                    `Account created successfully, ${firstName.trim()}! Let\u2019s get you started.`,
-                );
-                // Auth gate will redirect based on per-user onboarding status
+
+        // Pass to OTP for verification before actual sign-up
+        router.push({
+            pathname: '/(auth)/otp',
+            params: {
+                action: 'signup',
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                email: email.trim(),
+                password: password,
             }
-        } catch (e: any) {
-            Alert.alert('Error', e.message);
-        } finally {
-            setLoading(false);
-        }
+        });
     };
 
     return (
@@ -102,10 +88,15 @@ export default function SignupScreen() {
                         />
                     </TouchableOpacity>
 
+                    {/* Language Switcher */}
+                    <View style={{ alignItems: 'flex-end', marginTop: 16 }}>
+                        <LanguageToggle />
+                    </View>
+
                     {/* Logo & Header */}
                     <View style={{ alignItems: 'center', marginBottom: 32 }}>
                         <Image
-                            source={require('@/assets/images/icon.png')}
+                            source={require('@/assets/images/olfi-icon.png')}
                             style={{
                                 width: 72,
                                 height: 72,
@@ -121,18 +112,7 @@ export default function SignupScreen() {
                                 marginBottom: 8,
                             }}
                         >
-                            Create account
-                        </Text>
-                        <Text
-                            style={{
-                                fontSize: 14,
-                                fontWeight: '500',
-                                color: Colors.brand.teal,
-                                fontStyle: 'italic',
-                                letterSpacing: 0.3,
-                            }}
-                        >
-                            your debt, rewritten
+                            {t('auth.signup')}
                         </Text>
                     </View>
 
@@ -140,7 +120,7 @@ export default function SignupScreen() {
                     <View style={{ flexDirection: 'row', gap: 12 }}>
                         <View style={{ flex: 1 }}>
                             <InputField
-                                label="First Name"
+                                label={t('auth.firstName')}
                                 icon="person-outline"
                                 placeholder="Mahmoud"
                                 value={firstName}
@@ -150,7 +130,7 @@ export default function SignupScreen() {
                         </View>
                         <View style={{ flex: 1 }}>
                             <InputField
-                                label="Last Name"
+                                label={t('auth.lastName')}
                                 icon="person-outline"
                                 placeholder="Ahmed"
                                 value={lastName}
@@ -162,7 +142,7 @@ export default function SignupScreen() {
 
                     {/* Email */}
                     <InputField
-                        label="Email"
+                        label={t('auth.email')}
                         icon="mail-outline"
                         placeholder="your@email.com"
                         value={email}
@@ -181,7 +161,7 @@ export default function SignupScreen() {
                             marginBottom: 8,
                         }}
                     >
-                        Password
+                        {t('auth.password')}
                     </Text>
                     <View
                         style={{
@@ -262,7 +242,7 @@ export default function SignupScreen() {
                                         color: '#fff',
                                     }}
                                 >
-                                    Create Account
+                                    {t('auth.signup')}
                                 </Text>
                             )}
                         </LinearGradient>
@@ -279,9 +259,19 @@ export default function SignupScreen() {
                         }}
                     >
                         By signing up, you agree to our{' '}
-                        <Text style={{ color: Colors.brand.emerald }}>Terms of Service</Text>
+                        <Text
+                            style={{ color: Colors.brand.emerald }}
+                            onPress={() => router.push('/terms-of-service')}
+                        >
+                            Terms of Service
+                        </Text>
                         {' '}and{' '}
-                        <Text style={{ color: Colors.brand.emerald }}>Privacy Policy</Text>
+                        <Text
+                            style={{ color: Colors.brand.emerald }}
+                            onPress={() => router.push('/privacy-policy')}
+                        >
+                            Privacy Policy
+                        </Text>
                     </Text>
 
                     {/* Sign In Link */}
@@ -294,9 +284,9 @@ export default function SignupScreen() {
                         }}
                     >
                         <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
-                            Already have an account?
+                            {t('auth.haveAccount')}
                         </Text>
-                        <TouchableOpacity onPress={() => router.back()}>
+                        <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
                             <Text
                                 style={{
                                     fontSize: 14,
@@ -304,7 +294,7 @@ export default function SignupScreen() {
                                     color: Colors.brand.emerald,
                                 }}
                             >
-                                Sign In
+                                {t('auth.signIn')}
                             </Text>
                         </TouchableOpacity>
                     </View>

@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { Theme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 import CircularProgress from '@/components/ui/CircularProgress';
 
 export function LoanPreviewCard({
@@ -28,6 +29,8 @@ export function LoanPreviewCard({
     onPress?: () => void;
     savingsEstimate?: number;
 }) {
+    const { t } = useLanguage();
+
     return (
         <TouchableOpacity
             onPress={onPress}
@@ -65,7 +68,7 @@ export function LoanPreviewCard({
                             marginTop: 2,
                         }}
                     >
-                        {type} • {rate}% Profit Rate
+                        {type} • {rate}% {t('debtPreview.profitRate')}
                     </Text>
                 </View>
                 <View
@@ -83,7 +86,7 @@ export function LoanPreviewCard({
                             color: Colors.brand.emerald,
                         }}
                     >
-                        ACTIVE
+                        {t('common.active').toUpperCase()}
                     </Text>
                 </View>
             </View>
@@ -98,7 +101,7 @@ export function LoanPreviewCard({
                             letterSpacing: 0.5,
                         }}
                     >
-                        Remaining
+                        {t('debtPreview.remaining')}
                     </Text>
                     <Text
                         style={{
@@ -108,7 +111,7 @@ export function LoanPreviewCard({
                             marginTop: 2,
                         }}
                     >
-                        AED {remaining.toLocaleString()}
+                        {t('common.aed')} {remaining.toLocaleString()}
                     </Text>
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
@@ -120,7 +123,7 @@ export function LoanPreviewCard({
                             letterSpacing: 0.5,
                         }}
                     >
-                        Monthly EMI
+                        {t('debtPreview.monthlyEmi')}
                     </Text>
                     <Text
                         style={{
@@ -130,7 +133,7 @@ export function LoanPreviewCard({
                             marginTop: 2,
                         }}
                     >
-                        AED {emi.toLocaleString()}
+                        {t('common.aed')} {emi.toLocaleString()}
                     </Text>
                 </View>
             </View>
@@ -145,10 +148,10 @@ export function LoanPreviewCard({
                 />
                 <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary, marginBottom: 4 }}>
-                        {Math.round(progress * 100)}% Repaid
+                        {Math.round(progress * 100)}% {t('debtPreview.repaid')}
                     </Text>
                     <Text style={{ fontSize: 12, color: theme.colors.textSecondary }}>
-                        of AED {amount.toLocaleString()} original financing
+                        {t('debtPreview.ofOriginal')} ({t('common.aed')} {amount.toLocaleString()})
                     </Text>
                 </View>
             </View>
@@ -169,7 +172,7 @@ export function LoanPreviewCard({
                 >
                     <Ionicons name="trending-down" size={14} color={Colors.brand.emerald} />
                     <Text style={{ fontSize: 12, fontWeight: '600', color: Colors.brand.emerald }}>
-                        Potential savings: ~AED {savingsEstimate.toLocaleString()}/mo
+                        {t('debtPreview.potentialSavings')}{savingsEstimate.toLocaleString()}{t('debtSummary.perMonth')}
                     </Text>
                 </View>
             )}

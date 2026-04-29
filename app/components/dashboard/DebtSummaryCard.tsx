@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BorderRadius } from '@/lib/constants';
+import { BorderRadius , Colors } from '@/lib/constants';
 import { Theme } from '@/lib/theme-context';
+import { useLanguage } from '@/lib/language-context';
 import Skeleton from '@/components/ui/Skeleton';
-import { Colors } from '@/lib/constants';
 
 interface Props {
     theme: Theme;
@@ -21,6 +21,8 @@ export function DebtSummaryCard({
     totalEmi,
     potentialMonthlySavings,
 }: Props) {
+    const { t } = useLanguage();
+
     return (
         <LinearGradient
             colors={theme.gradients.card}
@@ -50,18 +52,18 @@ export function DebtSummaryCard({
                             letterSpacing: 0.5,
                         }}
                     >
-                        Total Outstanding
+                        {t('debtSummary.totalOutstanding')}
                     </Text>
                     <Text
                         style={{
-                            fontSize: 36,
+                            fontSize: totalDebt > 0 ? 36 : 22,
                             fontWeight: '700',
                             color: theme.colors.textPrimary,
                             marginTop: 8,
                             letterSpacing: -1,
                         }}
                     >
-                        {totalDebt > 0 ? `AED ${totalDebt.toLocaleString()}` : 'No debts yet'}
+                        {totalDebt > 0 ? `${t('common.aed')} ${totalDebt.toLocaleString()}` : t('debtSummary.noDebtsYet')}
                     </Text>
                     {totalDebt > 0 && (
                         <View style={{ flexDirection: 'row', marginTop: 20, gap: 24 }}>
@@ -75,7 +77,7 @@ export function DebtSummaryCard({
                                         marginBottom: 4,
                                     }}
                                 >
-                                    Monthly EMI
+                                    {t('debtSummary.monthlyEmi')}
                                 </Text>
                                 <Text
                                     style={{
@@ -84,7 +86,7 @@ export function DebtSummaryCard({
                                         color: theme.colors.textPrimary,
                                     }}
                                 >
-                                    AED {totalEmi.toLocaleString()}
+                                    {t('common.aed')} {totalEmi.toLocaleString()}
                                 </Text>
                             </View>
                             <View style={{ width: 1, backgroundColor: theme.colors.border }} />
@@ -98,7 +100,7 @@ export function DebtSummaryCard({
                                         marginBottom: 4,
                                     }}
                                 >
-                                    Potential Savings
+                                    {t('debtSummary.potentialSavings')}
                                 </Text>
                                 <Text
                                     style={{
@@ -107,7 +109,7 @@ export function DebtSummaryCard({
                                         color: Colors.brand.emerald,
                                     }}
                                 >
-                                    AED {potentialMonthlySavings.toLocaleString()}/mo
+                                    {t('common.aed')} {potentialMonthlySavings.toLocaleString()}{t('debtSummary.perMonth')}
                                 </Text>
                             </View>
                         </View>

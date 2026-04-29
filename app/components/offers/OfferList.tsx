@@ -1,36 +1,46 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Spacing } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { router } from 'expo-router';
 import { formatAED } from '@/lib/refinance-calculator';
-import ShariaBadge from '@/components/ui/ShariaBadge';
-import type { BankProduct } from '@/hooks/useOffersData';
-import { LinearGradient } from 'expo-linear-gradient';
+
+import type { BankProduct, PersonalizedRecommendation } from '@/hooks/useOffersData';
+
 
 interface OfferListProps {
     filteredProducts: BankProduct[];
     activeFilters: string[];
-    bestRate: number | null;
-    bestProduct: BankProduct | undefined;
+    selectedBanks: string[];
     selectedOffer: string | null;
     setSelectedOffer: (id: string | null) => void;
+    recommendations?: PersonalizedRecommendation[];
 }
 
 export default function OfferList({
     filteredProducts,
     activeFilters,
-    bestRate,
-    bestProduct,
+    selectedBanks,
     selectedOffer,
     setSelectedOffer,
+    recommendations = [],
 }: OfferListProps) {
     const { theme } = useTheme();
 
+    // Compute best rate locally for the chip badge on the first card
+    const bestRate = React.useMemo(() => {
+        if (filteredProducts.length === 0) return null;
+        return Math.min(
+            ...filteredProducts
+                .map((p) => p.interest_rate_min)
+                .filter((r): r is number => r !== null)
+        );
+    }, [filteredProducts]);
+
     if (filteredProducts.length === 0) {
         return (
-            <View style={{ paddingVertical: 40, alignItems: 'center', paddingHorizontal: 40 }}>
+            <View style={{ paddingVertical: Spacing['4xl'], alignItems: 'center', paddingHorizontal: Spacing['4xl'] }}>
                 <Ionicons name="search-outline" size={48} color={theme.colors.textTertiary} />
                 <Text
                     style={{
@@ -50,7 +60,9 @@ export default function OfferList({
                         textAlign: 'center',
                     }}
                 >
-                    {activeFilters.length > 0 ? 'Try removing some filters' : 'Check back later for new offers'}
+                    {activeFilters.length > 0 || selectedBanks.length > 0
+                        ? 'Try removing some filters'
+                        : 'Check back later for new offers'}
                 </Text>
             </View>
         );
@@ -58,36 +70,7 @@ export default function OfferList({
 
     return (
         <>
-            {/* Best Rate Banner */}
-            {bestProduct && (
-                <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
-                    <LinearGradient
-                        colors={theme.gradients.premium}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        style={{
-                            borderRadius: BorderRadius.lg,
-                            padding: 20,
-                        }}
-                    >
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                            <Ionicons name="star" size={16} color="#FFD700" />
-                            <Text style={{ fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.9)' }}>
-                                BEST RATE FOUND
-                            </Text>
-                        </View>
-                        <Text style={{ fontSize: 36, fontWeight: '700', color: '#fff', letterSpacing: -1 }}>
-                            {bestRate}% Profit Rate
-                        </Text>
-                        <Text style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
-                            {bestProduct.name} from {bestProduct.bank?.name}
-                        </Text>
-                    </LinearGradient>
-                </View>
-            )}
-
-            {/* Offer Cards */}
-            <View style={{ paddingHorizontal: 20 }}>
+            <View style={{ paddingHorizontal: Spacing.xl }}>
                 <Text
                     style={{
                         fontSize: 17,
@@ -101,14 +84,35 @@ export default function OfferList({
 
                 {filteredProducts.map((product, index) => {
                     const isBest = product.interest_rate_min === bestRate && index === 0;
+
+                    // Extract best personalized savings insight for this product, if any
+                    const productInsights = recommendations
+                        .map((rec) => {
+                            const matchingOffer = rec.topOffers.find((o) => o.productId === product.id);
+                            if (matchingOffer && matchingOffer.monthlySavings > 0) {
+                                return {
+                                    loanName: rec.loan.bank_name
+                                        ? `${rec.loan.bank_name}`
+                                        : 'existing',
+                                    loanType: rec.loan.loan_type.replace(/_/g, ' '),
+                                    savings: matchingOffer.monthlySavings,
+                                };
+                            }
+                            return null;
+                        })
+                        .filter((insight): insight is { loanName: string; loanType: string; savings: number } => insight !== null)
+                        .sort((a, b) => b.savings - a.savings);
+
+                    const bestInsight = productInsights[0];
+
                     return (
                         <TouchableOpacity
                             key={product.id}
                             style={{
                                 backgroundColor: theme.colors.card,
                                 borderRadius: BorderRadius.lg,
-                                padding: 20,
-                                marginBottom: 12,
+                                padding: Spacing.xl,
+                                marginBottom: Spacing.md,
                                 borderWidth: isBest ? 1.5 : 1,
                                 borderColor: isBest
                                     ? Colors.brand.emerald
@@ -143,6 +147,38 @@ export default function OfferList({
                                     >
                                         BEST RATE
                                     </Text>
+                                </View>
+                            )}
+
+                            {/* Personalized Insight Inline */}
+                            {bestInsight && (
+                                <View
+                                    style={{
+                                        backgroundColor: `${Colors.brand.emerald}15`,
+                                        paddingHorizontal: 12,
+                                        paddingVertical: 10,
+                                        borderRadius: BorderRadius.md,
+                                        marginBottom: 16,
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                    }}
+                                >
+                                    <Ionicons name="sparkles" size={16} color={Colors.brand.emerald} />
+                                    <View style={{ flex: 1 }}>
+                                        <Text
+                                            style={{
+                                                fontSize: 13,
+                                                color: Colors.brand.emerald,
+                                                fontWeight: '600',
+                                            }}
+                                        >
+                                            Save {formatAED(bestInsight.savings)}/mo
+                                        </Text>
+                                        <Text style={{ fontSize: 11, color: theme.colors.textSecondary, marginTop: 2 }}>
+                                            if you refinance your {bestInsight.loanName} {bestInsight.loanType}
+                                        </Text>
+                                    </View>
                                 </View>
                             )}
 
@@ -184,7 +220,7 @@ export default function OfferList({
                                             >
                                                 {product.bank?.name || 'Unknown'}
                                             </Text>
-                                            {product.bank?.is_islamic && <ShariaBadge size="small" variant="glass" />}
+
                                         </View>
                                         <Text
                                             style={{
@@ -347,11 +383,7 @@ export default function OfferList({
                                         </Text>
                                     </View>
 
-                                    {product.bank?.is_islamic && (
-                                        <View style={{ marginTop: 12 }}>
-                                            <ShariaBadge size="medium" variant="default" />
-                                        </View>
-                                    )}
+
 
                                     <TouchableOpacity
                                         style={{

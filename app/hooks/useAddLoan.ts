@@ -95,11 +95,11 @@ export function useAddLoan() {
         const origRaw = stripCommas(originalAmount);
         const remRaw = stripCommas(remainingAmount);
         const emiRaw = stripCommas(monthlyEmi);
-        if (!origRaw || Number(origRaw) <= 0) return 'Please enter the original financing amount';
+        if (!origRaw || Number(origRaw) <= 0) return 'Please enter the original loan amount';
         if (!remRaw || Number(remRaw) < 0) return 'Please enter the remaining amount';
-        if (!interestRate || Number(interestRate) <= 0) return 'Please enter the profit rate';
+        if (!interestRate || Number(interestRate) <= 0) return 'Please enter the interest rate';
         if (!emiRaw || Number(emiRaw) <= 0) return 'Please enter the monthly EMI';
-        if (!tenureMonths || Number(tenureMonths) <= 0) return 'Please enter the financing tenure';
+        if (!tenureMonths || Number(tenureMonths) <= 0) return 'Please enter the loan tenure';
         return null;
     };
 
@@ -165,7 +165,7 @@ export function useAddLoan() {
             });
             setShowSuccess(true);
         } catch (e: any) {
-            Alert.alert('Error', e.message || 'Failed to save financing');
+            Alert.alert('Error', e.message || 'Failed to save loan');
         } finally {
             setSaving(false);
         }

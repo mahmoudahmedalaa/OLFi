@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors, BorderRadius, Spacing } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -18,7 +18,7 @@ export default function AddLoanBanner({ userLoans, loading }: AddLoanBannerProps
     if (userLoans.length > 0 || loading) return null;
 
     return (
-        <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+        <View style={{ paddingHorizontal: Spacing.xl, marginBottom: Spacing.xl }}>
             <TouchableOpacity
                 onPress={() => router.push('/(tabs)/loans')}
                 activeOpacity={0.8}
@@ -27,7 +27,7 @@ export default function AddLoanBanner({ userLoans, loading }: AddLoanBannerProps
                     colors={['rgba(16,185,129,0.12)', 'rgba(16,185,129,0.04)']}
                     style={{
                         borderRadius: BorderRadius.lg,
-                        padding: 20,
+                        padding: Spacing.xl,
                         borderWidth: 1,
                         borderColor: `${Colors.brand.emerald}30`,
                         flexDirection: 'row',

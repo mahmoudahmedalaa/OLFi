@@ -85,7 +85,7 @@ export default function LoanSelection({
                                 {formatAED(loan.remaining_amount)}
                             </Text>
                             <Text style={{ fontSize: 11, color: theme.colors.textTertiary, marginTop: 2 }}>
-                                @ {loan.interest_rate}% Profit Rate
+                                @ {loan.interest_rate}% Interest Rate
                             </Text>
                         </TouchableOpacity>
                     );
