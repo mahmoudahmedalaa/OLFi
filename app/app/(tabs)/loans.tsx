@@ -36,11 +36,7 @@ interface UserLoan {
     status: LoanStatus;
 }
 
-const filters: { key: 'all' | LoanStatus; label: string }[] = [
-    { key: 'all', label: 'All' },
-    { key: 'active', label: 'Active' },
-    { key: 'completed', label: 'Completed' },
-];
+// Filter labels are resolved dynamically in the component via t()
 
 export default function LoansScreen() {
     const [activeFilter, setActiveFilter] = useState<'all' | LoanStatus>('all');
@@ -77,12 +73,12 @@ export default function LoansScreen() {
 
     const handleDelete = (loan: UserLoan) => {
         Alert.alert(
-            'Delete Loan',
-            `Remove "${loan.bank_name || 'Unknown'} - ${formatType(loan.loan_type)}"?`,
+            t('debts.deleteTitle'),
+            `${t('debts.deleteMessage')} "${loan.bank_name || 'Unknown'} - ${formatType(loan.loan_type)}"?`,
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Delete',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         try {
@@ -126,7 +122,7 @@ export default function LoansScreen() {
                         color: theme.colors.textPrimary,
                     }}
                 >
-                    {t('loans.title')}
+                    {t('debts.title')}
                 </Text>
             </GlassHeader>
 
@@ -154,7 +150,7 @@ export default function LoansScreen() {
                                 textTransform: 'uppercase',
                             }}
                         >
-                            {t('loans.totalDebt')}
+                            {t('debts.totalDebt')}
                         </Text>
                         <Text
                             style={{
@@ -176,7 +172,7 @@ export default function LoansScreen() {
                                 textTransform: 'uppercase',
                             }}
                         >
-                            {t('loans.monthlyPayments')}
+                            {t('debts.monthlyPayments')}
                         </Text>
                         <Text
                             style={{
@@ -199,7 +195,7 @@ export default function LoansScreen() {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={{ gap: Spacing.sm }}
                 >
-                    {filters.map((filter) => (
+                    {([{ key: 'all' as const, label: t('common.all') }, { key: 'active' as const, label: t('common.active') }, { key: 'completed' as const, label: t('common.completed') }]).map((filter) => (
                         <TouchableOpacity
                             key={filter.key}
                             onPress={() => setActiveFilter(filter.key)}
@@ -270,7 +266,7 @@ export default function LoansScreen() {
                         keyExtractor={(item) => item.id}
                         contentContainerStyle={{
                             paddingHorizontal: 20,
-                            paddingBottom: 100,
+                            paddingBottom: 120,
                             flexGrow: 1,
                         }}
                         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
@@ -296,8 +292,8 @@ export default function LoansScreen() {
                                     }}
                                 >
                                     {activeFilter === 'all'
-                                        ? t('loans.noLoans')
-                                        : `No ${activeFilter} loans`}
+                                        ? t('debts.noDebts')
+                                        : t('debts.noFiltered')}
                                 </Text>
                                 <Text
                                     style={{
@@ -307,7 +303,7 @@ export default function LoansScreen() {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    {activeFilter === 'all' ? t('loans.noLoansDesc') : 'Try changing the filter'}
+                                    {activeFilter === 'all' ? t('debts.noDebtsDesc') : t('debts.tryFilter')}
                                 </Text>
                             </View>
                         }
@@ -357,7 +353,7 @@ export default function LoansScreen() {
                                                         marginTop: 2,
                                                     }}
                                                 >
-                                                    {formatType(item.loan_type)} • {item.interest_rate}% Profit Rate
+                                                    {formatType(item.loan_type)} • {item.interest_rate}%
                                                 </Text>
                                             </View>
                                             <StatusBadge status={item.status} />
@@ -380,7 +376,7 @@ export default function LoansScreen() {
                                                         letterSpacing: 0.5,
                                                     }}
                                                 >
-                                                    Remaining
+                                                    {t('debts.balance')}
                                                 </Text>
                                                 <Text
                                                     style={{
@@ -402,7 +398,7 @@ export default function LoansScreen() {
                                                         letterSpacing: 0.5,
                                                     }}
                                                 >
-                                                    Monthly EMI
+                                                    {t('debts.monthly')}
                                                 </Text>
                                                 <Text
                                                     style={{
@@ -428,7 +424,7 @@ export default function LoansScreen() {
                                             <View style={{ flex: 1 }}>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                                                     <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}>
-                                                        {Math.round(progress * 100)}% Repaid
+                                                        {Math.round(progress * 100)}%
                                                     </Text>
                                                     <Text style={{ fontSize: 13, color: theme.colors.textSecondary }}>
                                                         of AED {item.original_amount.toLocaleString()}
@@ -460,7 +456,7 @@ export default function LoansScreen() {
                                             activeOpacity={0.7}
                                         >
                                             <Ionicons name="create-outline" size={16} color={Colors.brand.emerald} />
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>Edit</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>{t('common.edit')}</Text>
                                         </TouchableOpacity>
                                         <View style={{ width: 1, backgroundColor: theme.colors.border }} />
                                         <TouchableOpacity
@@ -469,7 +465,7 @@ export default function LoansScreen() {
                                             activeOpacity={0.7}
                                         >
                                             <Ionicons name="trash-outline" size={16} color={Colors.error} />
-                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.error }}>Delete</Text>
+                                            <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.error }}>{t('common.delete')}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>

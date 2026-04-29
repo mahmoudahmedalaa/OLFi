@@ -77,15 +77,20 @@ export default function AddLoanScreen() {
     // Wizard of Oz Prefill Logic
     const { prefill } = useLocalSearchParams<{ prefill?: string }>();
     useEffect(() => {
-        if (prefill === 'true') {
+        if (prefill === 'true' && banks.length > 0) {
             setLoanType('personal');
             setOriginalAmount('200000');
             setRemainingAmount('150000');
             setInterestRate('8.49');
             setTenureMonths('48');
-            setCustomBankName('Emirates NBD');
+            const enbd = banks.find(b => b.name.includes('Emirates NBD'));
+            if (enbd) {
+                setSelectedBank(enbd);
+            } else {
+                setCustomBankName('Emirates NBD');
+            }
         }
-    }, [prefill]);
+    }, [prefill, banks]);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -115,7 +120,7 @@ export default function AddLoanScreen() {
                             color: theme.colors.textPrimary,
                         }}
                     >
-                        Add Loan
+                        Add Debt
                     </Text>
                     <View style={{ width: 28 }} />
                 </View>
@@ -371,7 +376,7 @@ export default function AddLoanScreen() {
                                     color: '#fff',
                                 }}
                             >
-                                Add Loan
+                                Add Debt
                             </Text>
                         )}
                     </TouchableOpacity>

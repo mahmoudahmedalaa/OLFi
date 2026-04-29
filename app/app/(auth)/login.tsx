@@ -417,6 +417,17 @@ export default function LoginScreen() {
                             </Text>
                         </TouchableOpacity>
                     </View>
+
+                    {/* Legal Links */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 32, gap: 16 }}>
+                        <TouchableOpacity onPress={() => router.push('/terms-of-service')}>
+                            <Text style={{ fontSize: 12, color: theme.colors.textTertiary }}>Terms of Service</Text>
+                        </TouchableOpacity>
+                        <Text style={{ fontSize: 12, color: theme.colors.textTertiary }}>•</Text>
+                        <TouchableOpacity onPress={() => router.push('/privacy-policy')}>
+                            <Text style={{ fontSize: 12, color: theme.colors.textTertiary }}>Privacy Policy</Text>
+                        </TouchableOpacity>
+                    </View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

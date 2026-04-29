@@ -20,6 +20,7 @@ import {
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import InfoBottomSheet from '@/components/ui/InfoBottomSheet';
+import { TermTooltip } from '@/components/ui/TermTooltip';
 
 type CalcMode = 'emi' | 'affordability' | 'comparison';
 
@@ -264,9 +265,11 @@ export default function CalculatorScreen() {
                                             end={{ x: 1, y: 1 }}
                                             style={{ borderRadius: BorderRadius.xl, padding: 24 }}
                                         >
-                                            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                                Monthly EMI
-                                            </Text>
+                                            <TermTooltip
+                                                term="Monthly EMI"
+                                                definition="Equated Monthly Instalment — your fixed monthly repayment covering both the principal and the profit/interest portion."
+                                                labelStyle={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 0.5 }}
+                                            />
                                             <Text style={{ fontSize: 34, fontWeight: '800', color: '#fff', marginTop: 4 }}>
                                                 {formatAEDFull(emiResult.emi)}
                                             </Text>
@@ -553,7 +556,11 @@ export default function CalculatorScreen() {
                                             </View>
                                             <View style={{ flexDirection: 'row', gap: 0 }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Monthly EMI</Text>
+                                                    <TermTooltip
+                                                        term="Monthly EMI"
+                                                        definition="Equated Monthly Instalment — your current fixed monthly repayment."
+                                                        labelStyle={{ fontSize: 11, color: theme.colors.textTertiary }}
+                                                    />
                                                     <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.emiCur)}</Text>
                                                 </View>
                                                 <View style={{ flex: 1 }}>
@@ -588,7 +595,11 @@ export default function CalculatorScreen() {
                                             </View>
                                             <View style={{ flexDirection: 'row', gap: 0 }}>
                                                 <View style={{ flex: 1 }}>
-                                                    <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>Monthly EMI</Text>
+                                                    <TermTooltip
+                                                        term="Monthly EMI"
+                                                        definition="Equated Monthly Instalment — your new fixed monthly repayment if you switch to this offer."
+                                                        labelStyle={{ fontSize: 11, color: theme.colors.textTertiary }}
+                                                    />
                                                     <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.emiNew)}</Text>
                                                 </View>
                                                 <View style={{ flex: 1 }}>

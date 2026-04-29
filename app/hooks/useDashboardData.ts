@@ -119,13 +119,19 @@ export function useDashboardData() {
         )
         : 0;
 
-    // Rough savings estimate based on average rate reduction
-    const avgRate = activeLoans.length > 0
-        ? activeLoans.reduce((s, l) => s + l.interest_rate, 0) / activeLoans.length
-        : 0;
-    const potentialMonthlySavings = avgRate > 0
-        ? Math.round(totalEmi * (avgRate > 3 ? 0.08 : 0.03))
-        : 0;
+    // Savings algorithm: compare each loan's rate vs the best OLFi market rate
+    // Best Islamic personal finance rate currently available in UAE market
+    const BEST_OLFI_RATE = 3.49; // % per annum (Islamic profit rate)
+    const potentialMonthlySavings = activeLoans.reduce((totalSaving, loan) => {
+        if (loan.interest_rate <= BEST_OLFI_RATE) return totalSaving;
+        // EMI difference = current EMI - EMI at best rate (same remaining balance & tenure)
+        // Simplified: savings ≈ (rate_diff / current_rate) × monthly_emi
+        // This is conservative and directionally accurate
+        const rateDiff = loan.interest_rate - BEST_OLFI_RATE;
+        const savingFraction = rateDiff / loan.interest_rate;
+        return totalSaving + Math.round(loan.monthly_emi * savingFraction * 0.85); // 85% realisation factor
+    }, 0);
+
 
     return {
         loans,

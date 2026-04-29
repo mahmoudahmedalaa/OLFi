@@ -78,7 +78,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="loans"
         options={{
-          title: t('tabs.loans'),
+          title: t('tabs.debts'),
           tabBarIcon: ({ color, focused }) => (
             <View style={{ alignItems: 'center' }}>
               {focused && (
@@ -122,6 +122,33 @@ export default function TabLayout() {
               )}
               <Ionicons
                 name={focused ? 'swap-horizontal' : 'swap-horizontal-outline'}
+                size={22}
+                color={color}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="applications"
+        options={{
+          title: t('tabs.applications') || 'Applications',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -8,
+                    width: 24,
+                    height: 3,
+                    borderRadius: 2,
+                    backgroundColor: Colors.brand.emerald,
+                  }}
+                />
+              )}
+              <Ionicons
+                name={focused ? 'document-text' : 'document-text-outline'}
                 size={22}
                 color={color}
               />

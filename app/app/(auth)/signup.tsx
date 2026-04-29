@@ -259,9 +259,19 @@ export default function SignupScreen() {
                         }}
                     >
                         By signing up, you agree to our{' '}
-                        <Text style={{ color: Colors.brand.emerald }}>Terms of Service</Text>
+                        <Text
+                            style={{ color: Colors.brand.emerald }}
+                            onPress={() => router.push('/terms-of-service')}
+                        >
+                            Terms of Service
+                        </Text>
                         {' '}and{' '}
-                        <Text style={{ color: Colors.brand.emerald }}>Privacy Policy</Text>
+                        <Text
+                            style={{ color: Colors.brand.emerald }}
+                            onPress={() => router.push('/privacy-policy')}
+                        >
+                            Privacy Policy
+                        </Text>
                     </Text>
 
                     {/* Sign In Link */}

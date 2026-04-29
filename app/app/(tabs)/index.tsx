@@ -54,7 +54,7 @@ export default function DashboardScreen() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + Spacing.md,
-          paddingBottom: 100,
+          paddingBottom: 120,
         }}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -171,33 +171,33 @@ export default function DashboardScreen() {
               marginBottom: Spacing.lg,
             }}
           >
-            Quick Actions
+            {t('dashboard.quickActions')}
           </Text>
           <View style={{ flexDirection: 'row', gap: Spacing.md }}>
             <QuickActionCard
               icon="add-circle"
-              label="Add Finance"
+              label={t('dashboard.addFinance')}
               color={Colors.brand.emerald}
               theme={theme}
               onPress={() => router.push('/add-loan' as any)}
             />
             <QuickActionCard
               icon="calculator"
-              label="Calculator"
+              label={t('dashboard.calculator')}
               color={Colors.brand.teal}
               theme={theme}
               onPress={() => router.push('/calculator' as any)}
             />
             <QuickActionCard
               icon="swap-horizontal"
-              label="Compare"
+              label={t('dashboard.compare')}
               color={Colors.info}
               theme={theme}
               onPress={() => router.push('/(tabs)/offers')}
             />
             <QuickActionCard
               icon="school-outline"
-              label="Sharia Center"
+              label={t('dashboard.shariaCenter')}
               color={Colors.brand.emerald}
               theme={theme}
               onPress={() => router.push('/sharia-center' as any)}
@@ -221,17 +221,17 @@ export default function DashboardScreen() {
                 color: theme.colors.textPrimary,
               }}
             >
-              Active Financing
+              {t('dashboard.myDebts')}
             </Text>
             {activeLoans.length > 0 && (
-              <TouchableOpacity onPress={() => router.push('/(tabs)/loans')}>
+              <TouchableOpacity onPress={() => router.push('/(tabs)/loans' as any)}>
                 <Text
                   style={{
                     ...Typography.captionBold,
                     color: Colors.brand.emerald,
                   }}
                 >
-                  See All →
+                  {t('dashboard.seeAllDebts')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -239,7 +239,7 @@ export default function DashboardScreen() {
 
           {loading ? (
             <View style={{ backgroundColor: theme.colors.card, borderRadius: BorderRadius.lg, padding: Spacing.xl, marginBottom: Spacing.lg, borderWidth: 1, borderColor: theme.colors.border }}>
-              <Text style={{ color: theme.colors.textSecondary }}>Loading financing...</Text>
+              <Text style={{ color: theme.colors.textSecondary }}>{t('dashboard.loadingDebts')}</Text>
             </View>
           ) : activeLoans.length === 0 ? (
             <TouchableOpacity
@@ -263,7 +263,7 @@ export default function DashboardScreen() {
                   marginTop: Spacing.md,
                 }}
               >
-                Add your first finance
+                {t('dashboard.addDebt')}
               </Text>
               <Text
                 style={{
@@ -273,7 +273,7 @@ export default function DashboardScreen() {
                   textAlign: 'center',
                 }}
               >
-                Start tracking your debts and find better rates
+                {t('dashboard.startTracking')}
               </Text>
             </TouchableOpacity>
           ) : (
@@ -282,6 +282,10 @@ export default function DashboardScreen() {
                 loan.original_amount > 0
                   ? 1 - loan.remaining_amount / loan.original_amount
                   : 0;
+              const BEST_OLFI_RATE = 3.49;
+              const savingsEstimate = loan.interest_rate > BEST_OLFI_RATE
+                ? Math.round(loan.monthly_emi * ((loan.interest_rate - BEST_OLFI_RATE) / loan.interest_rate) * 0.85)
+                : 0;
               return (
                 <View key={loan.id}>
                   {i > 0 && <View style={{ height: Spacing.md }} />}
@@ -295,7 +299,7 @@ export default function DashboardScreen() {
                     progress={progress}
                     theme={theme}
                     onPress={() => router.push({ pathname: '/loan-detail' as any, params: { loanId: loan.id } })}
-                    savingsEstimate={loan.interest_rate > 3 ? Math.round(loan.monthly_emi * 0.08) : 0}
+                    savingsEstimate={savingsEstimate}
                   />
                 </View>
               );
@@ -313,7 +317,7 @@ export default function DashboardScreen() {
                 marginBottom: Spacing.lg,
               }}
             >
-              Financial Health
+              {t('dashboard.financialHealth')}
             </Text>
             <FinancialHealthCard
               theme={theme}
@@ -354,7 +358,7 @@ export default function DashboardScreen() {
                       marginBottom: Spacing.xs,
                     }}
                   >
-                    Compare OLFi Offers
+                    {t('dashboard.compareOffers')}
                   </Text>
                   <Text
                     style={{
@@ -362,7 +366,7 @@ export default function DashboardScreen() {
                       color: 'rgba(255,255,255,0.8)',
                     }}
                   >
-                    Personalized recommendations for your financing
+                    {t('dashboard.compareOffersDesc')}
                   </Text>
                 </View>
                 <Ionicons name="arrow-forward-circle" size={32} color="#fff" />

@@ -133,7 +133,7 @@ export default function ProfileScreen() {
             </GlassHeader>
 
             <ScrollView
-                contentContainerStyle={{ paddingBottom: 100, paddingTop: Spacing.lg }}
+                contentContainerStyle={{ paddingBottom: 120, paddingTop: Spacing.lg }}
                 showsVerticalScrollIndicator={false}
                 refreshControl={
                     <RefreshControl

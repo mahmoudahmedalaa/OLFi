@@ -3,6 +3,8 @@ export interface TranslationKeys {
     common: {
         continue: string; back: string; skip: string; save: string; cancel: string;
         confirm: string; loading: string; error: string; success: string; aed: string;
+        edit: string; delete: string; seeAll: string; active: string; paidOff: string;
+        default_: string; refinanced: string; all: string; completed: string;
     };
     onboarding: {
         next: string; getStarted: string;
@@ -11,7 +13,7 @@ export interface TranslationKeys {
         slide3: { title: string; desc: string };
         slide4: { title: string; desc: string };
     };
-    tabs: { dashboard: string; loans: string; offers: string; profile: string };
+    tabs: { dashboard: string; debts: string; offers: string; applications: string; profile: string };
     auth: {
         login: string; signup: string; email: string; password: string;
         firstName: string; lastName: string; forgotPassword: string;
@@ -22,13 +24,50 @@ export interface TranslationKeys {
     otp: { title: string; subtitle: string; verify: string; error: string; invalidCode: string; invalidMessage: string };
     dashboard: {
         greeting: string; totalDebt: string; monthlySavings: string; debtFreeIn: string;
-        years: string; viewOffers: string; myLoans: string; noLoans: string;
-        addFirstLoan: string; addLoan: string; olfiScore: string;
+        years: string; viewOffers: string; myDebts: string; noDebts: string;
+        addFirstDebt: string; addDebt: string; olfiScore: string;
         scoreGood: string; scoreFair: string; scorePoor: string;
+        quickActions: string; addFinance: string; calculator: string; compare: string;
+        shariaCenter: string; seeAllDebts: string; loadingDebts: string;
+        startTracking: string; compareOffers: string; compareOffersDesc: string;
+        financialHealth: string;
     };
-    loans: {
-        title: string; addLoan: string; totalDebt: string; monthlyPayments: string;
-        noLoans: string; noLoansDesc: string; balance: string; monthly: string; rate: string; lender: string;
+    debtSummary: {
+        totalOutstanding: string; noDebtsYet: string; monthlyEmi: string;
+        potentialSavings: string; perMonth: string;
+    };
+    scoreCard: {
+        olfiScore: string; excellent: string; good: string; fair: string; poor: string;
+        topPercent: string; tapToFlip: string; updatedLastMonth: string;
+        unlockTitle: string; unlockDesc: string; calculateScore: string;
+        addDebtToUnlock: string; aecbCreditScore: string;
+        // Dynamic footer based on score band
+        excellentFooter: string; goodFooter: string; fairFooter: string; poorFooter: string;
+        // AECB lock/unlock
+        aecbLocked: string; aecbLockedDesc: string; aecbUnlock: string; aecbUnlockDesc: string;
+        aecbPending: string; aecbPendingDesc: string;
+        // OLFi Score explanation modal
+        explainTitle: string;
+        explainExcellent: string; explainExcellentDesc: string;
+        explainGood: string; explainGoodDesc: string;
+        explainFair: string; explainFairDesc: string;
+        explainPoor: string; explainPoorDesc: string;
+        explainFormula: string;
+    };
+    healthCard: {
+        addSalary: string; tapToUpdate: string; monthlyDebt: string;
+        financingCost: string; shariaCompliant: string; couldSave: string;
+        perMonth: string; checkOffers: string; dti: string;
+    };
+    debtPreview: {
+        profitRate: string; remaining: string; monthlyEmi: string;
+        repaid: string; ofOriginal: string; potentialSavings: string;
+    };
+    debts: {
+        title: string; addDebt: string; totalDebt: string; monthlyPayments: string;
+        noDebts: string; noDebtsDesc: string; balance: string; monthly: string;
+        rate: string; lender: string; deleteTitle: string; deleteMessage: string;
+        noFiltered: string; tryFilter: string;
     };
     offers: {
         title: string; subtitle: string; noOffers: string; noOffersDesc: string;
@@ -74,6 +113,15 @@ const en: TranslationKeys = {
         error: 'Error',
         success: 'Success',
         aed: 'AED',
+        edit: 'Edit',
+        delete: 'Delete',
+        seeAll: 'See All',
+        active: 'Active',
+        paidOff: 'Paid Off',
+        default_: 'Default',
+        refinanced: 'Refinanced',
+        all: 'All',
+        completed: 'Completed',
     },
 
     onboarding: {
@@ -100,8 +148,9 @@ const en: TranslationKeys = {
     // ── Navigation tabs ──────────────────────────────────────────────────────
     tabs: {
         dashboard: 'Dashboard',
-        loans: 'Loans',
+        debts: 'Debts',
         offers: 'Offers',
+        applications: 'Applications',
         profile: 'Profile',
     },
 
@@ -142,28 +191,115 @@ const en: TranslationKeys = {
         debtFreeIn: 'Debt-free in',
         years: 'yrs',
         viewOffers: 'View Offers',
-        myLoans: 'My Loans',
-        noLoans: 'No loans added yet',
-        addFirstLoan: 'Add your first loan to get started',
-        addLoan: 'Add Loan',
+        myDebts: 'My Debts',
+        noDebts: 'No debts added yet',
+        addFirstDebt: 'Add your first debt to get started',
+        addDebt: 'Add Debt',
         olfiScore: 'OLFi Score',
         scoreGood: 'Good standing',
         scoreFair: 'Fair standing',
         scorePoor: 'Needs attention',
+        quickActions: 'Quick Actions',
+        addFinance: 'Add Debt',
+        calculator: 'Calculator',
+        compare: 'Compare',
+        shariaCenter: 'Sharia Center',
+        seeAllDebts: 'See All →',
+        loadingDebts: 'Loading debts...',
+        startTracking: 'Start tracking your debts and find better rates',
+        compareOffers: 'Compare OLFi Offers',
+        compareOffersDesc: 'Personalized recommendations for your financing',
+        financialHealth: 'Financial Health',
     },
 
-    // ── Loans ────────────────────────────────────────────────────────────────
-    loans: {
-        title: 'My Loans',
-        addLoan: 'Add Loan',
+    // ── Debt Summary Card ───────────────────────────────────────────────────
+    debtSummary: {
+        totalOutstanding: 'Total Outstanding',
+        noDebtsYet: 'No debts yet',
+        monthlyEmi: 'Monthly EMI',
+        potentialSavings: 'Potential Savings',
+        perMonth: '/mo',
+    },
+
+    // ── Score Flip Card ─────────────────────────────────────────────────────
+    scoreCard: {
+        olfiScore: 'OLFi Score',
+        excellent: 'Excellent',
+        good: 'Good',
+        fair: 'Fair',
+        poor: 'Poor',
+        topPercent: 'Top 10% of users',
+        tapToFlip: 'Tap to flip',
+        updatedLastMonth: 'Updated last month',
+        unlockTitle: 'Unlock Your OLFi Score',
+        unlockDesc: 'Add a debt to unlock your personalized score and exclusive rates',
+        calculateScore: 'Add Debt to Unlock',
+        addDebtToUnlock: 'Add a debt to see your score',
+        aecbCreditScore: 'AECB Credit Score',
+        // Dynamic footer by score band
+        excellentFooter: 'Top 10% of users',
+        goodFooter: 'Above average standing',
+        fairFooter: 'Room to improve',
+        poorFooter: 'Take action now',
+        // AECB lock/unlock states
+        aecbLocked: 'AECB Score Locked',
+        aecbLockedDesc: 'We partner with AECB to retrieve your official credit report. Tap to initiate.',
+        aecbUnlock: 'Request Credit Report',
+        aecbUnlockDesc: 'Securely requested via OLFi. Usually takes 1-2 business days.',
+        aecbPending: 'Report Pending',
+        aecbPendingDesc: 'Your AECB credit report is being retrieved. Check back soon.',
+        // OLFi Score explanation modal
+        explainTitle: 'How Your OLFi Score Works',
+        explainExcellent: 'Excellent (750-850)',
+        explainExcellentDesc: 'Your debt-to-income ratio is healthy and your total debt load is manageable. You qualify for the best OLFi refinancing rates.',
+        explainGood: 'Good (650-749)',
+        explainGoodDesc: 'Your finances are in good shape. Minor adjustments could push you into the Excellent band and unlock better rates.',
+        explainFair: 'Fair (550-649)',
+        explainFairDesc: 'Your monthly obligations are stretching your income. Consolidating debts with OLFi could help lower your score immediately.',
+        explainPoor: 'Poor (300-549)',
+        explainPoorDesc: 'Your debt burden is high relative to your income. OLFi can help you restructure and reduce pressure with a consolidated plan.',
+        explainFormula: 'Score is calculated from your debt-to-income ratio, total outstanding balance, and monthly EMI load — updated in real time.',
+    },
+
+    // ── Financial Health Card ───────────────────────────────────────────────
+    healthCard: {
+        addSalary: 'Add your salary to see your health score',
+        tapToUpdate: 'Tap to update your profile',
+        monthlyDebt: 'Monthly Debt',
+        financingCost: 'Financing Cost',
+        shariaCompliant: '100% Sharia-Compliant',
+        couldSave: 'You could save ~AED',
+        perMonth: '/month',
+        checkOffers: 'Check personalized offers',
+        dti: 'Debt-to-Income',
+    },
+
+    // ── Debt Preview Card (Dashboard) ──────────────────────────────────────
+    debtPreview: {
+        profitRate: 'Profit Rate',
+        remaining: 'Remaining',
+        monthlyEmi: 'Monthly EMI',
+        repaid: 'Repaid',
+        ofOriginal: 'of original debt',
+        potentialSavings: 'Potential savings: ~AED',
+    },
+
+    // ── Debts Tab ───────────────────────────────────────────────────────────
+    debts: {
+        title: 'My Debts',
+        addDebt: 'Add Debt',
         totalDebt: 'Total Outstanding',
         monthlyPayments: 'Monthly Payments',
-        noLoans: 'No loans yet',
-        noLoansDesc: 'Add your first loan to track and consolidate your debt',
+        noDebts: 'No debts yet',
+        noDebtsDesc: 'Add your first debt to track and consolidate',
         balance: 'Balance',
         monthly: 'Monthly',
         rate: 'Rate',
         lender: 'Lender',
+        deleteTitle: 'Delete Debt',
+        deleteMessage: 'Remove',
+        noFiltered: 'No debts found',
+        tryFilter: 'Try changing the filter',
     },
 
     // ── Offers ───────────────────────────────────────────────────────────────
@@ -171,7 +307,7 @@ const en: TranslationKeys = {
         title: 'Refinancing Offers',
         subtitle: 'Personalised offers based on your profile',
         noOffers: 'No offers yet',
-        noOffersDesc: 'Add your loans to see personalised refinancing offers',
+        noOffersDesc: 'Add your debts to see personalised refinancing offers',
         monthlySaving: 'Monthly Saving',
         totalSaving: 'Total Saving',
         rate: 'Rate',

@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingBottom: 100, // Space for tab bar
+        paddingBottom: 120, // Space for tab bar
     },
     loadingContainer: {
         paddingTop: 80,

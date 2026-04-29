@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import { TermTooltip } from '@/components/ui/TermTooltip';
 
 const { width } = Dimensions.get('window');
 
@@ -155,7 +156,7 @@ export default function SuccessModal({
                                     marginBottom: 4,
                                 }}
                             >
-                                Loan Added!
+                                Debt Added!
                             </Text>
                             <Text
                                 style={{
@@ -214,6 +215,7 @@ export default function SuccessModal({
                                 />
                                 <SummaryRow
                                     label="Monthly EMI"
+                                    tooltip="Equated Monthly Instalment — your fixed monthly repayment covering principal and profit."
                                     value={`AED ${loanSummary.emi.toLocaleString()}`}
                                     theme={theme}
                                     isLast
@@ -284,11 +286,13 @@ function SummaryRow({
     value,
     theme,
     isLast = false,
+    tooltip,
 }: {
     label: string;
     value: string;
     theme: ReturnType<typeof useTheme>['theme'];
     isLast?: boolean;
+    tooltip?: string;
 }) {
     return (
         <View
@@ -301,14 +305,22 @@ function SummaryRow({
                 borderBottomColor: theme.colors.border,
             }}
         >
-            <Text
-                style={{
-                    fontSize: 13,
-                    color: theme.colors.textTertiary,
-                }}
-            >
-                {label}
-            </Text>
+            {tooltip ? (
+                <TermTooltip
+                    term={label}
+                    definition={tooltip}
+                    labelStyle={{ fontSize: 13, color: theme.colors.textTertiary }}
+                />
+            ) : (
+                <Text
+                    style={{
+                        fontSize: 13,
+                        color: theme.colors.textTertiary,
+                    }}
+                >
+                    {label}
+                </Text>
+            )}
             <Text
                 style={{
                     fontSize: 14,
