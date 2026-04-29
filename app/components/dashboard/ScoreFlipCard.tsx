@@ -306,7 +306,7 @@ export function ScoreFlipCard() {
                                                 {t('scoreCard.olfiScore')}
                                             </Text>
                                         </View>
-                                        <View style={{ flexDirection: 'row', gap: 8 }} pointerEvents="box-none">
+                                        <View style={{ flexDirection: 'row', gap: 8, zIndex: 10 }}>
                                             {/* Info icon to explain score */}
                                             <TouchableOpacity
                                                 onPress={() => setShowExplain(true)}
