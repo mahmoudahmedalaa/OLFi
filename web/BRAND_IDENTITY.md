@@ -58,7 +58,7 @@
 ## Terminology Standards
 | Avoid | Use Instead |
 |---|---|
-| "Interest rate" | "Profit rate" |
+| "Interest rate" | "Interest rate" (for existing debt), "Profit rate" (for new refinancing) |
 | "Loan" (standalone) | "Financing" or "Debt" |
 | "Financing Cost" | "Total Profit Paid" |
 | "Credit Score" (generic) | "AECB Score" or "OLFi Score" |
