@@ -1,6 +1,6 @@
-# BuyOut QA & Testing Methodologies
+# OLFi QA & Testing Methodologies
 
-As a financial technology application handling user debt and credit profiles, BuyOut enforces a strict, multi-tiered testing methodology before any Release Candidate (RC) reaches production.
+As a financial technology application handling user debt and credit profiles, OLFi enforces a strict, multi-tiered testing methodology before any Release Candidate (RC) reaches production.
 
 ## 1. Static Analysis & Unit Testing
 *   **TypeScript Accuracy:** The codebase must compile exactly with zero implicit `any` usage. We enforce strict typing on all database models via generated Supabase types. Command: `npx tsc --noEmit`.

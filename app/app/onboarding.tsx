@@ -38,7 +38,7 @@ const B = {
     navyMid: '#1E293B',
     navyLt: '#334155',
     emerald: '#10B981',
-    teal: '#14B8A6',
+    teal: '#4FD1C5',
     blue: '#3B82F6',
     text: '#F8FAFC',
     muted: 'rgba(255,255,255,0.65)',

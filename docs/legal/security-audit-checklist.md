@@ -1,4 +1,4 @@
-# BuyOut Security Audit & Deployment Checklist
+# OLFi Security Audit & Deployment Checklist
 
 Before any major release to the Apple App Store, the Lead Engineer must perform this security audit to guarantee no vulnerabilities are exposed.
 

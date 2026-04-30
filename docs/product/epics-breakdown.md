@@ -1,6 +1,6 @@
-# BuyOut Epic Breakdown & Scope
+# OLFi Epic Breakdown & Scope
 
-In BuyOut, "Epics" are large bodies of work that span multiple sprints and deliver significant, recognizable value to the user or the business. We use this breakdown to ensure our development efforts are strongly aligned with our strategic goals.
+In OLFi, "Epics" are large bodies of work that span multiple sprints and deliver significant, recognizable value to the user or the business. We use this breakdown to ensure our development efforts are strongly aligned with our strategic goals.
 
 ## Epic 1: Core Consolidation Engine (Completed - Phase 1)
 **Goal:** Prove the core value proposition. Allow users to input debts, calculate savings against hardcoded/dummy bank offers, and see the interactive UI.
@@ -28,7 +28,7 @@ In BuyOut, "Epics" are large bodies of work that span multiple sprints and deliv
     *   Dynamic processing fee calculations based on live bank data.
 
 ## Epic 4: Admin & Business Operations Dashboard (Phase 3)
-**Goal:** Give internal BuyOut staff (Operations, Sales) a web-based dashboard to track application flow and manage bank relationships.
+**Goal:** Give internal OLFi staff (Operations, Sales) a web-based dashboard to track application flow and manage bank relationships.
 *   **Status:** Backlog.
 *   **Key Deliverables:**
     *   Next.js/React web dashboard built on the same Supabase instance.

@@ -1,6 +1,6 @@
 # MVP → Production Migration Roadmap
 
-> What changes when BuyOut goes from free-tier MVP to production-grade fintech platform.
+> What changes when OLFi goes from free-tier MVP to production-grade fintech platform.
 
 ---
 

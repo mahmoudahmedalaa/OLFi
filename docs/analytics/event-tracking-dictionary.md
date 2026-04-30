@@ -1,6 +1,6 @@
-# BuyOut Event Tracking Dictionary
+# OLFi Event Tracking Dictionary
 
-To understand user behavior and conversion funnels, BuyOut utilizes product analytics (e.g., PostHog / Mixpanel). This document defines the exact schema for custom events fired from the React Native client.
+To understand user behavior and conversion funnels, OLFi utilizes product analytics (e.g., PostHog / Mixpanel). This document defines the exact schema for custom events fired from the React Native client.
 
 ## Global Properties
 Every event dispatched MUST automatically attach these super properties:
@@ -22,7 +22,7 @@ Every event dispatched MUST automatically attach these super properties:
     *   *Trigger:* Supabase successfully returns an active session.
 
 ### 2. Core Conversion Funnel
-These are the most critical events for measuring BuyOut's core business KPI (Lead Generation).
+These are the most critical events for measuring OLFi's core business KPI (Lead Generation).
 
 *   **Event:** `debt_added`
     *   *Trigger:* User successfully adds a new liability.

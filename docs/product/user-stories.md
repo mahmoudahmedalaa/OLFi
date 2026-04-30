@@ -1,4 +1,4 @@
-# BuyOut User Stories & Acceptance Criteria
+# OLFi User Stories & Acceptance Criteria
 
 This document provides a highly specific breakdown of pending features (defined in Epics) into actionable User Stories for developers.
 
@@ -17,7 +17,7 @@ This document provides a highly specific breakdown of pending features (defined 
 **US-AECB-2: AECB Consent Capture**
 *   **As a** user who just logged in via UAE Pass,
 *   **I want to** see a clear, legally compliant consent screen asking to access my credit report,
-*   **So that** BuyOut can securely fetch my real debts.
+*   **So that** OLFi can securely fetch my real debts.
 *   *Acceptance Criteria:*
     1.  UI must show the exact legal text mandated by AECB.
     2.  User must explicitly check a box (no default check) to "Agree".
@@ -39,7 +39,7 @@ This document provides a highly specific breakdown of pending features (defined 
 ### Epic 4: Admin Dashboard
 
 **US-ADMIN-1: View Pending Applications**
-*   **As an** internal BuyOut Operations Manager,
+*   **As an** internal OLFi Operations Manager,
 *   **I want to** see a list of all `pending` applications in a web dashboard,
 *   **So that** I can manually follow up with banks if APIs fail.
 *   *Acceptance Criteria:*

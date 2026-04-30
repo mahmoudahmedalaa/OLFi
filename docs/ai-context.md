@@ -1,8 +1,8 @@
-# BuyOut - AI Agent Handover Document
+# OLFi - AI Agent Handover Document
 
 ## Project State Summary 
-The objective of the previous session was to massively expand the BuyOut application's documentation to a "production-grade" standard. This has been completed. 
-The repository now possesses an exhaustive, 9-pillar knowledge base inside `/docs`, which has also been fully synchronized into the **BuyOut HQ Notion workspace**.
+The objective of the previous session was to massively expand the OLFi application's documentation to a "production-grade" standard. This has been completed. 
+The repository now possesses an exhaustive, 9-pillar knowledge base inside `/docs`, which has also been fully synchronized into the **OLFi HQ Notion workspace**.
 
 ## Core Architecture & Stack
 *   **Framework:** React Native (Expo Bare Workflow)

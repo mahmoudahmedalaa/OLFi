@@ -27,7 +27,7 @@ For iOS apps:
 - ✅ **Always use local Xcode builds** via `build-ios.sh`
 - ✅ **Upload via Transporter** (free Mac App Store app)
 - ✅ **Test via TestFlight** (free, unlimited builds)
-- ✅ **Reference:** `03-workflows/XCODE_GUIDE.md`
+- ✅ **Reference:** `workflows/XCODE_GUIDE.md`
 - ✅ **Launch workflow:** `.agent/workflows/app-store-launch.md`
 
 **When user says "ready for production" or "deploy to App Store":**
@@ -112,7 +112,7 @@ npm run build
 ### Project Structure
 
 ```
-buyout/
+olfi/
 ├── .agent/
 │   ├── AGENTS.md              # This file
 │   ├── rules/
@@ -124,11 +124,13 @@ buyout/
 │       ├── dev-quick-reference.md # Quick dev commands
 │       ├── ralph-loop.md      # Build/lint verification loop
 │       └── verification.md    # 4-level feature verification
-├── app/                       # Application code (Expo Router)
-├── ios/                       # Native iOS code
-├── assets/                    # Images, fonts
-├── app.json                   # Expo config
-└── build-ios.sh              # iOS build script
+├── app/                       # Expo React Native app
+├── web/                       # Next.js marketing site
+├── docs/                      # All project documentation
+├── assets/                    # Shared brand assets
+├── agent-config/              # Agent rules, skills, scripts
+├── workflows/                 # Dev, deployment, Xcode guides
+└── supabase/                  # DB migrations & config
 ```
 
 ### Project Structure (React Native/Expo)
@@ -246,7 +248,7 @@ What changed?
 ### When Starting Work
 
 1. **Check for existing workflows** in `.agent/workflows/`
-2. **Read relevant documentation** in `03-workflows/`
+2. **Read relevant documentation** in `workflows/`
 3. **Understand project structure** before making changes
 4. **Ask clarifying questions** if user intent is unclear
 

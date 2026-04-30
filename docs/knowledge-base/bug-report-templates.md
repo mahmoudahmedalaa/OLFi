@@ -1,4 +1,4 @@
-# BuyOut Standardized Bug Report Templates
+# OLFi Standardized Bug Report Templates
 
 To maintain engineering velocity, all bugs submitted via GitHub/Linear MUST follow these strict templates. "It doesn't work" is immediately closed.
 

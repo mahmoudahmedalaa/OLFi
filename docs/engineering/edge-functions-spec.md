@@ -1,6 +1,6 @@
-# BuyOut Supabase Edge Functions Specification
+# OLFi Supabase Edge Functions Specification
 
-BuyOut utilizes Supabase Edge Functions (Deno backend environments) to execute complex, secure financial logic that should not reside on the client device. This prevents manipulation of interest rates, secures API keys for third-party banking integrations, and ensures calculating engines operate in a trusted environment.
+OLFi utilizes Supabase Edge Functions (Deno backend environments) to execute complex, secure financial logic that should not reside on the client device. This prevents manipulation of interest rates, secures API keys for third-party banking integrations, and ensures calculating engines operate in a trusted environment.
 
 ## General Architecture & Rules
 

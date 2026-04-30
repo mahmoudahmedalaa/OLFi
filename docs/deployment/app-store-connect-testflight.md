@@ -1,6 +1,6 @@
 # App Store Connect & TestFlight Runbook
 
-This guide covers the exact steps required to push a new build of the BuyOut app from a developer's machine up to Apple's TestFlight for internal QA, and eventually to the App Store.
+This guide covers the exact steps required to push a new build of the OLFi app from a developer's machine up to Apple's TestFlight for internal QA, and eventually to the App Store.
 
 ## Prerequisites
 1.  **Apple Developer Account:** You must be added to the team on Apple Developer Portal with the "App Manager" or "Admin" role.
@@ -28,7 +28,7 @@ Once the EAS build finishes successfully, you can submit the compiled binary dir
     eas submit -p ios --latest
     ```
 2.  This command uploads the `.ipa` to Apple.
-3.  Log into **App Store Connect** -> BuyOut App -> TestFlight.
+3.  Log into **App Store Connect** -> OLFi App -> TestFlight.
 4.  The build will say "Processing" (can take up to 30 mins).
 5.  Once processed, provide Export Compliance documentation (usually "No" for standard encryption), and the build will be pushed to internal testers automatically.
 

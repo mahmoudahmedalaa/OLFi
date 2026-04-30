@@ -1,8 +1,8 @@
-# BuyOut
+# OLFi
 
-**Smart loan management & refinancing for the UAE.**
+**Smart debt management & refinancing for the UAE.**
 
-BuyOut helps users track their existing loans, compare refinance offers from UAE banks, and find better rates — all from one app.
+OLFi helps users track their existing debts, compare refinance offers from UAE banks, and find better rates — all from one app.
 
 ## Tech Stack
 
@@ -34,21 +34,34 @@ open ios/BuyOutapp.xcworkspace
 ## Project Structure
 
 ```
-BuyOut/
-├── app/                    # Expo app (source code)
-│   ├── app/                # Screens & routing
-│   │   ├── (auth)/         # Login, Signup
-│   │   ├── (tabs)/         # Dashboard, Loans, Offers, Profile
-│   │   └── _layout.tsx     # Root layout
-│   ├── components/         # Reusable components
-│   ├── lib/                # Supabase client, auth context, constants
-│   └── assets/             # Images, fonts
-├── 00-research/            # Market research & competitor analysis
-├── 01-docs/                # PRD, tech stack, app flow, design guidelines
-├── 02-agent/               # Agent config, rules, skills
-├── 03-workflows/           # Dev, deployment, Xcode guides
-├── 05-checklists/          # App Store launch checklist
-└── reference-docs/         # Brand assets, pitch deck, business plan
+OLFi/
+├── app/                 # Expo app (source code)
+│   ├── app/             # Screens & routing
+│   │   ├── (auth)/      # Login, Signup, KYC
+│   │   ├── (tabs)/      # Dashboard, Debts, Offers, Profile
+│   │   └── _layout.tsx  # Root layout
+│   ├── components/      # Reusable components
+│   └── lib/             # Supabase client, auth context, constants
+├── web/                 # Next.js marketing site
+├── docs/                # All project documentation
+│   ├── product/         # PRD, app flow, user stories
+│   ├── engineering/     # Tech stack, architecture, setup guide
+│   ├── design/          # Brand identity, frontend guidelines
+│   ├── deployment/      # TestFlight, App Store, git flow
+│   ├── financial/       # Monetisation, cost projections
+│   ├── legal/           # DPA, security audit, integrations policy
+│   ├── calculations/    # Financial logic & edge cases
+│   ├── analytics/       # Event tracking dictionary
+│   └── knowledge-base/  # Bug templates, QA scripts, troubleshooting
+├── assets/              # Shared brand assets (logos, icons, splash)
+├── research/            # Market research & competitor analysis
+├── reference/           # Pitch deck, business plan, KYC docs
+├── shared/              # Files shared with external collaborators
+├── agent-config/        # Agent rules, skills, scripts
+├── workflows/           # Dev, deployment, Xcode guides
+├── checklists/          # App Store launch checklist
+├── admin/               # Admin dashboard (internal)
+└── supabase/            # Supabase migrations & config
 ```
 
 ## Git Flow

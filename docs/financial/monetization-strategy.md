@@ -1,6 +1,6 @@
-# BuyOut Monetization Strategy
+# OLFi Monetization Strategy
 
-BuyOut operates fundamentally as a B2B2C entity. The primary customer creating revenue is the banking partner, not the end user.
+OLFi operates fundamentally as a B2B2C entity. The primary customer creating revenue is the banking partner, not the end user.
 
 ## Primary Revenue Stream: B2B Lead Generation (CPA/CPL)
 Our core engine calculates the value of an aggregated debt. When a user taps "Apply Now", we generate a highly qualified, pre-vetted lead for the partner bank.

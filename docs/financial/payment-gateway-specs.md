@@ -1,4 +1,4 @@
-# BuyOut Payment Gateway Specifications
+# OLFi Payment Gateway Specifications
 
 When we roll out the Phase 3 Premium Subscription tier, we will use **RevenueCat** to handle all Apple App Store integrations, rather than building custom IAP (In-App Purchase) logic.
 

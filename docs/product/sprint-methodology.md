@@ -1,6 +1,6 @@
-# BuyOut Sprint Methodology
+# OLFi Sprint Methodology
 
-BuyOut operates on a fast-paced, highly focused Agile methodology. Because we are a fin-tech product with compliance requirements, we balance "moving fast" with strict QA cycles.
+OLFi operates on a fast-paced, highly focused Agile methodology. Because we are a fin-tech product with compliance requirements, we balance "moving fast" with strict QA cycles.
 
 ## The Sprint Structure
 

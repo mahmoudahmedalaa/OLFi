@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OLFi - Brand Identity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'base-dark': '#011819',
+                        'base-beige': '#E1DED1',
+                        'brand-emerald': '#10B981',
+                        'brand-teal': '#4FD1C5',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; color: #333; }
+        .page { max-width: 1000px; margin: 40px auto; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 60px; border-radius: 12px; }
+        .swatch { width: 100%; height: 120px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: flex-end; padding: 16px; color: white; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
+        .swatch-light { color: #011819; }
+        h1, h2, h3 { letter-spacing: -0.02em; }
+        .principle-card { background: #FAFAFA; border: 1px solid #EBEBEB; border-radius: 16px; padding: 28px; }
+        .principle-card h3 { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: #9CA3AF; margin-bottom: 8px; }
+        .principle-card .title { font-size: 1.15rem; font-weight: 700; color: #011819; margin-bottom: 12px; }
+        .principle-card p { font-size: 0.9rem; color: #4B5563; line-height: 1.7; }
+        .rule-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F3F4F6; }
+        .rule-row:last-child { border-bottom: none; }
+        .rule-tag { flex-shrink: 0; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; margin-top: 2px; }
+        .tag-do { background: #D1FAE5; color: #065F46; }
+        .tag-dont { background: #FEE2E2; color: #991B1B; }
+        .voice-example { background: #011819; border-radius: 12px; padding: 20px 24px; }
+        .voice-example .label { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+        .voice-example .text { font-size: 1rem; font-weight: 600; }
+        @media print {
+            body { background: white; }
+            .page { box-shadow: none; margin: 0; padding: 20px; max-width: none; }
+            .print-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <header class="mb-16 border-b pb-8 flex justify-between items-end">
+        <div>
+            <h1 class="text-5xl font-bold text-base-dark mb-4 tracking-tighter">OLFi</h1>
+            <p class="text-xl text-gray-500">Brand Identity &amp; Visual Reference &middot; V1.0 &middot; April 2026</p>
+        </div>
+        <img src="../../assets/brand/olfi-icon.png" alt="OLFi Logo" class="h-12 bg-base-dark p-2 rounded-md object-contain">
+    </header>
+
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2 text-base-dark">01 Brand Colors</h2>
+        <p class="text-gray-600 mb-8 text-lg">The signature palette. Brutalist-minimalist fintech aesthetic emphasizing trust and clarity.</p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+                <div class="swatch bg-base-dark">
+                    <span class="font-semibold text-lg">#011819</span>
+                </div>
+                <h3 class="font-bold text-base-dark">Base Dark</h3>
+                <p class="text-sm text-gray-500">Primary background, app chrome, headers.</p>
+            </div>
+            <div>
+                <div class="swatch bg-base-beige swatch-light">
+                    <span class="font-semibold text-lg">#E1DED1</span>
+                </div>
+                <h3 class="font-bold text-base-dark">Base Beige</h3>
+                <p class="text-sm text-gray-500">Primary text (dark mode), light-mode backgrounds.</p>
+            </div>
+            <div>
+                <div class="swatch bg-brand-emerald">
+                    <span class="font-semibold text-lg">#10B981</span>
+                </div>
+                <h3 class="font-bold text-base-dark">Brand Emerald</h3>
+                <p class="text-sm text-gray-500">Primary CTA, success states, score indicators.</p>
+            </div>
+            <div>
+                <div class="swatch bg-brand-teal">
+                    <span class="font-semibold text-lg">#4FD1C5</span>
+                </div>
+                <h3 class="font-bold text-base-dark">Brand Teal</h3>
+                <p class="text-sm text-gray-500">Secondary accent, the clover icon, charts.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2 text-base-dark">02 Application Themes</h2>
+        <p class="text-gray-600 mb-8 text-lg">OLFi is a dark-first product. Every surface must feel intentional and premium.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-[#011819] p-8 rounded-2xl text-[#E1DED1]">
+                <h3 class="text-xl font-bold mb-4 text-white">Dark Theme (Default)</h3>
+                <div class="space-y-4">
+                    <div class="bg-[#0A2525] p-4 rounded-xl flex justify-between items-center">
+                        <span>Card Surface</span>
+                        <span class="text-sm opacity-50">#0A2525</span>
+                    </div>
+                    <div class="bg-[#133030] p-4 rounded-xl flex justify-between items-center">
+                        <span>Elevated Card</span>
+                        <span class="text-sm opacity-50">#133030</span>
+                    </div>
+                    <div class="bg-[#1B3B3B] p-4 rounded-xl flex justify-between items-center">
+                        <span>Interactive Input</span>
+                        <span class="text-sm opacity-50">#1B3B3B</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#E1DED1] p-8 rounded-2xl text-[#011819]">
+                <h3 class="text-xl font-bold mb-4">Light Theme</h3>
+                <div class="space-y-4">
+                    <div class="bg-[#EDE9DD] p-4 rounded-xl flex justify-between items-center shadow-sm">
+                        <span>Card Surface</span>
+                        <span class="text-sm opacity-50">#EDE9DD</span>
+                    </div>
+                    <div class="bg-[#D5D0C4] p-4 rounded-xl flex justify-between items-center shadow-sm">
+                        <span>Elevated Card</span>
+                        <span class="text-sm opacity-50">#D5D0C4</span>
+                    </div>
+                    <div class="bg-[#C8C3B7] p-4 rounded-xl flex justify-between items-center shadow-sm">
+                        <span>Interactive Input</span>
+                        <span class="text-sm opacity-50">#C8C3B7</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="print-break"></div>
+
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2 text-base-dark">03 Typography</h2>
+        <p class="text-gray-600 mb-8 text-lg">Clean, readable typography emphasizing clarity.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <div class="mb-4">
+                    <span class="text-xs uppercase tracking-widest text-gray-400 font-bold">Latin (Primary)</span>
+                    <h3 class="text-4xl font-bold text-base-dark font-inter mt-1">Inter</h3>
+                </div>
+                <div class="space-y-4 font-inter border-l-4 border-brand-emerald pl-6 py-2">
+                    <div class="text-4xl font-bold tracking-tighter text-base-dark">Headline (Bold 700)</div>
+                    <div class="text-xl font-semibold text-base-dark">Subheadline (Semi 600)</div>
+                    <div class="text-base text-gray-700">Body copy is set in Regular 400. It provides a comfortable reading experience for longer educational content regarding refinancing and Sharia compliance.</div>
+                    <div class="text-sm uppercase tracking-wider font-bold text-brand-emerald">Label / Badge (Bold 600)</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="mb-4 text-right" dir="rtl">
+                    <span class="text-xs uppercase tracking-widest text-gray-400 font-bold">Arabic</span>
+                    <h3 class="text-4xl font-bold text-base-dark font-cairo mt-1">Cairo</h3>
+                </div>
+                <div class="space-y-4 font-cairo border-r-4 border-brand-teal pr-6 py-2 text-right" dir="rtl">
+                    <div class="text-4xl font-bold tracking-tighter text-base-dark">العنوان الرئيسي</div>
+                    <div class="text-xl font-semibold text-base-dark">العنوان الفرعي (شبه غامق)</div>
+                    <div class="text-base text-gray-700">النص الأساسي للفقرات الطويلة يوفر تجربة قراءة مريحة للمحتوى التعليمي المتعلق بإعادة التمويل والامتثال لأحكام الشريعة الإسلامية.</div>
+                    <div class="text-sm uppercase tracking-wider font-bold text-brand-teal">تسمية / شارة</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2 text-base-dark">04 Gradients &amp; UI Elements</h2>
+        <p class="text-gray-600 mb-8 text-lg">Subtle depths and interactions.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="h-32 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(to right, #011819, #0A2525);">
+                BRAND GRADIENT
+            </div>
+            <div class="h-32 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(to bottom, #0A2525, #011819);">
+                CARD GRADIENT
+            </div>
+            <div class="h-32 rounded-xl flex items-center justify-center text-white font-bold" style="background: linear-gradient(to bottom, #133030, #0A2525);">
+                ELEVATED CARD
+            </div>
+        </div>
+    </section>
+
+    <div class="print-break"></div>
+
+    <section class="mb-16">
+        <h2 class="text-3xl font-bold mb-2 text-base-dark">05 Logo Architecture</h2>
+        <p class="text-gray-600 mb-8 text-lg">Our visual mark featuring the four-leaf clover motif.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="bg-base-dark p-12 rounded-2xl flex justify-center items-center h-64 shadow-inner">
+                <img src="../../assets/brand/olfi-icon.png" alt="App Icon" class="h-32 w-32 rounded-3xl shadow-2xl">
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-base-dark">Primary App Icon</h3>
+                <p class="text-gray-600 mb-4">The clover replaces the dot of the "i", symbolizing growth, fortune, and prosperity. Always rendered on the Base Dark background.</p>
+                <div class="flex items-center space-x-4">
+                    <div class="h-10 w-10 rounded bg-[#E1DED1] border flex items-center justify-center font-bold text-xs text-base-dark">Beige</div>
+                    <div class="h-10 w-10 rounded bg-[#10B981] flex items-center justify-center font-bold text-xs text-white">Emerald</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 06 Design Principles & Voice -->
+    <section>
+        <h2 class="text-3xl font-bold mb-2 text-base-dark">06 Design Principles &amp; Voice</h2>
+        <p class="text-gray-600 mb-10 text-lg">The standards that govern every interface decision and every word we publish.</p>
+
+        <!-- Core principles -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+            <div class="principle-card">
+                <h3>Principle 01</h3>
+                <div class="title">Clarity over Cleverness</div>
+                <p>Every screen, label, and data point must communicate its meaning at a glance. Decorative complexity is never a substitute for functional transparency.</p>
+            </div>
+            <div class="principle-card">
+                <h3>Principle 02</h3>
+                <div class="title">Earned Trust</div>
+                <p>Trust is not asserted through marketing language. It is earned through accurate data, honest comparisons, and a UI that never obscures costs or terms.</p>
+            </div>
+            <div class="principle-card">
+                <h3>Principle 03</h3>
+                <div class="title">Restraint as a Feature</div>
+                <p>We do not animate for the sake of animating. We do not add color for the sake of vibrancy. Every design decision must serve the user's next action.</p>
+            </div>
+        </div>
+
+        <!-- Visual Rules & Terminology side by side -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+
+            <!-- Visual Rules -->
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Visual Rules</p>
+                <div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-dont">Don't</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">No glow or blur effects.</strong> Avoid box-shadow glow, backdrop blur on cards, and animate-ping indicators. All surfaces stay flat and intentional.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-do">Do</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">Use opacity for transitions.</strong> State changes (hover, press, disabled) are communicated through opacity shifts or subtle background color steps, never movement.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-dont">Don't</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">No float or bounce animations.</strong> Interactive elements must not lift, scale up, or float on hover. Motion is reserved for meaningful navigation transitions.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-do">Do</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">Maintain contrast strictly.</strong> Dark text never appears on dark surfaces. Light text never appears on light surfaces. WCAG AA compliance is the minimum bar.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-dont">Don't</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">No unsanctioned colors.</strong> Introduce new colors only via design token updates. Ad-hoc hex values in components are not permitted.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminology & Copy -->
+            <div>
+                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Terminology &amp; Copy</p>
+                <div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-do">Do</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">Use Sharia-compliant terms.</strong> Write "Profit Rate" not "Interest Rate". Write "Financing Amount" not "Loan Amount". This applies to all copy, in both English and Arabic.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-do">Do</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">Prefer plain financial language.</strong> Write "Total Profit Paid" not "Financing Cost". Write "Monthly Instalment" not "EMI" unless a tooltip is present to define the abbreviation.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-dont">Don't</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">No em-dashes.</strong> The em-dash (—) is not part of OLFi's typographic voice. Use a period, a colon, or restructure the sentence.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-dont">Don't</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">No filler phrases.</strong> Eliminate AI-inflected phrases such as "Absolutely!", "Great question!", "Certainly!", or "It's worth noting that". Every sentence must carry weight.</div>
+                    </div>
+                    <div class="rule-row">
+                        <span class="rule-tag tag-dont">Don't</span>
+                        <div class="text-sm text-gray-700"><strong class="text-base-dark">No vague reassurances.</strong> Do not write "We take your privacy seriously" or "We're here to help" without actionable context. Say what you will do, not how you feel about it.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tone of Voice examples -->
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-5">Tone of Voice — Examples</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="voice-example">
+                <div class="label text-red-400">Avoid</div>
+                <div class="text-[#E1DED1] text-sm leading-relaxed">"We're excited to help you on your financial journey! Applying is quick and easy — it only takes a few minutes to get started."</div>
+            </div>
+            <div class="voice-example">
+                <div class="label text-brand-emerald">Preferred</div>
+                <div class="text-[#E1DED1] text-sm leading-relaxed">"See your refinancing options in under two minutes. No impact to your credit score."</div>
+            </div>
+            <div class="voice-example">
+                <div class="label text-red-400">Avoid</div>
+                <div class="text-[#E1DED1] text-sm leading-relaxed">"Your OLFi Score is a comprehensive measure of your overall financial wellness and creditworthiness across multiple dimensions."</div>
+            </div>
+            <div class="voice-example">
+                <div class="label text-brand-emerald">Preferred</div>
+                <div class="text-[#E1DED1] text-sm leading-relaxed">"Your OLFi Score reflects your debt load, payment history, and refinancing potential. Higher is better."</div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+</body>
+</html>

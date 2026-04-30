@@ -1,11 +1,11 @@
-# BuyOut Third-Party Integrations Policy
+# OLFi Third-Party Integrations Policy
 
-BuyOut acts as a conduit between the user and financial institutions. This policy defines exactly what happens with data when it leaves our system.
+OLFi acts as a conduit between the user and financial institutions. This policy defines exactly what happens with data when it leaves our system.
 
 ## 1. Banking Partners (API Integration)
 When a user taps "Apply Now" for a specific bank:
 *   **Data Shared:** We transmit exactly what the bank requires to generate a pre-approval (e.g., Emirates ID, declared salary, list of active debts to be consolidated).
-*   **Liability:** Once the application reaches the Bank's API, the Bank becomes the Data Controller for that specific application stream. BuyOut is no longer liable for the bank's internal processing times or ultimate approval decisions.
+*   **Liability:** Once the application reaches the Bank's API, the Bank becomes the Data Controller for that specific application stream. OLFi is no longer liable for the bank's internal processing times or ultimate approval decisions.
 *   **No Cross-Selling:** We explicitly promise users that if they apply for Bank A, we will NOT secretly sell their contextual data to Bank B as a "lead" without their direct initiation.
 
 ## 2. Al Etihad Credit Bureau (AECB)

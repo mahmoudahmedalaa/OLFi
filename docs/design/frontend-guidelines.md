@@ -1,4 +1,4 @@
-# Frontend Guidelines & Design System — BuyOut
+# Frontend Guidelines & Design System — OLFi
 
 > The #1 debt restructuring fintech. Every pixel should communicate trust, clarity, and empowerment.
 
@@ -211,7 +211,7 @@
 | **Robinhood** | Data visualization, portfolio-style views |
 | **Tala** | Trust signals, emerging market fintech UX |
 
-### BuyOut Design DNA
+### OLFi Design DNA
 - **Revolut's premium feel** + **Wise's clarity** + **Islamic finance trust cues**
 - Dark mode for dashboards (premium), light mode for forms (clarity)
 - Green = savings. Always show what the user gains, not what they owe.

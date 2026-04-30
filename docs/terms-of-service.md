@@ -3,12 +3,12 @@ layout: default
 title: Terms of Use
 ---
 
-# Terms of Use for BuyOut
+# Terms of Use for OLFi
 
 **Last Updated and Effective Date: February 22, 2026**
 
 ## 1. Acceptance of Terms
-By downloading, accessing, or using the BuyOut mobile application, corresponding websites, and any related services (collectively, the "Service"), you agree to be bound by these Terms of Use ("Terms") and our Privacy Policy. These Terms constitute a legally binding agreement between you ("User", "you") and BuyOut ("Company", "we", "us", "our"). 
+By downloading, accessing, or using the OLFi mobile application, corresponding websites, and any related services (collectively, the "Service"), you agree to be bound by these Terms of Use ("Terms") and our Privacy Policy. These Terms constitute a legally binding agreement between you ("User", "you") and OLFi ("Company", "we", "us", "our"). 
 
 If you do not agree to all of these Terms, you are expressly prohibited from using the Service and must discontinue use immediately.
 
@@ -20,7 +20,7 @@ By using the Service, you represent and warrant that:
 4.  All registration and financial information you submit is truthful, accurate, and current.
 
 ## 3. Description of Service and Disclaimer of Financial Advice
-BuyOut is an aggregator and technological platform that provides financial recording tools, EMI calculators, debt consolidation engines, and simulated refinance comparison features ("Calculators"). Our Service allows you to organize your debt profile and compare potential refinancing opportunities from various financial institutions.
+OLFi is an aggregator and technological platform that provides financial recording tools, EMI calculators, debt consolidation engines, and simulated refinance comparison features ("Calculators"). Our Service allows you to organize your debt profile and compare potential refinancing opportunities from various financial institutions.
 
 **CRITICAL DISCLAIMER: BUYOUT IS NOT A BANK, LENDER, FINANCIAL ADVISOR, OR BROKER.**
 *   **Informational Purposes Only:** All content, algorithms, calculated EMI reductions, estimations, and simulated offers presented within the Service are for informational and educational purposes only. They do not constitute financial, legal, or tax advice.
@@ -68,6 +68,6 @@ We reserve the right, in our sole discretion, to make changes or modifications t
 ## 13. Contact Us
 If you have questions, comments, or require support regarding these Terms of Service, please contact us at:
 
-**BuyOut Technologies FZ-LLC**  
+**OLFi Technologies FZ-LLC**  
 **Email:** legal@buyout.ae  
 **Address:** [Insert UAE Office Address Here]  

@@ -1,6 +1,6 @@
-# BuyOut Data Processing Agreement (DPA)
+# OLFi Data Processing Agreement (DPA)
 
-This document outlines the internal policies and technical guardrails enforcing BuyOut's compliance with the UAE Federal Decree-Law No. 45 of 2021 regarding the Protection of Personal Data.
+This document outlines the internal policies and technical guardrails enforcing OLFi's compliance with the UAE Federal Decree-Law No. 45 of 2021 regarding the Protection of Personal Data.
 
 ## 1. Principles of Data Processing
 *   **Lawfulness & Transparency:** Data is only collected with explicit user consent via the UI prior to AECB checks or loan submissions.

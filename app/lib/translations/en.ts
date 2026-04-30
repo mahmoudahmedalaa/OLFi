@@ -216,7 +216,7 @@ const en: TranslationKeys = {
     debtSummary: {
         totalOutstanding: 'Total Outstanding',
         noDebtsYet: 'No debts yet',
-        monthlyEmi: 'Monthly EMI',
+        monthlyEmi: 'Monthly Instalment',
         potentialSavings: 'Potential Savings',
         perMonth: '/mo',
     },
@@ -258,7 +258,7 @@ const en: TranslationKeys = {
         explainFairDesc: 'Your monthly obligations are stretching your income. Consolidating debts with OLFi could help lower your score immediately.',
         explainPoor: 'Poor (300-549)',
         explainPoorDesc: 'Your debt burden is high relative to your income. OLFi can help you restructure and reduce pressure with a consolidated plan.',
-        explainFormula: 'Score is calculated from your debt-to-income ratio, total outstanding balance, and monthly EMI load — updated in real time.',
+        explainFormula: 'Score is calculated from your debt-to-income ratio, total outstanding balance, and monthly instalment load. Updated in real time.',
     },
 
     // ── Financial Health Card ───────────────────────────────────────────────
@@ -278,7 +278,7 @@ const en: TranslationKeys = {
     debtPreview: {
         profitRate: 'Profit Rate',
         remaining: 'Remaining',
-        monthlyEmi: 'Monthly EMI',
+        monthlyEmi: 'Monthly Instalment',
         repaid: 'Repaid',
         ofOriginal: 'of original debt',
         potentialSavings: 'Potential savings: ~AED',
@@ -342,12 +342,12 @@ const en: TranslationKeys = {
     // ── Calculator ───────────────────────────────────────────────────────────
     calculator: {
         title: 'Calculator',
-        emi: 'EMI',
+        emi: 'Instalment',
         affordability: 'Affordability',
         compare: 'Compare',
         financingAmount: 'Financing Amount (AED)',
-        interestRate: 'Interest Rate',
-        expectedInterestRate: 'Expected Interest Rate',
+        interestRate: 'Profit Rate',
+        expectedInterestRate: 'Expected Profit Rate',
         tenure: 'Tenure',
         months: 'months',
         salary: 'Monthly Salary (AED)',
@@ -355,10 +355,10 @@ const en: TranslationKeys = {
         financingTerm: 'Desired Financing Term',
         rateA: 'Rate A',
         rateB: 'Rate B',
-        monthlyEmi: 'Monthly EMI',
+        monthlyEmi: 'Monthly Instalment',
         totalPayable: 'Total Payable',
-        totalInterest: 'Total Interest',
-        interestShare: 'Interest Share',
+        totalInterest: 'Total Profit Paid',
+        interestShare: 'Profit Share',
     },
 
     // ── KYC ─────────────────────────────────────────────────────────────────
@@ -378,7 +378,7 @@ const en: TranslationKeys = {
         title: 'Connect your bank',
         subtitle: 'OLFi uses Open Banking to securely read your transactions and give you personalised offers',
         readOnly: 'Read-only access',
-        readOnlyDesc: 'We can never move your money — ever',
+        readOnlyDesc: 'We can never move your money. Ever.',
         bankLevel: 'Bank-level encryption',
         bankLevelDesc: 'Powered by Lean Technologies, regulated by CBUAE',
         revoke: 'Revoke anytime',

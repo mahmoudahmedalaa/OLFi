@@ -1,6 +1,6 @@
-# BuyOut Consolidation Engine Logic
+# OLFi Consolidation Engine Logic
 
-The `calculate-savings-engine` Edge Function is the heart of BuyOut. This document explains the algorithmic steps taken when a user hits "Calculate Savings".
+The `calculate-savings-engine` Edge Function is the heart of OLFi. This document explains the algorithmic steps taken when a user hits "Calculate Savings".
 
 ## Input State
 The Engine receives an array of `DebtItem` objects:

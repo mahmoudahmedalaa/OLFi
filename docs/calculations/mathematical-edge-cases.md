@@ -1,6 +1,6 @@
-# BuyOut Mathematical Edge Cases & Precision Rules
+# OLFi Mathematical Edge Cases & Precision Rules
 
-Because BuyOut deals directly with user debt and bank loans, mathematical precision is our highest priority. Miscalculating an EMI by even a few fils can lead to trust issues or legal compliance failures with UAE banking standards.
+Because OLFi deals directly with user debt and bank loans, mathematical precision is our highest priority. Miscalculating an EMI by even a few fils can lead to trust issues or legal compliance failures with UAE banking standards.
 
 ## Rule 1: The "No Float" Doctrine
 JavaScript uses double-precision 64-bit format IEEE 754 for numbers, meaning `0.1 + 0.2 === 0.30000000000000004`. 

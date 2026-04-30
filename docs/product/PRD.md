@@ -1,6 +1,6 @@
-# Product Requirements Document — BuyOut MVP
+# Product Requirements Document — OLFi MVP
 
-> **BuyOut** — A single digital platform that aggregates, analyzes, and executes consumer debt refinancing end-to-end.
+> **OLFi** — A single digital platform that aggregates, analyzes, and executes consumer debt refinancing end-to-end.
 
 ---
 
@@ -8,7 +8,7 @@
 
 | Field                   | Detail                                      |
 | :---------------------- | :------------------------------------------ |
-| **Product Name**  | BuyOut (working name)                       |
+| **Product Name**  | OLFi (working name)                       |
 | **Tagline**       | "For every loan"                            |
 | **Type**          | Mobile-first fintech app (iOS)              |
 | **Target Market** | UAE salaried consumers with 2+ active debts |
@@ -21,7 +21,7 @@ Salaried consumers in the UAE manage 3-5 separate liabilities across multiple ba
 
 ### Solution
 
-BuyOut aggregates all debts into a single dashboard, runs portfolio-level restructuring logic, surfaces pre-qualified offers from partner banks, and orchestrates the refinance execution end-to-end.
+OLFi aggregates all debts into a single dashboard, runs portfolio-level restructuring logic, surfaces pre-qualified offers from partner banks, and orchestrates the refinance execution end-to-end.
 
 ---
 
@@ -67,14 +67,14 @@ BuyOut aggregates all debts into a single dashboard, runs portfolio-level restru
 | Step | What Happens | MVP Implementation |
 |:-----|:-------------|:-------------------|
 | 1. **Submitted** | User accepts offer, provides contact info | Auto: application record created, notification sent |
-| 2. **Under Review** | Bank (or BuyOut ops team) reviews application | Manual: ops team updates status in Supabase dashboard |
+| 2. **Under Review** | Bank (or OLFi ops team) reviews application | Manual: ops team updates status in Supabase dashboard |
 | 3. **Documents Requested** | Bank needs salary certificate, statements, etc. | Push notification → user uploads docs in-app |
 | 4. **Conditional Approval** | Bank pre-approves pending document verification | Manual status update → user sees approval with conditions |
 | 5. **Final Approval** | Bank confirms the refinance | Manual status update → celebration screen + next steps |
 | 6. **Rejected** | Bank declines the application | Manual status update → show reason + alternative offers |
 | 7. **Completed** | Refinance executed, old debt closed | Manual status update → dashboard updates to show new loan |
 
-**MVP approach:** Semi-manual. BuyOut operations team uses Supabase dashboard to update statuses. User sees a beautiful progress tracker in-app. Push notifications on every status change. This lets us validate the flow cheaply before automating bank integrations.
+**MVP approach:** Semi-manual. OLFi operations team uses Supabase dashboard to update statuses. User sees a beautiful progress tracker in-app. Push notifications on every status change. This lets us validate the flow cheaply before automating bank integrations.
 
 **Future (P1):** Direct bank API integration for automated status updates, document submission via bank APIs, and real-time approval webhooks.
 
@@ -113,15 +113,15 @@ BuyOut aggregates all debts into a single dashboard, runs portfolio-level restru
 
 ### Scenario 1: New User — Salaried Expat
 
-> Raj (32, Indian expat, AED 15K/mo) has a personal loan at 14.5% and 2 credit cards. He downloads BuyOut, signs up with Google, enters his 3 debts manually. The dashboard shows AED 85,000 total debt with potential savings of AED 650/month. He taps "See Offers" on his personal loan, compares 3 bank offers, accepts the best one. He enters his phone number for a BuyOut advisor to follow up.
+> Raj (32, Indian expat, AED 15K/mo) has a personal loan at 14.5% and 2 credit cards. He downloads OLFi, signs up with Google, enters his 3 debts manually. The dashboard shows AED 85,000 total debt with potential savings of AED 650/month. He taps "See Offers" on his personal loan, compares 3 bank offers, accepts the best one. He enters his phone number for a OLFi advisor to follow up.
 
 ### Scenario 2: Sharia-Conscious User
 
-> Fatima (40, Emirati, AED 35K/mo) has a conventional car loan she wants to convert to Sharia-compliant. She enters her loan, marks compliance as "Conventional," and enables the "Sharia-Compliant Only" filter. BuyOut shows her Murābaḥa-based alternatives from Emirates Islamic and ADIB. She accepts and provides contact info.
+> Fatima (40, Emirati, AED 35K/mo) has a conventional car loan she wants to convert to Sharia-compliant. She enters her loan, marks compliance as "Conventional," and enables the "Sharia-Compliant Only" filter. OLFi shows her Murābaḥa-based alternatives from Emirates Islamic and ADIB. She accepts and provides contact info.
 
 ### Scenario 3: Investor Demo
 
-> During a pitch meeting, the founder opens BuyOut, taps "Connect Your Bank" to show the animated preview of the future auto-sync experience. Then manually adds sample debts. The dashboard calculates savings. The investor sees the full intended flow including AECB integration and UAE Pass — all clearly labeled as "Coming Soon" with polished previews.
+> During a pitch meeting, the founder opens OLFi, taps "Connect Your Bank" to show the animated preview of the future auto-sync experience. Then manually adds sample debts. The dashboard calculates savings. The investor sees the full intended flow including AECB integration and UAE Pass — all clearly labeled as "Coming Soon" with polished previews.
 
 ---
 
