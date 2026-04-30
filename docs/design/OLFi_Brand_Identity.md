@@ -80,7 +80,7 @@ The standards that govern every interface decision and every word we publish.
 - ❌ **DON'T: No unsanctioned colors.** Introduce new colors only via design token updates. Ad-hoc hex values in components are not permitted.
 
 ### Terminology & Copy
-- ✅ **DO: Use Sharia-compliant terms.** Write "Profit Rate" not "Interest Rate". Write "Financing Amount" not "Loan Amount". This applies to all copy, in both English and Arabic.
+- ✅ **DO: Use accurate financial terms.** Use "Interest Rate" for existing traditional debt. Use "Profit Rate" only when referring to the new Sharia-compliant refinancing offer. Write "Financing Amount" not "Loan Amount".
 - ✅ **DO: Prefer plain financial language.** Write "Total Profit Paid" not "Financing Cost". Write "Monthly Instalment" not "EMI" unless a tooltip is present to define the abbreviation.
 - ❌ **DON'T: No em-dashes.** The em-dash (—) is not part of OLFi's typographic voice. Use a period, a colon, or restructure the sentence.
 - ❌ **DON'T: No filler phrases.** Eliminate AI-inflected phrases such as "Absolutely!", "Great question!", "Certainly!", or "It's worth noting that". Every sentence must carry weight.
