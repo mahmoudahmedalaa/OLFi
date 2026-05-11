@@ -14,7 +14,7 @@ Before making any design changes, you must review the canonical design document:
 - **Brand Teal:** The definitive brand teal is `#4FD1C5`. Do not use legacy versions (e.g., `#14B8A6`).
 
 ## 2. Terminology & Copy Rules
-- **Use Sharia-compliant terms.** Write "Profit Rate" not "Interest Rate". Write "Financing Amount" not "Loan Amount". Write "Total Profit Paid" not "Financing Cost".
+- **Use accurate financial terms.** Use "Interest Rate" for existing traditional debt. Use "Profit Rate" only when referring to the new Sharia-compliant refinancing offer. Write "Financing Amount" not "Loan Amount".
 - **Prefer plain financial language.** Write "Monthly Instalment" not "EMI" unless a tooltip is present to define the abbreviation.
 - **No em-dashes.** The em-dash (—) is not part of OLFi's typographic voice. Use a period, a colon, or restructure the sentence.
 - **No filler phrases.** Eliminate AI-inflected phrases such as "Absolutely!", "Great question!", "Certainly!", or "It's worth noting that". Every sentence must carry weight.

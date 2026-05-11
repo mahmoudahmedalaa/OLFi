@@ -16,6 +16,7 @@ import { useTheme } from '@/lib/theme-context';
 import { useLanguage } from '@/lib/language-context';
 import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useDashboardData } from '@/hooks/useDashboardData';
+import { TermTooltip } from '@/components/ui/TermTooltip';
 
 /**
  * Auto-calculated OLFi Score based on real user data.
@@ -177,11 +178,14 @@ function AecbContent({ onFlip }: { onFlip: () => void }) {
         <View style={styles.scoreContent} pointerEvents="box-none">
             {/* Header row */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md }} pointerEvents="box-none">
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, zIndex: 20 }}>
                     <Ionicons name="shield-checkmark" size={18} color={brandGreen} />
-                    <Text style={{ ...Typography.captionBold, color: theme.colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
-                        {t('scoreCard.aecbCreditScore')}
-                    </Text>
+                    <TermTooltip
+                        term="AECB Credit Score"
+                        short={t('scoreCard.aecbCreditScore')}
+                        definition="Al Etihad Credit Bureau score is the official credit rating in the UAE. It determines your eligibility for financing."
+                        labelStyle={{ ...Typography.captionBold, color: theme.colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.8 }}
+                    />
                 </View>
                 <TouchableOpacity
                     onPress={onFlip}
@@ -221,13 +225,13 @@ function AecbContent({ onFlip }: { onFlip: () => void }) {
             ) : (
                 /* Locked state */
                 <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }} pointerEvents="box-none">
-                    <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: `${brandGreen}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.md }}>
-                        <Ionicons name="lock-closed" size={28} color={brandGreen} />
+                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: `${brandGreen}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.sm }}>
+                        <Ionicons name="lock-closed" size={24} color={brandGreen} />
                     </View>
-                    <Text style={{ ...Typography.h3, color: theme.colors.textPrimary, marginBottom: Spacing.xs, textAlign: 'center' }}>
+                    <Text style={{ ...Typography.h3, color: theme.colors.textPrimary, marginBottom: 4, textAlign: 'center' }}>
                         {t('scoreCard.aecbLocked')}
                     </Text>
-                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginBottom: Spacing.lg, paddingHorizontal: Spacing.md }}>
+                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginBottom: Spacing.md, paddingHorizontal: Spacing.md }}>
                         {t('scoreCard.aecbLockedDesc')}
                     </Text>
                     <TouchableOpacity
@@ -292,7 +296,10 @@ export function ScoreFlipCard() {
             <View style={styles.container}>
                 <View style={styles.cardContainer}>
                     {/* Front Side: OLFi Score */}
-                    <Animated.View style={[styles.card, frontAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+                    <Animated.View 
+                        pointerEvents={isFlipped ? 'none' : 'auto'}
+                        style={[styles.card, frontAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+                    >
                         {/* Background Pressable to catch empty space taps */}
                         <TouchableOpacity activeOpacity={1} style={[StyleSheet.absoluteFillObject, { zIndex: 0 }]} onPress={flipCard} />
                         <View style={[styles.touchableArea, { pointerEvents: 'box-none', zIndex: 1 }]}>
@@ -300,11 +307,14 @@ export function ScoreFlipCard() {
                                 <View style={styles.scoreContent} pointerEvents="box-none">
                                     {/* Header row */}
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md }} pointerEvents="box-none">
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, zIndex: 20 }}>
                                             <Ionicons name="bar-chart" size={18} color={theme.colors.textPrimary} />
-                                            <Text style={{ ...Typography.captionBold, color: theme.colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
-                                                {t('scoreCard.olfiScore')}
-                                            </Text>
+                                            <TermTooltip
+                                                term="OLFi Score"
+                                                short={t('scoreCard.olfiScore')}
+                                                definition="Your OLFi Score reflects your debt load, payment history, and refinancing potential. Higher is better."
+                                                labelStyle={{ ...Typography.captionBold, color: theme.colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.8 }}
+                                            />
                                         </View>
                                         <View style={{ flexDirection: 'row', gap: 8, zIndex: 10 }}>
                                             {/* Info icon to explain score */}
@@ -343,37 +353,61 @@ export function ScoreFlipCard() {
                                     </Text>
                                 </View>
                             ) : (
-                                <View style={[styles.scoreContent, { justifyContent: 'center', alignItems: 'center' }]} pointerEvents="box-none">
-                                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: `${Colors.brand.emerald}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.md }}>
-                                        <Ionicons name="lock-closed" size={20} color={Colors.brand.emerald} />
-                                    </View>
-                                    <Text style={{ ...Typography.h3, color: theme.colors.textPrimary, marginBottom: Spacing.xs }}>
-                                        {t('scoreCard.unlockTitle')}
-                                    </Text>
-                                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginBottom: Spacing.lg, paddingHorizontal: Spacing.lg }}>
-                                        {t('scoreCard.unlockDesc')}
-                                    </Text>
-                                    <TouchableOpacity
-                                        onPress={() => router.push('/add-loan' as any)}
-                                        activeOpacity={0.8}
-                                    >
-                                        <LinearGradient
-                                            colors={theme.gradients.brand}
-                                            start={{ x: 0, y: 0 }}
-                                            end={{ x: 1, y: 1 }}
-                                            style={styles.actionBtn}
+                                <View style={styles.scoreContent} pointerEvents="box-none">
+                                    {/* Header row */}
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md }} pointerEvents="box-none">
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, zIndex: 20 }}>
+                                            <Ionicons name="bar-chart" size={18} color={theme.colors.textPrimary} />
+                                            <TermTooltip
+                                                term="OLFi Score"
+                                                short={t('scoreCard.olfiScore')}
+                                                definition="Your OLFi Score reflects your debt load, payment history, and refinancing potential. Higher is better."
+                                                labelStyle={{ ...Typography.captionBold, color: theme.colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.8 }}
+                                            />
+                                        </View>
+                                        <TouchableOpacity
+                                            onPress={flipCard}
+                                            style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: `${Colors.brand.emerald}18`, alignItems: 'center', justifyContent: 'center' }}
                                         >
-                                            <Text style={styles.actionBtnText}>{t('scoreCard.calculateScore')}</Text>
-                                            <Ionicons name="arrow-forward" size={16} color="#fff" />
-                                        </LinearGradient>
-                                    </TouchableOpacity>
+                                            <Ionicons name="sync" size={16} color={Colors.brand.emerald} />
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }} pointerEvents="box-none">
+                                        <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: `${Colors.brand.emerald}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.sm }}>
+                                            <Ionicons name="lock-closed" size={24} color={Colors.brand.emerald} />
+                                        </View>
+                                        <Text style={{ ...Typography.h3, color: theme.colors.textPrimary, marginBottom: Spacing.xs, textAlign: 'center' }}>
+                                            {t('scoreCard.unlockTitle')}
+                                        </Text>
+                                        <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginBottom: Spacing.lg, paddingHorizontal: Spacing.lg }}>
+                                            {t('scoreCard.unlockDesc')}
+                                        </Text>
+                                        <TouchableOpacity
+                                            onPress={() => router.push('/add-loan' as any)}
+                                            activeOpacity={0.8}
+                                        >
+                                            <LinearGradient
+                                                colors={theme.gradients.brand}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 1, y: 1 }}
+                                                style={styles.actionBtn}
+                                            >
+                                                <Text style={styles.actionBtnText}>{t('scoreCard.calculateScore')}</Text>
+                                                <Ionicons name="arrow-forward" size={16} color="#fff" />
+                                            </LinearGradient>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             )}
                         </View>
                     </Animated.View>
 
                     {/* Back Side: AECB Score — on-brand, themed */}
-                    <Animated.View style={[styles.card, styles.cardBack, backAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
+                    <Animated.View 
+                        pointerEvents={isFlipped ? 'auto' : 'none'}
+                        style={[styles.card, styles.cardBack, backAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+                    >
                         <TouchableOpacity activeOpacity={1} style={[StyleSheet.absoluteFillObject, { zIndex: 0 }]} onPress={flipCard} />
                         <View style={[styles.touchableArea, { pointerEvents: 'box-none', zIndex: 1 }]}>
                             <AecbContent onFlip={flipCard} />
@@ -397,7 +431,7 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         width: '100%',
-        height: 240,
+        height: 260,
     },
     card: {
         width: '100%',

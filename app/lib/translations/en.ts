@@ -346,8 +346,8 @@ const en: TranslationKeys = {
         affordability: 'Affordability',
         compare: 'Compare',
         financingAmount: 'Financing Amount (AED)',
-        interestRate: 'Profit Rate',
-        expectedInterestRate: 'Expected Profit Rate',
+        interestRate: 'Interest Rate',
+        expectedInterestRate: 'Expected Interest Rate',
         tenure: 'Tenure',
         months: 'months',
         salary: 'Monthly Salary (AED)',
@@ -357,8 +357,8 @@ const en: TranslationKeys = {
         rateB: 'Rate B',
         monthlyEmi: 'Monthly Instalment',
         totalPayable: 'Total Payable',
-        totalInterest: 'Total Profit Paid',
-        interestShare: 'Profit Share',
+        totalInterest: 'Total Interest',
+        interestShare: 'Interest Share',
     },
 
     // ── KYC ─────────────────────────────────────────────────────────────────

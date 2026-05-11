@@ -23,7 +23,8 @@ export function QuickActionCard({
                 flex: 1,
                 backgroundColor: theme.colors.card,
                 borderRadius: BorderRadius.lg,
-                padding: 16,
+                paddingVertical: 16,
+                paddingHorizontal: 8,
                 alignItems: 'center',
                 borderWidth: 1,
                 borderColor: theme.colors.border,
@@ -45,11 +46,15 @@ export function QuickActionCard({
                 <Ionicons name={icon} size={20} color={color} />
             </View>
             <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit={true}
+                minimumFontScale={0.8}
                 style={{
                     fontSize: 11,
                     fontWeight: '600',
                     color: theme.colors.textSecondary,
                     textAlign: 'center',
+                    width: '100%',
                 }}
             >
                 {label}
