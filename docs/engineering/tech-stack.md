@@ -119,7 +119,7 @@
 
 ```bash
 # Application
-APP_NAME="buyout"
+APP_NAME="OLFi"
 APP_ENV="development"  # development | staging | production
 
 # Supabase

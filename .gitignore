@@ -1,5 +1,5 @@
 # ========================================
-# BuyOut — Root .gitignore
+# OLFi — Root .gitignore
 # ========================================
 
 # OS
@@ -12,6 +12,10 @@ Thumbs.db
 .vscode/
 .idea/
 *.sublime-*
+
+# Dependencies
+node_modules/
+*/node_modules/
 
 # Environment
 .env
@@ -29,3 +33,28 @@ Thumbs.db
 *.keystore
 *.jks
 *.pem
+
+# Build outputs and local tool state
+.expo/
+*/.expo/
+dist/
+*/dist/
+.next/
+*/.next/
+out/
+*/out/
+build/
+*/build/
+coverage/
+*/coverage/
+*.tsbuildinfo
+
+# Local Vercel link state
+.vercel/
+*/.vercel/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

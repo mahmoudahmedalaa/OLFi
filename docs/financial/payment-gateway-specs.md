@@ -8,7 +8,7 @@ React Native apps face immense complexity when managing Apple's receipt validati
 ## Technical Implementation Plan
 
 1.  **SDK Dependency:** `react-native-purchases`.
-2.  **Product Entitlements:** Within the RevenueCat dashboard, we define a single entitlement: `buyout_premium`.
+2.  **Product Entitlements:** Within the RevenueCat dashboard, define a single entitlement: `olfi_premium`. If an older `buyout_premium` entitlement already exists in a live account, migrate it deliberately instead of renaming it in place.
 3.  **Supabase Integration (Crucial):**
     *   We do NOT rely purely on the local app state to check if a user is premium.
     *   We configure a RevenueCat Webhook to hit a dedicated Supabase Edge Function (`revenuecat-webhook-handler`).

@@ -3,7 +3,7 @@ description: 'How to fetch and insert icons into the project using the Lucide AP
 ---
 # Iconography Skill
 
-BuyOut relies on high-quality SVG icons. To streamline development and avoid manual downloads, use the `fetch-icon.js` script to pull icons directly from the Lucide open-source library.
+OLFi relies on high-quality SVG icons. To streamline development and avoid manual downloads, use the `fetch-icon.js` script to pull icons directly from the Lucide open-source library.
 
 ## Usage
 

@@ -220,7 +220,7 @@ export default function ApplicationsScreen() {
                                                     styles.commBubble,
                                                     { backgroundColor: theme.colors.bg },
                                                     comm.sender === 'olfi_team' && { borderLeftColor: Colors.brand.emerald, borderLeftWidth: 3 },
-                                                    comm.sender === 'bank' && { borderLeftColor: Colors.brand.blue, borderLeftWidth: 3 },
+                                                    comm.sender === 'bank' && { borderLeftColor: Colors.info, borderLeftWidth: 3 },
                                                 ]}>
                                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                                                         <Text style={[styles.commSender, { color: theme.colors.textSecondary }]}>

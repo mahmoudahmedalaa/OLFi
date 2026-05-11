@@ -69,5 +69,5 @@ We reserve the right, in our sole discretion, to make changes or modifications t
 If you have questions, comments, or require support regarding these Terms of Service, please contact us at:
 
 **OLFi Technologies FZ-LLC**  
-**Email:** legal@buyout.ae  
+**Email:** legal@olfi.ae
 **Address:** [Insert UAE Office Address Here]  

@@ -178,6 +178,8 @@ stateDiagram-v2
 
 ## 6. Deep Linking (Future)
 
+Current technical URL scheme is still `buyout` for continuity. A future `olfi` scheme migration should be handled as a dedicated release task.
+
 | Link | Destination |
 |:-----|:------------|
 | `buyout://dashboard` | Dashboard |

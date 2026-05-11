@@ -1,11 +1,10 @@
 ---
-description: Core rules for all AI agents working on BuyOut. Read FIRST, follow ALWAYS.
+description: Core rules for all AI agents working on OLFi. Read after PROJECT_MAP.md, follow always.
 ---
 
-# BuyOut — Base Rules
+# OLFi — Base Rules
 
-> ⚠️ **Every AI agent must read this file before writing a single line of code.**
-> No exceptions. No shortcuts. These are non-negotiable.
+> Every AI agent must read `PROJECT_MAP.md` and this file before writing code. OLFi has multiple app surfaces, and the first quality bar is editing the right one.
 
 ---
 
@@ -29,32 +28,55 @@ description: Core rules for all AI agents working on BuyOut. Read FIRST, follow 
 - **Never add a dependency** without checking: maintained? TypeScript types? Expo compatible? <500KB bundle impact?
 - **Never use `any` type.** If you can't type it, you don't understand it.
 - **Never store monetary values as float/decimal.** Always BIGINT in fils (1 AED = 100 fils).
+- **Never rename legacy technical IDs casually.** Bundle IDs, schemes, Supabase project names, and OAuth callback identifiers need a migration plan.
 
 ---
+
+## Surface Discipline
+
+Before editing, identify the target surface:
+
+| Target | Path |
+|:--|:--|
+| Mobile app | `app/` |
+| Marketing website | `web/` |
+| Admin dashboard | `admin/` |
+| Prototype | Vercel project `olfi-prototype` |
+| Backend | `supabase/` |
+| Docs/planning | `docs/`, `research/`, `reference/`, `workflows/`, `checklists/` |
+
+Rules:
+- Do not edit `app/`, `web/`, and `admin/` in the same task unless the user asks for a cross-surface change.
+- Treat `shared/` and `archive/` as reference/historical unless explicitly promoted.
+- Current latest app line is `fix/auth-and-splash` and cleanup work branches from it.
+- `feature/kyc-open-finance` is preserved historical work, not the current latest app.
 
 ## Design System Rules
 
 ### Colors — Psychology-Driven
 | Token | Usage | Rationale |
 |:------|:------|:----------|
-| **Primary Blue** `#1A73E8` | Trust, CTAs, primary actions | Blue = trust in fintech |
+| **Brand Teal** `#4FD1C5` | Primary OLFi identity accents | Distinctive premium fintech signal |
+| **Deep Ink** `#011819` | Primary dark surface and brand contrast | Quiet, premium financial dashboard base |
+| **Trust Blue** `#1A73E8` | Select trust/utility actions | Blue = trust in fintech |
 | **Success Green** `#34A853` | Savings, gains, positive outcomes | Green = money growth |
 | **Warning Amber** `#F9AB00` | Attention needed, pending states | Amber = caution |
 | **Error Red** `#EA4335` | Failures, validation errors | Red = stop/danger |
 | **Neutral** 50-900 scale | Backgrounds, text, borders | Cool grays for professionalism |
 
 ### Typography
-- **System font** (SF Pro iOS / Roboto Android) for body text
+- **Inter** for Latin UI, **Cairo** for Arabic UI where configured
 - **Monospace font** for ALL financial numbers (alignment matters)
-- No custom fonts unless explicitly approved
+- No new fonts unless explicitly approved
 
 ### Interaction Standards
-- **Every pressable element**: press feedback (opacity or scale) + haptic
+- **Every pressable element**: press feedback + haptic where appropriate
 - **Every number reveal**: count-up animation (800-1200ms)
 - **Every screen transition**: spring animation (250-300ms)
 - **Every loading state**: skeleton shimmer, never a spinner
 - **Touch targets**: minimum 44x44pt (Apple HIG)
 - **Dark mode**: mandatory for all screens (financial dashboards look premium in dark)
+- Avoid decorative glow/blur effects unless the canonical OLFi brand document explicitly allows them.
 
 ### Figma ≠ Spec
 Figma designs are **inspiration, not specification**. The AI must:
@@ -110,7 +132,7 @@ These are **non-negotiable** for a fintech app:
 ## File Organization
 
 ```
-src/
+app/
 ├── app/                    # Expo Router screens (file-based routing)
 │   ├── (tabs)/             # Tab navigator screens
 │   ├── auth/               # Auth flow screens
@@ -132,7 +154,7 @@ src/
 **Rules:**
 - One component per file
 - Components in PascalCase, hooks in camelCase with `use` prefix
-- All Supabase queries go through `services/` — never call Supabase directly from components
+- Prefer hooks/services for Supabase access. Existing code uses hooks directly; do not refactor broadly unless the task calls for it.
 - Types in `types/` — never inline complex types
 
 ---

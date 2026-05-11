@@ -1,6 +1,17 @@
-# BuyOut Development Principles
+# OLFi Development Principles
 
-> These principles apply to ALL development work on BuyOut.
+> These principles apply to all OLFi development work. Read `PROJECT_MAP.md` first so the correct app surface is edited.
+
+## 0. Surface Discipline
+
+- Mobile app work belongs in `app/`.
+- Marketing website work belongs in `web/`.
+- Admin dashboard work belongs in `admin/`.
+- Backend work belongs in `supabase/`.
+- Prototype work belongs to the Vercel `olfi-prototype` surface and should not be mixed into canonical app work by accident.
+- `shared/` and `archive/` are reference/historical by default.
+
+Do not make broad cross-surface edits unless the task explicitly asks for them.
 
 ## 1. Library-First Development
 
@@ -15,7 +26,7 @@
 
 - **Do NOT follow the Figma designs literally** — they are guidance and inspiration only
 - Study market leaders (Revolut, Wise, Cash App, Robinhood) for design patterns
-- Apply color psychology: blue for trust, green for growth/savings
+- Follow the OLFi brand system: deep ink surfaces, brand teal accents, restrained premium motion, and clear financial hierarchy
 - Dark mode for financial dashboards (premium feel), light mode for forms
 - Every interaction should have micro-animations (haptics, spring animations)
 - Arabic/RTL is a first-class citizen, not an afterthought
@@ -48,3 +59,9 @@
 - Test every feature on a physical iOS device
 - Ensure native-quality animations and interactions
 - Follow Apple HIG for touch targets, safe areas, and gestures
+
+## 7. Cleanup & Archiving
+
+- Preserve before pruning. Use an `archive/*` branch, tag, or `archive/` folder before removing historical material.
+- Never delete divergent branches unless their useful work has been merged or explicitly archived and the user approves deletion.
+- Keep legacy technical IDs unless a migration plan covers App Store, Supabase, OAuth, deep links, and installed app continuity.

@@ -79,5 +79,5 @@ We may periodically update this Privacy Policy to reflect changes in our practic
 If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact our Data Protection Officer at:
 
 **OLFi Technologies FZ-LLC**  
-**Email:** legal@buyout.ae  
+**Email:** legal@olfi.ae
 **Address:** [Insert UAE Office Address Here]  
