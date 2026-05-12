@@ -46,18 +46,18 @@ export function HowItWorks() {
     const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
     return (
-        <section ref={sectionRef} id="how-it-works" className="py-32 bg-base-dark relative border-t border-white/5">
+        <section ref={sectionRef} id="how-it-works" className="scroll-mt-28 py-32 bg-base-dark relative border-t border-white/5 overflow-hidden">
             <div className="container mx-auto px-6 max-w-7xl">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-24"
+                    className="mb-20 max-w-3xl"
                 >
-                    <h2 className="text-5xl font-bold tracking-tighter text-base-beige mb-6">
+                    <h2 className="text-5xl md:text-7xl font-bold tracking-tighter text-base-beige mb-6">
                         Your path to stability
                     </h2>
-                    <p className="text-xl text-base-beige/60 max-w-2xl mx-auto">
+                    <p className="text-xl text-base-beige/60 max-w-2xl">
                         Three simple steps to restructure your debt and regain control of your financial clarity
                     </p>
                 </motion.div>
@@ -66,35 +66,25 @@ export function HowItWorks() {
                     variants={containerVariants}
                     initial="hidden"
                     animate={isInView ? "show" : "hidden"}
-                    className="grid md:grid-cols-3 gap-12 relative"
+                    className="grid overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-3 md:gap-px relative"
                 >
-                    {/* Animated connecting line */}
-                    <motion.div
-                        className="absolute top-12 left-20 right-20 h-px bg-white/10 hidden md:block origin-left"
-                        initial={{ scaleX: 0 }}
-                        animate={isInView ? { scaleX: 1 } : {}}
-                        transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-                    />
-
                     {steps.map((step) => (
                         <motion.div
                             key={step.num}
                             variants={stepVariants}
-                            className="relative z-10 flex flex-col items-center text-center"
+                            className="relative z-10 flex min-h-[350px] flex-col justify-between bg-base-dark p-8 md:p-10"
                         >
-                            <motion.div
-                                className="w-24 h-24 bg-base-dark border border-brand-teal/30 rounded-2xl flex items-center justify-center text-3xl font-bold text-brand-teal shadow-[0_0_30px_rgba(13,148,136,0.15)] mb-8 transform -rotate-3"
-                                whileHover={{ rotate: 0, scale: 1.08 }}
-                                transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                            >
+                            <span className="font-mono text-5xl text-brand-teal">
                                 {step.num}
-                            </motion.div>
-                            <h3 className="text-2xl font-bold text-base-beige mb-4 tracking-tight">
-                                {step.title}
-                            </h3>
-                            <p className="text-base-beige/60 leading-relaxed max-w-xs">
-                                {step.desc}
-                            </p>
+                            </span>
+                            <div>
+                                <h3 className="text-2xl font-bold text-base-beige mb-4 tracking-tight">
+                                    {step.title}
+                                </h3>
+                                <p className="text-base-beige/60 leading-relaxed max-w-xs">
+                                    {step.desc}
+                                </p>
+                            </div>
                         </motion.div>
                     ))}
                 </motion.div>
