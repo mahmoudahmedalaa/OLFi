@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     fetchProducts, fetchBanksList,
     createProduct, updateProduct, deleteProduct, toggleProductActive,
@@ -36,15 +36,17 @@ export default function ProductsPage() {
     const [saving, setSaving] = useState(false);
     const [filterType, setFilterType] = useState('all');
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true);
         const [prods, bks] = await Promise.all([fetchProducts(), fetchBanksList()]);
         setProducts(prods as Product[]);
         setBanks(bks as Bank[]);
         setLoading(false);
-    };
+    }, []);
 
-    useEffect(() => { loadData(); }, []);
+    useEffect(() => {
+        void Promise.resolve().then(loadData);
+    }, [loadData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

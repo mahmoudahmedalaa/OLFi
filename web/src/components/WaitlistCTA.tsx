@@ -63,9 +63,9 @@ export function WaitlistCTA() {
             setSubmitted(true);
             setEmail('');
             setFullName('');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Waitlist error:', err);
-            setErrorMsg(err.message || 'Something went wrong. Please try again.');
+            setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }

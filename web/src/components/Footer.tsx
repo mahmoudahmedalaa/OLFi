@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 const fadeUp = {
     hidden: { opacity: 0, y: 40 },
@@ -61,7 +62,7 @@ export function Footer() {
                 className="container mx-auto px-6 max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6"
             >
                 <Link href="/" className="flex items-center">
-                    <img src="/assets/olfi-logo.png" alt="OLFi Logo" className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
+                    <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={86} height={32} className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
                 </Link>
 
                 <div className="flex flex-wrap justify-center gap-6 text-sm text-white/70">

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     fetchNotifications, fetchUsersList,
     sendNotification, broadcastNotification, deleteNotification,
@@ -19,15 +19,17 @@ export default function NotificationsPage() {
     const [sending, setSending] = useState(false);
     const [broadcastMode, setBroadcastMode] = useState(false);
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true);
         const [notifs, userList] = await Promise.all([fetchNotifications(), fetchUsersList()]);
         setNotifications(notifs as Notification[]);
         setUsers(userList);
         setLoading(false);
-    };
+    }, []);
 
-    useEffect(() => { loadData(); }, []);
+    useEffect(() => {
+        void Promise.resolve().then(loadData);
+    }, [loadData]);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();

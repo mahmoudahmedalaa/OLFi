@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { fetchApplications, updateApplicationStatus } from '@/lib/actions';
 
+type Application = Awaited<ReturnType<typeof fetchApplications>>[number];
+
 const STATUS_COLORS: Record<string, string> = {
     submitted: 'bg-blue-500/10 text-blue-400',
     under_review: 'bg-amber-500/10 text-amber-400',
@@ -20,7 +22,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default function ApplicationsPage() {
-    const [applications, setApplications] = useState<any[]>([]);
+    const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [actionModal, setActionModal] = useState<{
@@ -155,7 +157,7 @@ export default function ApplicationsPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
-                        {filtered.map((app: any) => {
+                        {filtered.map((app) => {
                             const userName = app.profile?.first_name
                                 ? `${app.profile.first_name} ${app.profile.last_name || ''}`.trim()
                                 : app.profile?.full_name || 'User';

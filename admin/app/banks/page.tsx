@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchBanks, createBank, updateBank, deleteBank } from '@/lib/actions';
 
 interface Bank {
@@ -23,14 +23,16 @@ export default function BanksPage() {
     const [form, setForm] = useState(emptyForm);
     const [saving, setSaving] = useState(false);
 
-    const loadBanks = async () => {
+    const loadBanks = useCallback(async () => {
         setLoading(true);
         const data = await fetchBanks();
         setBanks(data as Bank[]);
         setLoading(false);
-    };
+    }, []);
 
-    useEffect(() => { loadBanks(); }, []);
+    useEffect(() => {
+        void Promise.resolve().then(loadBanks);
+    }, [loadBanks]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -147,7 +149,13 @@ export default function BanksPage() {
                                 <tr key={bank.id} className="hover:bg-gray-800/30 transition-colors">
                                     <td className="px-6 py-4 font-medium">
                                         <div className="flex items-center gap-3">
-                                            {bank.logo_url && <img src={bank.logo_url} alt="" className="w-8 h-8 rounded-full object-cover bg-gray-700" />}
+                                            {bank.logo_url && (
+                                                <span
+                                                    aria-hidden="true"
+                                                    className="w-8 h-8 rounded-full bg-gray-700 bg-cover bg-center"
+                                                    style={{ backgroundImage: `url(${bank.logo_url})` }}
+                                                />
+                                            )}
                                             {bank.name}
                                         </div>
                                     </td>

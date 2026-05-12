@@ -4,6 +4,11 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+type UserDetail = Awaited<ReturnType<typeof fetchUserDetail>>;
+type UserLoan = UserDetail['loans'][number];
+type UserApplication = UserDetail['applications'][number];
+type RecentActivity = UserDetail['recentActivity'][number];
+
 export default async function UserDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const { profile, loans, applications, recentActivity } = await fetchUserDetail(id);
@@ -76,7 +81,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                         <h2 className="text-lg font-semibold">Loans ({loans.length})</h2>
                     </div>
                     <div className="divide-y divide-gray-800">
-                        {loans.map((loan: any) => (
+                        {loans.map((loan: UserLoan) => (
                             <div key={loan.id} className="p-4">
                                 <div className="flex justify-between items-start mb-2">
                                     <div>
@@ -119,7 +124,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                         <h2 className="text-lg font-semibold">Applications ({applications.length})</h2>
                     </div>
                     <div className="divide-y divide-gray-800">
-                        {applications.map((app: any) => (
+                        {applications.map((app: UserApplication) => (
                             <div key={app.id} className="p-4">
                                 <div className="flex justify-between items-start mb-2">
                                     <div>
@@ -159,7 +164,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                 </div>
                 <div className="p-6">
                     <div className="space-y-3">
-                        {recentActivity.map((event: any, i: number) => (
+                        {recentActivity.map((event: RecentActivity, i: number) => (
                             <div key={i} className="flex items-center gap-4">
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
                                 <code className="text-xs bg-gray-800 px-2 py-0.5 rounded text-cyan-400 flex-shrink-0">

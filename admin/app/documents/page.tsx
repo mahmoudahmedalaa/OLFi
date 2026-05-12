@@ -3,11 +3,14 @@
 import { useEffect, useState, useCallback } from 'react';
 import { fetchApplications, fetchUserDocuments, getDocumentSignedUrl } from '@/lib/actions';
 
+type Application = Awaited<ReturnType<typeof fetchApplications>>[number];
+type UserDocument = Awaited<ReturnType<typeof fetchUserDocuments>>[number];
+
 export default function DocumentVaultPage() {
-    const [applications, setApplications] = useState<any[]>([]);
+    const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedApp, setSelectedApp] = useState<any | null>(null);
-    const [documents, setDocuments] = useState<any[]>([]);
+    const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+    const [documents, setDocuments] = useState<UserDocument[]>([]);
     const [docsLoading, setDocsLoading] = useState(false);
     const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null);
 
@@ -15,7 +18,7 @@ export default function DocumentVaultPage() {
         try {
             const data = await fetchApplications();
             // Only show apps that might have documents
-            setApplications(data.filter((a: any) =>
+            setApplications(data.filter((a) =>
                 ['submitted', 'under_review', 'documents_required', 'approved'].includes(a.status)
             ));
         } catch (e) {
@@ -44,7 +47,7 @@ export default function DocumentVaultPage() {
         }
     };
 
-    const handleSelectApp = (app: any) => {
+    const handleSelectApp = (app: Application) => {
         setSelectedApp(app);
         loadDocuments(app.id, app.user_id);
     };

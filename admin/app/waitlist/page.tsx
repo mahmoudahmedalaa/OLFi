@@ -3,8 +3,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { fetchWaitlist } from '@/lib/actions';
 
+type WaitlistEntry = Awaited<ReturnType<typeof fetchWaitlist>>[number];
+
 export default function WaitlistPage() {
-    const [waitlist, setWaitlist] = useState<any[]>([]);
+    const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([]);
     const [loading, setLoading] = useState(true);
 
     const load = useCallback(async () => {
@@ -50,7 +52,7 @@ export default function WaitlistPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800/50">
-                        {waitlist.map((entry: any) => (
+                        {waitlist.map((entry) => (
                             <tr key={entry.id || entry.email} className="hover:bg-gray-800/30 transition-colors">
                                 <td className="px-6 py-4 font-medium text-gray-200">{entry.email}</td>
                                 <td className="px-6 py-4 font-medium text-gray-200">{entry.full_name || '—'}</td>

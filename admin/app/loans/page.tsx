@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { fetchLoans, updateLoanStatus, updateLoanDetails, deleteLoan } from '@/lib/actions';
 import Link from 'next/link';
 
+type Loan = Awaited<ReturnType<typeof fetchLoans>>[number];
+
 const STATUS_COLORS: Record<string, string> = {
     active: 'bg-emerald-500/10 text-emerald-400',
     completed: 'bg-blue-500/10 text-blue-400',
@@ -14,10 +16,10 @@ const STATUS_COLORS: Record<string, string> = {
 const LOAN_STATUSES = ['active', 'completed', 'refinanced', 'defaulted'];
 
 export default function LoansPage() {
-    const [loans, setLoans] = useState<any[]>([]);
+    const [loans, setLoans] = useState<Loan[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
-    const [selectedLoan, setSelectedLoan] = useState<any | null>(null);
+    const [selectedLoan, setSelectedLoan] = useState<Loan | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [editForm, setEditForm] = useState<Record<string, string>>({});
     const [saving, setSaving] = useState(false);
@@ -41,9 +43,9 @@ export default function LoansPage() {
             await updateLoanStatus(id, newStatus);
             await load();
             if (selectedLoan?.id === id) {
-                setSelectedLoan((prev: any) => prev ? { ...prev, status: newStatus } : null);
+                setSelectedLoan((prev) => prev ? { ...prev, status: newStatus } : null);
             }
-        } catch (e) {
+        } catch {
             alert('Failed to update status');
         } finally {
             setSaving(false);
@@ -64,7 +66,7 @@ export default function LoansPage() {
             setEditMode(false);
             await load();
             setSelectedLoan(null);
-        } catch (e) {
+        } catch {
             alert('Failed to update loan');
         } finally {
             setSaving(false);
@@ -77,19 +79,19 @@ export default function LoansPage() {
             await deleteLoan(id);
             setSelectedLoan(null);
             await load();
-        } catch (e) {
+        } catch {
             alert('Failed to delete loan');
         }
     };
 
     const filtered = filter === 'all' ? loans : loans.filter((l) => l.status === filter);
 
-    const totalDebt = loans.reduce((sum: number, l: any) => sum + Number(l.remaining_amount), 0);
-    const totalOriginal = loans.reduce((sum: number, l: any) => sum + Number(l.original_amount), 0);
+    const totalDebt = loans.reduce((sum, l) => sum + Number(l.remaining_amount), 0);
+    const totalOriginal = loans.reduce((sum, l) => sum + Number(l.original_amount), 0);
     const avgRate = loans.length > 0
-        ? (loans.reduce((sum: number, l: any) => sum + Number(l.interest_rate), 0) / loans.length).toFixed(2)
+        ? (loans.reduce((sum, l) => sum + Number(l.interest_rate), 0) / loans.length).toFixed(2)
         : '0';
-    const statusCounts = loans.reduce((acc: Record<string, number>, l: any) => {
+    const statusCounts = loans.reduce((acc: Record<string, number>, l) => {
         acc[l.status] = (acc[l.status] || 0) + 1;
         return acc;
     }, {});
@@ -165,7 +167,7 @@ export default function LoansPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
-                        {filtered.map((loan: any) => (
+                        {filtered.map((loan) => (
                             <tr key={loan.id} className="hover:bg-gray-800/30 transition-colors">
                                 <td className="px-6 py-4">
                                     <Link

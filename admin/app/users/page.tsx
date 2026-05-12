@@ -4,6 +4,8 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+type UserProfile = Awaited<ReturnType<typeof getUsers>>[number];
+
 async function getUsers() {
     // Fetch profiles and join with auth.users is not possible directly via client,
     // but profiles has all we need
@@ -19,7 +21,7 @@ async function getUserLoansCount() {
         .from('user_loans')
         .select('user_id');
     const countMap: Record<string, number> = {};
-    (data || []).forEach((l: any) => {
+    (data || []).forEach((l) => {
         countMap[l.user_id] = (countMap[l.user_id] || 0) + 1;
     });
     return countMap;
@@ -52,7 +54,7 @@ export default async function UsersPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-800">
-                        {users.map((u: any) => (
+                        {users.map((u: UserProfile) => (
                             <tr key={u.id} className="hover:bg-gray-800/30 transition-colors">
                                 <td className="px-6 py-4 font-medium">
                                     <Link href={`/users/${u.id}`} className="hover:text-emerald-400 transition-colors">

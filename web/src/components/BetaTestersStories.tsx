@@ -55,7 +55,7 @@ export function BetaTestersStories() {
                             </div>
 
                             <p className="text-[15px] leading-relaxed text-base-dark/80 mb-8 italic">
-                                "{testimonial.quote}"
+                                &ldquo;{testimonial.quote}&rdquo;
                             </p>
 
                             <div className="flex items-center gap-4 mt-auto">

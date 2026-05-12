@@ -4,6 +4,12 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
+type OlfiScoreTranslationKey =
+    | 'bullet1'
+    | 'bullet2'
+    | 'bullet3'
+    | 'bullet4';
+
 const brands = [
     { name: 'Tabby', accent: '#3CFFD0', short: 'TB' },
     { name: 'Tamara', accent: '#FF6B9D', short: 'TM' },
@@ -93,10 +99,10 @@ export function OlfiScore() {
                                 transition={{ delay: 0.2 }}
                                 className="space-y-4 text-white leading-relaxed font-medium mb-4"
                             >
-                                {['bullet1', 'bullet2', 'bullet3', 'bullet4'].map((bullet, idx) => (
+                                {(['bullet1', 'bullet2', 'bullet3', 'bullet4'] satisfies OlfiScoreTranslationKey[]).map((bullet, idx) => (
                                     <li key={idx} className="flex gap-3">
                                         <div className="mt-2 w-1.5 h-1.5 rounded-full bg-brand-teal shrink-0 shadow-[0_0_8px_#00e5ff]" />
-                                        <span>{t(bullet as any)}</span>
+                                        <span>{t(bullet)}</span>
                                     </li>
                                 ))}
                             </motion.ul>
@@ -152,7 +158,6 @@ export function OlfiScore() {
                         {/* Orbiting Glassmorphic Brand Chips */}
                         {brands.map((brand, i) => {
                             const desktopPos = getOrbitalStyle(i, brands.length, orbitRadiusDesktop);
-                            const mobilePos = getOrbitalStyle(i, brands.length, orbitRadiusMobile);
                             const chipAnim = getChipAnimation(i);
 
                             return (

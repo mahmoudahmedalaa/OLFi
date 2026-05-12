@@ -3,9 +3,13 @@
 import { useState, useEffect } from 'react';
 import { fetchApplications, fetchBanks, fetchRecentManualOffers, createManualOffer } from '@/lib/actions';
 
+type Application = Awaited<ReturnType<typeof fetchApplications>>[number];
+type Bank = Awaited<ReturnType<typeof fetchBanks>>[number];
+type RecentOffer = Awaited<ReturnType<typeof fetchRecentManualOffers>>[number];
+
 export default function ManualOffersPage() {
-    const [applications, setApplications] = useState<any[]>([]);
-    const [banks, setBanks] = useState<any[]>([]);
+    const [applications, setApplications] = useState<Application[]>([]);
+    const [banks, setBanks] = useState<Bank[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Form State
@@ -18,7 +22,7 @@ export default function ManualOffersPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // List of created offers
-    const [recentOffers, setRecentOffers] = useState<any[]>([]);
+    const [recentOffers, setRecentOffers] = useState<RecentOffer[]>([]);
 
     useEffect(() => {
         async function loadData() {
@@ -30,7 +34,7 @@ export default function ManualOffersPage() {
                 ]);
 
                 // Only show apps that are in review or approved
-                setApplications(appsData.filter((a: any) =>
+                setApplications(appsData.filter((a) =>
                     ['under_review', 'approved'].includes(a.status)
                 ));
                 setBanks(banksData);
@@ -103,9 +107,9 @@ export default function ManualOffersPage() {
             setTenureYears('');
             setProcessingFee('');
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error creating offer:', error);
-            alert(`Failed to create offer: ${error.message}`);
+            alert(`Failed to create offer: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setIsSubmitting(false);
         }

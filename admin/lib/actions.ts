@@ -2,6 +2,61 @@
 
 import { supabase } from '@/lib/supabase';
 
+type ProfileSummary = {
+    id?: string;
+    first_name?: string | null;
+    last_name?: string | null;
+    full_name?: string | null;
+};
+
+type LoanWithProfile = {
+    id: string;
+    user_id: string;
+    bank_name: string | null;
+    loan_type: string;
+    original_amount: number | string | null;
+    remaining_amount: number | string | null;
+    interest_rate: number | string | null;
+    monthly_emi: number | string | null;
+    tenure_months: number | string | null;
+    start_date: string | null;
+    status: string;
+    created_at: string;
+    profile?: ProfileSummary | null;
+    [key: string]: unknown;
+};
+
+export type AdminLoan = {
+    id: string;
+    user_id: string;
+    bank_name: string | null;
+    loan_type: string;
+    original_amount: number | string | null;
+    remaining_amount: number | string | null;
+    interest_rate: number | string | null;
+    monthly_emi: number | string | null;
+    tenure_months: number | string | null;
+    start_date: string | null;
+    status: string;
+    created_at: string;
+    profile?: ProfileSummary | null;
+    user_display: string;
+    user_email: string;
+};
+
+type RecentApplicationSummary = {
+    id: string;
+    status: string;
+    monthly_savings: number | string | null;
+    total_savings: number | string | null;
+    created_at: string;
+    profile?: ProfileSummary | null;
+    bank_product?: {
+        name?: string | null;
+        bank?: { name?: string | null } | null;
+    } | null;
+};
+
 // ── Banks ───────────────────────────────────────────
 export async function fetchBanks() {
     const { data, error } = await supabase.from('banks').select('*').order('name');
@@ -165,7 +220,7 @@ export async function updateApplicationStatus(
 }
 
 // ── Loan Management ────────────────────────────────
-export async function fetchLoans() {
+export async function fetchLoans(): Promise<AdminLoan[]> {
     const { data: loans, error } = await supabase
         .from('user_loans')
         .select('*, profile:profiles!user_loans_user_id_fkey (id, first_name, last_name, full_name)')
@@ -179,7 +234,7 @@ export async function fetchLoans() {
         emailMap[u.id] = u.email || '';
     }
 
-    return (loans || []).map((loan: any) => {
+    return ((loans || []) as LoanWithProfile[]).map((loan) => {
         const p = loan.profile;
         const name = p?.first_name
             ? `${p.first_name} ${p.last_name || ''}`.trim()
@@ -353,7 +408,7 @@ export async function fetchUserDetail(userId: string) {
     return {
         profile: profile.data,
         loans: loans.data || [],
-        applications: applications.data || [],
+        applications: (applications.data || []) as RecentApplicationSummary[],
         recentActivity: events.data || [],
     };
 }

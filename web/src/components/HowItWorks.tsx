@@ -76,7 +76,7 @@ export function HowItWorks() {
                         transition={{ duration: 1.2, delay: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
                     />
 
-                    {steps.map((step, idx) => (
+                    {steps.map((step) => (
                         <motion.div
                             key={step.num}
                             variants={stepVariants}

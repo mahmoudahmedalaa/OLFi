@@ -5,6 +5,24 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+type RecentLoan = Awaited<ReturnType<typeof getRecentLoans>>[number];
+type RecentApplication = {
+  id: string;
+  status: string;
+  monthly_savings: number | string | null;
+  total_savings: number | string | null;
+  created_at: string;
+  profile?: {
+    first_name?: string | null;
+    last_name?: string | null;
+    full_name?: string | null;
+  } | null;
+  bank_product?: {
+    name?: string | null;
+    bank?: { name?: string | null } | null;
+  } | null;
+};
+
 async function getStats() {
   const [banks, products, users, loans] = await Promise.all([
     supabase.from('banks').select('*', { count: 'exact', head: true }),
@@ -39,7 +57,7 @@ async function getRecentApplications() {
         `)
     .order('created_at', { ascending: false })
     .limit(5);
-  return data || [];
+  return (data || []) as unknown as RecentApplication[];
 }
 
 export default async function Dashboard() {
@@ -127,7 +145,7 @@ export default async function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
-              {recentLoans.map((loan: any) => (
+              {recentLoans.map((loan: RecentLoan) => (
                 <tr key={loan.id} className="hover:bg-gray-800/30 transition-colors">
                   <td className="px-6 py-3 font-medium">{loan.bank_name || '—'}</td>
                   <td className="px-6 py-3 capitalize text-gray-300">{loan.loan_type}</td>
@@ -162,7 +180,7 @@ export default async function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
-              {recentApps.map((app: any) => {
+              {recentApps.map((app: RecentApplication) => {
                 const appName = app.profile?.first_name
                   ? `${app.profile.first_name} ${app.profile.last_name || ''}`.trim()
                   : app.profile?.full_name || 'User';
