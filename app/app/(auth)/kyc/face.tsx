@@ -28,7 +28,7 @@ export default function FaceIdentityScreen() {
                 setScanState('success');
             }, 3000);
         }
-    }, [scanState]);
+    }, [scanState, scaleAnim]);
 
     const handleCompleteKYC = async () => {
         if (user) {

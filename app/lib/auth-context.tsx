@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import { supabase } from './supabase';
 import { initAnalytics, clearAnalytics } from './analytics';
 
@@ -27,6 +28,16 @@ const AuthContext = createContext<AuthContextType>({
     signOut: async () => { },
 });
 
+const LEGACY_CREDENTIAL_KEYS = ['saved_email', 'saved_password'];
+
+async function clearLegacyCredentialSecrets() {
+    if (Platform.OS === 'web') return;
+
+    await Promise.allSettled(
+        LEGACY_CREDENTIAL_KEYS.map((key) => SecureStore.deleteItemAsync(key))
+    );
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
@@ -35,6 +46,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         let mounted = true;
+
+        clearLegacyCredentialSecrets().catch(() => { });
 
         // Init postAuthSetupPending from AsyncStorage
         AsyncStorage.getItem('@olfi_post_auth_setup_pending').then((val) => {
@@ -105,12 +118,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (!error) {
-            try {
-                await SecureStore.setItemAsync('saved_email', email);
-                await SecureStore.setItemAsync('saved_password', password);
-            } catch (e) {
-                console.warn('Failed to save credentials for biometric auto-login', e);
-            }
+            await clearLegacyCredentialSecrets();
         }
 
         return { error: error as Error | null };
@@ -118,6 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const signOut = async () => {
         clearAnalytics();
+        await clearLegacyCredentialSecrets();
         await supabase.auth.signOut();
     };
 

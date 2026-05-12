@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
     View, Text, TouchableOpacity, Animated, Image, ScrollView,
     Modal, TextInput, KeyboardAvoidingView, Platform, StyleSheet,
-    FlatList
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,7 +10,7 @@ import { useTheme } from '@/lib/theme-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/lib/auth-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { Colors } from '@/lib/constants';
 import { supabase } from '@/lib/supabase';
 
 // ─── Bank data ────────────────────────────────────────────────────────────────
@@ -78,7 +77,7 @@ function MockLoginModal({ visible, bank, onSuccess, onDismiss }: MockLoginModalP
             }, 2500);
             return () => clearTimeout(timer);
         }
-    }, [loading]);
+    }, [loading, onSuccess, spinAnim]);
 
     const spin = spinAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
@@ -312,7 +311,9 @@ export default function OpenBankingScreen() {
                         // Also arbitrarily set the salary in profiles to 35000 if needed for realistic health scores
                         await supabase.from('profiles').update({ salary: 35000 }).eq('id', user.id);
                     } catch (e) {
-                        console.error('Failed to seed mock loans:', e);
+                        if (__DEV__) {
+                            console.error('Failed to seed mock loans:', e);
+                        }
                     }
                 }
             }

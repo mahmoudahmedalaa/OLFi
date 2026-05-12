@@ -4,7 +4,6 @@ import {
     Text,
     TouchableOpacity,
     Alert,
-    Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,15 +13,13 @@ import { useTheme } from '@/lib/theme-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
 import { useAuth } from '@/lib/auth-context';
 
 const BIOMETRIC_KEY_PREFIX = '@olfi_biometric_lock_';
-const POST_AUTH_SETUP_KEY = '@olfi_post_auth_setup_pending';
 
 export default function BiometricSetupScreen() {
     const { theme } = useTheme();
-    const { user, setPostAuthSetupPending } = useAuth();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
     const handleEnable = useCallback(async () => {
@@ -49,22 +46,11 @@ export default function BiometricSetupScreen() {
                 const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user?.id}`;
                 await AsyncStorage.setItem(userBiometricKey, 'true');
 
-                // Save credentials for biometric auto-login
-                const email = user?.email;
-                if (email) {
-                    try {
-                        const savedEmail = await SecureStore.getItemAsync('saved_email');
-                        if (!savedEmail) {
-                            await SecureStore.setItemAsync('saved_email', email);
-                        }
-                    } catch { }
-                }
-
                 // Navigate to open banking — postAuthSetupPending cleared there
                 router.replace('/(auth)/open-banking' as any);
             }
-        } catch (e: any) {
-            Alert.alert('Error', e.message || 'Failed to enable biometric authentication');
+        } catch (e: unknown) {
+            Alert.alert('Error', e instanceof Error ? e.message : 'Failed to enable biometric authentication');
         } finally {
             setLoading(false);
         }

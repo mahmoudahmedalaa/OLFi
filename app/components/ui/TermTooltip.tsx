@@ -8,7 +8,7 @@
  * Uses the render-function pattern for `from` prop to be fully type-safe
  * with react-native-popover-view.
  */
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, TextStyle, View } from 'react-native';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import { useTheme } from '@/lib/theme-context';

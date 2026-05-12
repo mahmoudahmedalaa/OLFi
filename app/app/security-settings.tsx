@@ -14,14 +14,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import * as LocalAuthentication from 'expo-local-authentication';
-import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import type { Theme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 
 const BIOMETRIC_KEY_PREFIX = '@olfi_biometric_lock_';
+
+function getErrorMessage(error: unknown, fallback: string) {
+    return error instanceof Error ? error.message : fallback;
+}
 
 export default function SecuritySettingsScreen() {
     const { theme } = useTheme();
@@ -62,14 +66,6 @@ export default function SecuritySettingsScreen() {
                 setBiometrics(true);
                 const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user?.id}`;
                 await AsyncStorage.setItem(userBiometricKey, 'true');
-
-                const savedPwd = await SecureStore.getItemAsync('saved_password');
-                if (!savedPwd) {
-                    Alert.alert(
-                        'Almost Done',
-                        'To use Face ID for logging in, you must manually log in with your email and password at least once. Please log out and back in to fully enable biometric login.'
-                    );
-                }
             }
             // If cancelled/failed, toggle stays OFF
         } else {
@@ -101,17 +97,12 @@ export default function SecuritySettingsScreen() {
             const { error } = await supabase.auth.updateUser({ password: newPw });
             if (error) throw error;
 
-            // Update saved credentials for FaceID if they exist
-            if (biometrics) {
-                await SecureStore.setItemAsync('saved_password', newPw);
-            }
-
             Alert.alert('Success', 'Password updated successfully.');
             setShowPasswordSection(false);
             setNewPw('');
             setConfirmPw('');
-        } catch (e: any) {
-            Alert.alert('Error', e.message || 'Failed to update password.');
+        } catch (e: unknown) {
+            Alert.alert('Error', getErrorMessage(e, 'Failed to update password.'));
         } finally {
             setChangingPw(false);
         }
@@ -151,8 +142,7 @@ export default function SecuritySettingsScreen() {
                                                 'Account Deleted',
                                                 'Your account and all associated data have been permanently deleted.'
                                             );
-                                        } catch (e: any) {
-                                            console.error('Failed to delete account:', e);
+                                        } catch {
                                             Alert.alert('Error', 'Failed to delete account. Please try again or contact support@olfi.ae');
                                         }
                                     },
@@ -346,7 +336,7 @@ export default function SecuritySettingsScreen() {
     );
 }
 
-function PwField({ placeholder, value, onChangeText, theme }: { placeholder: string; value: string; onChangeText: (t: string) => void; theme: any }) {
+function PwField({ placeholder, value, onChangeText, theme }: { placeholder: string; value: string; onChangeText: (t: string) => void; theme: Theme }) {
     const [visible, setVisible] = useState(false);
     return (
         <View style={{

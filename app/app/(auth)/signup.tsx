@@ -15,12 +15,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useLanguage } from '@/lib/language-context';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
-import { supabase } from '@/lib/supabase';
 
 export default function SignupScreen() {
     const [firstName, setFirstName] = useState('');
@@ -29,8 +27,7 @@ export default function SignupScreen() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const { signUp } = useAuth();
+    const loading = false;
     const { theme } = useTheme();
     const { t } = useLanguage();
 

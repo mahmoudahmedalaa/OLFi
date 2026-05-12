@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, BorderRadius, Spacing, Typography } from '@/lib/constants';
+import { BorderRadius, Spacing, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { LinearGradient } from 'expo-linear-gradient';
 

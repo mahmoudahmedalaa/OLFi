@@ -27,7 +27,7 @@ import OfferList from '@/components/offers/OfferList';
 
 export default function OffersScreen() {
     const { theme } = useTheme();
-    const { t, isRtl } = useLanguage();
+    const { t } = useLanguage();
     const [showFilterModal, setShowFilterModal] = useState(false);
 
     const {

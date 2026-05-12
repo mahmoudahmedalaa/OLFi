@@ -10,7 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useSegments } from 'expo-router';
+import type { ComponentProps } from 'react';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
@@ -34,18 +35,38 @@ interface Application {
         loan_type: string;
         remaining_amount: number;
         interest_rate: number;
-    };
+    } | null;
     bank_product: {
         id: string;
         name: string;
         bank: {
             name: string;
             is_islamic: boolean;
-        };
+        } | null;
+    } | null;
+}
+
+type IoniconName = ComponentProps<typeof Ionicons>['name'];
+type RelatedOne<T> = T | T[] | null;
+type ApplicationRow = Omit<Application, 'user_loan' | 'bank_product'> & {
+    user_loan: RelatedOne<NonNullable<Application['user_loan']>>;
+    bank_product: RelatedOne<NonNullable<Application['bank_product']>>;
+};
+
+function unwrapRelated<T>(value: RelatedOne<T>): T | null {
+    if (Array.isArray(value)) return value[0] ?? null;
+    return value;
+}
+
+function normalizeApplication(row: ApplicationRow): Application {
+    return {
+        ...row,
+        user_loan: unwrapRelated(row.user_loan),
+        bank_product: unwrapRelated(row.bank_product),
     };
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string; bg: string }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: IoniconName; bg: string }> = {
     submitted: {
         label: 'Submitted',
         color: '#3B82F6',
@@ -84,9 +105,15 @@ export default function MyApplicationsScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { theme } = useTheme();
     const { user } = useAuth();
+    const segments = useSegments();
+    const showBackButton = segments[0] !== '(tabs)';
 
     const fetchApplications = useCallback(async () => {
-        if (!user) return;
+        if (!user) {
+            setLoading(false);
+            setRefreshing(false);
+            return;
+        }
         try {
             const { data, error } = await supabase
                 .from('refinance_applications')
@@ -105,9 +132,10 @@ export default function MyApplicationsScreen() {
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
-            setApplications((data as any) || []);
-        } catch (e) {
-            console.error('Failed to fetch applications:', e);
+            const rows = (data || []) as unknown as ApplicationRow[];
+            setApplications(rows.map(normalizeApplication));
+        } catch {
+            setApplications([]);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -143,12 +171,14 @@ export default function MyApplicationsScreen() {
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
             {/* Header */}
             <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12 }}>
-                <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12, padding: 4 }}>
-                    <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
-                </TouchableOpacity>
+                {showBackButton && (
+                    <TouchableOpacity onPress={() => router.back()} style={{ marginRight: 12, padding: 4 }}>
+                        <Ionicons name="chevron-back" size={24} color={theme.colors.textPrimary} />
+                    </TouchableOpacity>
+                )}
                 <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary }}>
-                        My Applications
+                        Applications
                     </Text>
                     <Text style={{ fontSize: 13, color: theme.colors.textSecondary }}>
                         Track your refinance applications
@@ -214,10 +244,9 @@ export default function MyApplicationsScreen() {
                 ) : (
                     applications.map((app) => {
                         const statusConfig = STATUS_CONFIG[app.status] || STATUS_CONFIG.submitted;
-                        const bankName = (app.bank_product as any)?.bank?.name || 'Bank';
-                        const isIslamic = (app.bank_product as any)?.bank?.is_islamic;
-                        const loanBank = (app.user_loan as any)?.bank_name || 'Your';
-                        const loanType = (app.user_loan as any)?.loan_type || 'loan';
+                        const bankName = app.bank_product?.bank?.name || 'Bank';
+                        const loanBank = app.user_loan?.bank_name || 'Your';
+                        const loanType = app.user_loan?.loan_type || 'loan';
 
                         return (
                             <View
@@ -243,7 +272,7 @@ export default function MyApplicationsScreen() {
                                     }}
                                 >
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                                        <Ionicons name={statusConfig.icon as any} size={16} color={statusConfig.color} />
+                                        <Ionicons name={statusConfig.icon} size={16} color={statusConfig.color} />
                                         <Text style={{ fontSize: 13, fontWeight: '700', color: statusConfig.color }}>
                                             {statusConfig.label}
                                         </Text>

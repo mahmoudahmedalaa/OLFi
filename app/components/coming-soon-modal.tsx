@@ -1,25 +1,24 @@
 import React, { useState, useRef } from 'react';
+import type { ComponentProps } from 'react';
 import {
     View,
     Text,
     Modal,
     TouchableOpacity,
     Animated,
-    Dimensions,
-    Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, BorderRadius, Typography, Spacing } from '@/lib/constants';
+import { Colors, BorderRadius, Typography } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
-import { supabase } from '@/lib/supabase';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+type IconName = ComponentProps<typeof Ionicons>['name'];
 
 // ─── Feature Configs ────────────────────────────────────────────────────────
 interface FeatureSlide {
-    icon: string;
+    icon: IconName;
     iconColor: string;
     iconBg: string;
     title: string;
@@ -29,7 +28,7 @@ interface FeatureSlide {
 interface FeatureConfig {
     key: string;
     headerGradient: [string, string];
-    headerIcon: string;
+    headerIcon: IconName;
     headerTitle: string;
     headerSubtitle: string;
     slides: FeatureSlide[];
@@ -143,7 +142,6 @@ export function ComingSoonModal({
     const feature = FEATURES[featureKey];
     const [currentSlide, setCurrentSlide] = useState(0);
     const [notified, setNotified] = useState(false);
-    const slideAnim = useRef(new Animated.Value(0)).current;
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     if (!feature) return null;
@@ -168,10 +166,7 @@ export function ComingSoonModal({
     const handleNotify = async () => {
         if (!user) return;
         try {
-            await supabase.from('coming_soon_notifications').upsert({
-                user_id: user.id,
-                feature: feature.key,
-            });
+            await AsyncStorage.setItem(`@olfi_notify_${user.id}_${feature.key}`, 'true');
             setNotified(true);
         } catch {
             // Silently fail — not critical
@@ -252,7 +247,7 @@ export function ComingSoonModal({
                         alignItems: 'center',
                         marginBottom: 16,
                     }}>
-                        <Ionicons name={feature.headerIcon as any} size={36} color="#fff" />
+                        <Ionicons name={feature.headerIcon} size={36} color="#fff" />
                     </View>
 
                     <Text style={{
@@ -294,7 +289,7 @@ export function ComingSoonModal({
                             alignItems: 'center',
                             marginBottom: 20,
                         }}>
-                            <Ionicons name={slide.icon as any} size={32} color={slide.iconColor} />
+                            <Ionicons name={slide.icon} size={32} color={slide.iconColor} />
                         </View>
 
                         {/* Step indicator */}
@@ -443,7 +438,13 @@ export function ComingSoonCards() {
     const { theme } = useTheme();
     const [activeModal, setActiveModal] = useState<string | null>(null);
 
-    const cards = [
+    const cards: {
+        key: keyof typeof FEATURES;
+        icon: IconName;
+        gradient: [string, string];
+        title: string;
+        subtitle: string;
+    }[] = [
         {
             key: 'uae_pass',
             icon: 'finger-print-outline',
@@ -496,7 +497,7 @@ export function ComingSoonCards() {
                                     alignItems: 'center',
                                 }}
                             >
-                                <Ionicons name={card.icon as any} size={22} color="#fff" />
+                                <Ionicons name={card.icon} size={22} color="#fff" />
                             </LinearGradient>
                             <View style={{ flex: 1 }}>
                                 <Text style={{ ...Typography.bodyBold, color: theme.colors.textPrimary }}>

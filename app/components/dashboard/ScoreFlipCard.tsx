@@ -157,7 +157,6 @@ function AecbContent({ onFlip }: { onFlip: () => void }) {
     const [aecbStatus, setAecbStatus] = useState<AecbStatus>('locked');
 
     const brandGreen = Colors.brand.emerald;
-    const borderColor = theme.colors.border;
 
     const handleRequest = () => {
         Alert.alert(

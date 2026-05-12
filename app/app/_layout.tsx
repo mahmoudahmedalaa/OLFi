@@ -17,7 +17,7 @@ import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { ThemeProvider, useTheme } from '@/lib/theme-context';
 import { LanguageProvider, useLanguage } from '@/lib/language-context';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { BorderRadius } from '@/lib/constants';
 import '@/global.css';
 
 // Ignore 3rd-party deprecation warnings
@@ -27,7 +27,6 @@ LogBox.ignoreLogs(['SafeAreaView has been deprecated']);
 SplashScreen.preventAutoHideAsync();
 
 const BIOMETRIC_KEY_PREFIX = '@olfi_biometric_lock_';
-const POST_AUTH_SETUP_KEY = '@olfi_post_auth_setup_pending';
 
 // Custom navigation themes
 const OLFiDarkTheme = {

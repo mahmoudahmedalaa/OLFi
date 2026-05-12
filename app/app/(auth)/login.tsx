@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -17,20 +17,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAuth } from '@/lib/auth-context';
 import { Colors, BorderRadius } from '@/lib/constants';
-import { ThemeProvider, useTheme } from '@/lib/theme-context';
+import { useTheme } from '@/lib/theme-context';
 import { useLanguage } from '@/lib/language-context';
 import { supabase } from '@/lib/supabase';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
-import * as SecureStore from 'expo-secure-store';
-import * as LocalAuthentication from 'expo-local-authentication';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [hasBiometricOption, setHasBiometricOption] = useState(false);
     const { signIn } = useAuth();
     const { theme } = useTheme();
     const { t } = useLanguage();
@@ -44,65 +40,12 @@ export default function LoginScreen() {
         try {
             const { error } = await signIn(email, password);
             if (error) Alert.alert('Login Error', error.message);
-        } catch (e: any) {
-            Alert.alert('Error', e.message);
+        } catch (e: unknown) {
+            Alert.alert('Error', e instanceof Error ? e.message : 'Unable to sign in.');
         } finally {
             setLoading(false);
         }
     };
-
-    const handleBiometricLogin = useCallback(async (savedEmail?: string, savedPassword?: string) => {
-        try {
-            const emailToUse = savedEmail || await SecureStore.getItemAsync('saved_email');
-            const passwordToUse = savedPassword || await SecureStore.getItemAsync('saved_password');
-
-            if (!emailToUse || !passwordToUse) return;
-
-            const result = await LocalAuthentication.authenticateAsync({
-                promptMessage: 'Log in to OLFi',
-                fallbackLabel: 'Use Passcode',
-            });
-
-            if (result.success) {
-                setLoading(true);
-                const { error } = await signIn(emailToUse, passwordToUse);
-                if (error) Alert.alert('Login Error', error.message);
-                // IF successful, _layout will transition automatically
-            }
-        } catch (e: any) {
-            // Silently caught as UI propagates errors independently
-        } finally {
-            setLoading(false);
-        }
-    }, [signIn]);
-
-    useEffect(() => {
-        const checkBiometricAvailability = async () => {
-            try {
-                // Check if any biometric lock is enabled (device-level check for login auto-prompt)
-                const savedEmail = await SecureStore.getItemAsync('saved_email');
-                // We can't know the user ID yet, so we check saved credentials exist
-                const isEnabled = savedEmail ? 'true' : null; // Will be validated below
-                if (isEnabled !== 'true') return;
-
-                const compatible = await LocalAuthentication.hasHardwareAsync();
-                const enrolled = await LocalAuthentication.isEnrolledAsync();
-
-                if (compatible && enrolled) {
-                    const savedEmail = await SecureStore.getItemAsync('saved_email');
-                    const savedPassword = await SecureStore.getItemAsync('saved_password');
-                    if (savedEmail && savedPassword) {
-                        setHasBiometricOption(true);
-                        // Auto-prompt Face ID on mount
-                        handleBiometricLogin(savedEmail, savedPassword);
-                    }
-                }
-            } catch (e) {
-                // Biometrics omitted safely for production
-            }
-        };
-        checkBiometricAvailability();
-    }, [handleBiometricLogin]);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -272,31 +215,6 @@ export default function LoginScreen() {
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    {/* Face ID / Biometric Button */}
-                    {hasBiometricOption && (
-                        <TouchableOpacity
-                            onPress={() => handleBiometricLogin()}
-                            style={{
-                                marginTop: 16,
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: theme.colors.card,
-                                borderRadius: BorderRadius.md,
-                                height: 52,
-                                borderWidth: 1,
-                                borderColor: Colors.brand.teal,
-                            }}
-                            activeOpacity={0.7}
-                            disabled={loading}
-                        >
-                            <Ionicons name="scan-outline" size={20} color={Colors.brand.teal} style={{ marginRight: 8 }} />
-                            <Text style={{ fontSize: 16, fontWeight: '600', color: Colors.brand.teal }}>
-                                Login with Face ID
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-
                     {/* Forgot Password */}
                     <TouchableOpacity
                         style={{ alignItems: 'center', marginTop: 16 }}
@@ -323,8 +241,8 @@ export default function LoginScreen() {
                                                     'Check Your Email ✉️',
                                                     `We've sent a password reset link to ${resetEmail}. Check your inbox (and spam folder).`
                                                 );
-                                            } catch (e: any) {
-                                                Alert.alert('Error', e.message || 'Failed to send reset email.');
+                                            } catch (e: unknown) {
+                                                Alert.alert('Error', e instanceof Error ? e.message : 'Failed to send reset email.');
                                             }
                                         },
                                     },

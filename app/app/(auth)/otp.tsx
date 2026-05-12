@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { NativeSyntheticEvent, TextInputKeyPressEventData ,
     View,
     Text,
@@ -10,7 +10,6 @@ import { NativeSyntheticEvent, TextInputKeyPressEventData ,
     ScrollView,
     ActivityIndicator,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';

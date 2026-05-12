@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     Dimensions,
-    Animated as RNAnimated,
     Image,
     Platform,
 } from 'react-native';
@@ -13,18 +12,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors, BorderRadius } from '@/lib/constants';
 import Animated, {
     FadeIn,
-    FadeOut,
     SlideInRight,
     SlideInLeft,
-    useSharedValue,
-    useAnimatedStyle,
-    withTiming,
-    withSequence,
-    withRepeat,
-    Easing,
 } from 'react-native-reanimated';
 import { useAuth } from '@/lib/auth-context';
 import { useLanguage } from '@/lib/language-context';

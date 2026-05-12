@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, Text, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, BorderRadius } from '@/lib/constants';
 
@@ -72,5 +72,3 @@ export default function ShariaBadge({
         </View>
     );
 }
-
-const styles = StyleSheet.create({});

@@ -15,6 +15,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import { Colors, BorderRadius } from '@/lib/constants';
 import { useTheme } from '@/lib/theme-context';
+import type { Theme } from '@/lib/theme-context';
 import SuccessModal from '@/components/SuccessModal';
 
 import { useAddLoan, formatWithCommas, stripCommas } from '@/hooks/useAddLoan';
@@ -23,7 +24,7 @@ import LoanTypeSelector from '@/components/add-loan/LoanTypeSelector';
 import FormInput from '@/components/add-loan/FormInput';
 import DatePickerModal from '@/components/add-loan/DatePickerModal';
 
-function labelStyle(theme: any) {
+function labelStyle(theme: Theme) {
     return {
         fontSize: 13,
         fontWeight: '600' as const,
@@ -90,7 +91,7 @@ export default function AddLoanScreen() {
                 setCustomBankName('Emirates NBD');
             }
         }
-    }, [prefill, banks]);
+    }, [prefill, banks, setCustomBankName, setInterestRate, setLoanType, setOriginalAmount, setRemainingAmount, setSelectedBank, setTenureMonths]);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>

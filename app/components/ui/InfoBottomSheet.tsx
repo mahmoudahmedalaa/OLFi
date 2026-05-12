@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet , Platform } from 'react-native';
 import { BottomSheetModal, BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { useTheme } from '@/lib/theme-context';
-import { Colors, BorderRadius } from '@/lib/constants';
+import { BorderRadius } from '@/lib/constants';
 import { BlurView } from 'expo-blur';
 
 interface InfoBottomSheetProps {

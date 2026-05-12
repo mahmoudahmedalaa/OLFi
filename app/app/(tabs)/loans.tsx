@@ -45,7 +45,7 @@ export default function LoansScreen() {
     const [refreshing, setRefreshing] = useState(false);
     const { theme } = useTheme();
     const { user } = useAuth();
-    const { t, isRtl } = useLanguage();
+    const { t } = useLanguage();
 
     const fetchLoans = useCallback(async () => {
         if (!user) return;

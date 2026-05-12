@@ -23,7 +23,7 @@ import { ScoreFlipCard } from '@/components/dashboard/ScoreFlipCard';
 
 export default function DashboardScreen() {
   const { theme } = useTheme();
-  const { t, isRtl } = useLanguage();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const {
     loading,
@@ -380,13 +380,6 @@ export default function DashboardScreen() {
 }
 
 // ─── Helpers ────────────────────────────────────────
-
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'morning';
-  if (h < 17) return 'afternoon';
-  return 'evening';
-}
 
 function formatLoanType(type: string) {
   return type.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase()) + ' Finance';
