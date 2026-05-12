@@ -1,19 +1,37 @@
 ---
-description: Git workflow for BuyOut — branching, commits, PRs, and releases
+description: Git workflow for OLFi — branching, commits, PRs, and releases
 ---
 
-# Git Flow — BuyOut
+# Git Flow — OLFi
+
+This workflow prioritizes preserving history. Do not delete or rewrite branches unless a safety branch/tag exists and the branch has been inspected.
+
+## Current Repo State
+
+| Item | Value |
+|:--|:--|
+| GitHub repo | `mahmoudahmedalaa/OLFi` |
+| Remote URL | `https://github.com/mahmoudahmedalaa/OLFi.git` |
+| Default branch | `main` |
+| Current latest product line | `fix/auth-and-splash` |
+| Cleanup branch | `chore/repo-stabilization` |
+| Safety snapshot | `archive/pre-cleanup-20260511` |
+| Historical divergent branch | `feature/kyc-open-finance` |
+
+`feature/kyc-open-finance` is preserved because it contains an older alternate structure with large deletes. Do not merge it into current work without a focused review.
 
 ## Branch Strategy
 
 ```
-main          ← production-ready, archivable, what goes to TestFlight/App Store
-  └── develop ← integration branch, all features merge here first
-       ├── feature/add-loan-form
-       ├── feature/refinance-calculator
-       ├── fix/login-crash
-       └── chore/update-deps
+main          ← production-ready, what goes to TestFlight/App Store
+  ├── feature/*  ← new functionality
+  ├── fix/*      ← bug fixes
+  ├── chore/*    ← maintenance, cleanup, dependencies, structure
+  ├── docs/*     ← documentation-only work
+  └── archive/*  ← preserved snapshots, do not use for active work
 ```
+
+`develop` exists historically. Keep it until the branch strategy is intentionally simplified, but do not assume it is ahead of `main`.
 
 ### Branch Naming
 
@@ -23,6 +41,8 @@ main          ← production-ready, archivable, what goes to TestFlight/App Stor
 | `fix/` | Bug fix | `fix/auth-token-expiry` |
 | `chore/` | Dependencies, config, cleanup | `chore/update-expo-sdk` |
 | `hotfix/` | Urgent production fix | `hotfix/crash-on-launch` |
+| `docs/` | Documentation only | `docs/repo-map` |
+| `archive/` | Safety snapshots | `archive/pre-cleanup-20260511` |
 
 ## Commit Convention (Conventional Commits)
 
@@ -63,9 +83,9 @@ docs(readme): add setup instructions
 ### Starting New Work
 
 ```bash
-# Always start from develop
-git checkout develop
-git pull origin develop
+# Start from the latest product branch or main, depending on release state
+git checkout main
+git pull origin main
 
 # Create feature branch
 git checkout -b feature/my-feature
@@ -87,31 +107,35 @@ git push -u origin feature/my-feature
 ### Merging to Develop
 
 ```bash
-# Update develop first
-git checkout develop
-git pull origin develop
+# Update main or the agreed integration branch first
+git checkout main
+git pull origin main
 
 # Merge feature (use --no-ff to preserve branch history)
 git merge --no-ff feature/my-feature
-git push origin develop
+git push origin main
 
 # Clean up
 git branch -d feature/my-feature
 git push origin --delete feature/my-feature
 ```
 
-### Releasing to Main (TestFlight / App Store)
+### Releasing to TestFlight / App Store
 
 ```bash
-# Merge develop into main
+# Ensure main contains the intended release changes
 git checkout main
 git pull origin main
-git merge --no-ff develop
 
 # Tag the release
 git tag -a v1.0.0 -m "v1.0.0: Initial TestFlight release"
 git push origin main --tags
 ```
+
+Only delete a remote branch after confirming:
+- Its useful work is merged or preserved elsewhere.
+- A branch/tag/archive exists for recovery.
+- The user explicitly agrees to deletion.
 
 ## Pre-Commit Checklist
 
@@ -120,7 +144,7 @@ Before every commit, verify:
 // turbo
 1. `npx tsc --noEmit` — zero TypeScript errors
 2. No secrets in staged files (`grep -r "SUPABASE_SERVICE_ROLE" app/`)
-3. `.gitignore` covers `ios/`, `android/`, `node_modules/`, `.env`
+3. `.gitignore` covers generated output and secrets: `node_modules/`, `.env`, `.expo/`, `dist/`, `.next/`, local `.vercel/`
 
 ## Pre-Archive Checklist
 
@@ -128,8 +152,9 @@ Before `Product → Archive` in Xcode:
 
 1. Version bumped in `app.json` (`version` and `ios.buildNumber`)
 2. All changes committed and pushed
-3. `npx expo prebuild --platform ios --clean` run fresh
+3. Xcode workspace opens at `app/ios/OLFi.xcworkspace`
 4. Team signing selected in Xcode
+5. Archive tested through Xcode and then TestFlight on a physical iPhone
 
 ## What NOT to Commit
 
@@ -141,3 +166,5 @@ Before `Product → Archive` in Xcode:
 | `.DS_Store` | macOS cruft |
 | `.expo/` | Metro cache |
 | `dist/` | Build output |
+| `.next/` | Next.js build output |
+| `.vercel/` | Local Vercel link state |

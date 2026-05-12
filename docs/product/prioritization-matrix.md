@@ -1,4 +1,4 @@
-# BuyOut Prioritization Matrix (Impact vs. Effort)
+# OLFi Prioritization Matrix (Impact vs. Effort)
 
 To ensure we build the right features at the right time, we evaluate all pending epics and user stories against a strict Impact vs. Effort matrix. 
 

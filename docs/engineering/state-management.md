@@ -1,6 +1,6 @@
-# BuyOut State Management & Data Flow Architecture
+# OLFi State Management & Data Flow Architecture
 
-BuyOut uses a hybrid state management approach. We separate **Client UI State** (user inputs, active tabs, dark mode toggle) from **Server/Asynchronous State** (fetched user profiles, active loan offers, bank integrations).
+OLFi uses a hybrid state management approach. We separate **Client UI State** (user inputs, active tabs, dark mode toggle) from **Server/Asynchronous State** (fetched user profiles, active loan offers, bank integrations).
 
 ## 1. Client State: Zustand
 
@@ -16,7 +16,7 @@ Our Zustand stores are slice-based. Instead of one massive `useStore`, we logica
     *   Holds the user's `monthlySalary` and `selectedTenure` (from the slider!).
     *   Computes derived state client-side (e.g., total debt pool) to provide immediate feedback to the UI without waiting for network requests.
 
-### Zustand Best Practices in BuyOut
+### Zustand Best Practices in OLFi
 
 1.  **Select strictly what you need:** Do not extract the entire store. This prevents unnecessary re-renders.
     *   *Good:* `const currentDebts = useApplicationStore((state) => state.currentDebts);`

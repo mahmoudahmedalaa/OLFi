@@ -1,4 +1,4 @@
-# Application Flow & Navigation — BuyOut MVP
+# Application Flow & Navigation — OLFi MVP
 
 > Maps every screen, transition, and user journey in the app.
 
@@ -76,7 +76,7 @@ Tab Bar (Bottom)
 |:--|:-------|:------|:-------------|
 | 14 | **Offers Overview** | `/(tabs)/offers` | Debt selector (horizontal scroll of user's debts). Filter toggles: Sharia Only, Lowest Rate, Shortest Tenure. Offer cards: bank logo, rate, tenure, EMI, savings vs current |
 | 15 | **Offer Detail** | `/offers/[id]` | Side-by-side comparison: Current vs This Offer. Savings breakdown: monthly, total over tenure. Bank info + offer terms. "Accept Offer" CTA (green, prominent) |
-| 16 | **Offer Acceptance** | `/offers/[id]/accept` | Step 1: Confirm details. Step 2: Success animation (Lottie checkmark). Step 3: Lead capture form (name, phone, preferred contact time). "Your application has been submitted to [Bank]. A BuyOut advisor will contact you within 24 hours." |
+| 16 | **Offer Acceptance** | `/offers/[id]/accept` | Step 1: Confirm details. Step 2: Success animation (Lottie checkmark). Step 3: Lead capture form (name, phone, preferred contact time). "Your application has been submitted to [Bank]. A OLFi advisor will contact you within 24 hours." |
 
 ### Application Tracker (Post-Offer Closing Journey)
 
@@ -92,7 +92,7 @@ Tab Bar (Bottom)
 
 | # | Screen | Route | Key Elements |
 |:--|:-------|:------|:-------------|
-| 22 | **Profile** | `/(tabs)/profile` | User info card (name, email, avatar). Menu: Personal Details, Notification Settings, Credit Health, My Applications, BuyOut Partners, Privacy & Security, About, Language, Rate Us, Invite Friends, Logout |
+| 22 | **Profile** | `/(tabs)/profile` | User info card (name, email, avatar). Menu: Personal Details, Notification Settings, Credit Health, My Applications, OLFi Partners, Privacy & Security, About, Language, Rate Us, Invite Friends, Logout |
 | 23 | **Personal Details** | `/profile/details` | Edit: name, phone, nationality, employment type, salary (optional with tooltip) |
 | 24 | **Notification Settings** | `/profile/notifications` | Toggles: New offers, Payment reminders, Offer status updates, Application updates |
 | 25 | **Credit Health** | `/profile/credit-health` | Health indicator (Healthy/Needs Attention/At Risk). Factors: number of debts, DBR estimate, payment consistency. "Connect AECB for real score" → Coming Soon. Disclaimer text |
@@ -177,6 +177,8 @@ stateDiagram-v2
 ---
 
 ## 6. Deep Linking (Future)
+
+Current technical URL scheme is still `buyout` for continuity. A future `olfi` scheme migration should be handled as a dedicated release task.
 
 | Link | Destination |
 |:-----|:------------|

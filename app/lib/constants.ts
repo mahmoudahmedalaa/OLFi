@@ -12,7 +12,7 @@ export const Colors = {
         emerald: '#10B981',      // Emerald 500
         emeraldLight: '#34D399', // Emerald 400
         emeraldDark: '#047857',  // Emerald 700
-        teal: '#14B8A6',         // Teal 500
+        teal: '#4FD1C5',         // Teal 500
         tealLight: '#2DD4BF',    // Teal 400
         tealDark: '#0F766E',     // Teal 700
     },

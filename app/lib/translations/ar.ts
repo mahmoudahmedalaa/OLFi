@@ -51,6 +51,7 @@ const ar: TranslationKeys = {
         dashboard: 'الرئيسية',
         debts: 'ديوني',
         offers: 'العروض',
+        applications: 'طلباتي',
         profile: 'حسابي',
     },
 

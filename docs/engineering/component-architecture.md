@@ -1,6 +1,6 @@
-# BuyOut Component Architecture & UI Guidelines
+# OLFi Component Architecture & UI Guidelines
 
-BuyOut maintains a strict, highly reusable component architecture to ensure consistency, speed up development, and provide a premium "Apple-like" feel across the application. We leverage **gluestack-ui v2** combined with **NativeWind v4** (Tailwind CSS) for our design system.
+OLFi maintains a strict, highly reusable component architecture to ensure consistency, speed up development, and provide a premium "Apple-like" feel across the application. We leverage **gluestack-ui v2** combined with **NativeWind v4** (Tailwind CSS) for our design system.
 
 ## Core Principles
 
@@ -32,7 +32,7 @@ Our core components are located in `app/components/ui`. If a UI element is used 
     *   *Features:* Supports left/right slots (for icons), secure text entry (passwords), and floating labels.
     *   *Validation:* Should visually indicate `isInvalid` state (red borders, error text below).
 
-### 4. Specialized BuyOut Components
+### 4. Specialized OLFi Components
 
 While gluestack provides the primitives, we compose them into complex, domain-specific components:
 
@@ -44,7 +44,7 @@ While gluestack provides the primitives, we compose them into complex, domain-sp
 
 ---
 
-## Anatomy of a BuyOut Component
+## Anatomy of a OLFi Component
 
 ```tsx
 import React from 'react';

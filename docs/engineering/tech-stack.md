@@ -1,4 +1,4 @@
-# Technology Stack — BuyOut MVP
+# Technology Stack — OLFi MVP
 
 > Every technology decision locked down with exact versions. No "latest" — pin everything.
 > **Philosophy: Free/cheap for MVP, scalable architecture for production.**
@@ -19,7 +19,7 @@
 
 ### The Decision Matrix
 
-| Dimension | Supabase | Firebase | Winner for BuyOut |
+| Dimension | Supabase | Firebase | Winner for OLFi |
 |:----------|:---------|:---------|:------------------|
 | **Database Model** | PostgreSQL (relational) — SQL joins, CTEs, views, transactions | Firestore (NoSQL document) — denormalized, no joins | **Supabase** — financial data is inherently relational (users → loans → offers → payments) |
 | **Data Integrity** | Full ACID transactions, foreign keys, constraints | Eventual consistency, no foreign keys | **Supabase** — money demands strict consistency |
@@ -50,13 +50,13 @@
 ### 🏆 My Recommendation: Supabase
 
 > [!IMPORTANT]
-> **For BuyOut specifically, Supabase wins decisively.** Here's why:
+> **For OLFi specifically, Supabase wins decisively.** Here's why:
 
 1. **Financial data is relational.** A user has loans across banks → each loan has offers → each offer has terms → decisions affect credit score. This is a textbook relational problem. Trying to model this in Firestore's NoSQL would mean denormalizing data everywhere, leading to bugs in financial calculations.
 
-2. **You need to call external APIs for free.** BuyOut's core value is connecting to banks, credit bureaus, and lender APIs. Firebase's free Spark plan blocks ALL outbound network calls from Cloud Functions — you'd be forced onto the Blaze plan immediately.
+2. **You need to call external APIs for free.** OLFi's core value is connecting to banks, credit bureaus, and lender APIs. Firebase's free Spark plan blocks ALL outbound network calls from Cloud Functions — you'd be forced onto the Blaze plan immediately.
 
-3. **Exit strategy matters.** If BuyOut grows and you need to move to AWS RDS or self-host for regulatory reasons (Central Bank compliance, data sovereignty), Supabase → PostgreSQL migration is a `pg_dump` command. Firebase → anything else is a complete rewrite.
+3. **Exit strategy matters.** If OLFi grows and you need to move to AWS RDS or self-host for regulatory reasons (Central Bank compliance, data sovereignty), Supabase → PostgreSQL migration is a `pg_dump` command. Firebase → anything else is a complete rewrite.
 
 4. **Complex queries are the product.** "Show me all my loans, ranked by how much I'd save by refinancing each one, factoring in early settlement fees" — this is one SQL query in Supabase, but would require multiple Firestore reads + client-side computation in Firebase.
 
@@ -119,7 +119,7 @@
 
 ```bash
 # Application
-APP_NAME="buyout"
+APP_NAME="OLFi"
 APP_ENV="development"  # development | staging | production
 
 # Supabase

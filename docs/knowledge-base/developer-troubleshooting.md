@@ -1,6 +1,6 @@
-# BuyOut Developer Troubleshooting Guide
+# OLFi Developer Troubleshooting Guide
 
-This document catalogs common errors encountered when developing the BuyOut mobile application and their confirmed resolutions.
+This document catalogs common errors encountered when developing the OLFi mobile application and their confirmed resolutions.
 
 ## 1. Expo & Metro Bundler Errors
 

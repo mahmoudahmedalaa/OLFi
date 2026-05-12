@@ -1,6 +1,6 @@
-# BuyOut Developer Setup Guide (Zero-to-Hero)
+# OLFi Developer Setup Guide (Zero-to-Hero)
 
-Welcome to the BuyOut engineering team! This guide will walk you through setting up your local environment from scratch so you can build, run, and contribute to the iOS mobile application.
+Welcome to the OLFi engineering team! This guide will walk you through setting up your local environment from scratch so you can build, run, and contribute to the iOS mobile application.
 
 ## Prerequisites
 
@@ -43,7 +43,7 @@ Before cloning the repository, ensure your macOS system has the following core d
 
 ```bash
 git clone <repository-url>
-cd BuyOut/app
+cd OLFi/app
 npm install
 ```
 
@@ -94,7 +94,7 @@ If you need to test database migrations or run Edge Functions locally without hi
 Navigate to the project root (where the `supabase` directory is located) and start the local instance:
 
 ```bash
-cd .. # Go back to the root BuyOut directory from /app
+cd .. # Go back to the root OLFi directory from /app
 supabase start
 ```
 

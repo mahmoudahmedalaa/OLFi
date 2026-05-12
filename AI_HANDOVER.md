@@ -1,10 +1,14 @@
 # OLFi Mobile App — AI Handover Document
 
-**Last Updated:** April 2026 (TestFlight preparation)
+**Last Updated:** May 11, 2026 (repo stabilization)
 **Target Environment:** iOS
 **Stack:** React Native (Expo), TypeScript, Supabase, Tailwind, Gluestack
 
-To the next AI agent: Please read this document before making any modifications to the app. It outlines the rigid brand aesthetic, the newly implemented translation system, terminology standardization, and critical authentication flows.
+To the next AI agent: read `PROJECT_MAP.md` first, then this document before making mobile app changes. It outlines the rigid brand aesthetic, translation system, terminology standardization, and critical authentication flows.
+
+Canonical mobile app path: `app/`.
+Canonical Xcode workspace: `app/ios/OLFi.xcworkspace`.
+Latest product line: `fix/auth-and-splash`, with stabilization work on `chore/repo-stabilization`.
 
 ---
 

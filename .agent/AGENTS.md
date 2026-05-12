@@ -1,21 +1,38 @@
-# AI Agent Instructions
+# OLFi AI Agent Instructions
 
 > **Critical instructions for AI assistants working on projects in this workspace.**
 
-## ⚠️ MANDATORY — Read Before ANYTHING Else
-1. **Read `.agent/rules/base.md`** — Tech stack, design system, financial rules, The Ralph Mandate
-2. **Read `.agent/rules/design-reference.md`** — Fintech color system, financial UX patterns, Arabic typography, UAE conventions
-3. **Know `.agent/workflows/ralph-loop.md`** — Every feature must pass the verification loop before completion
-4. **Know `.agent/workflows/verification.md`** — 4-level verification (Exists → Substantive → Wired → Functional). Catches stubs.
-5. **Know `.agent/workflows/debug-loop.md`** — Structured debugging with hypothesis tracking. Never debug ad-hoc.
-6. **Then read this file** for build/deploy context
+## Mandatory Reading Order
+
+1. **Read `PROJECT_MAP.md`** to identify the target surface and avoid editing the wrong app.
+2. **Read `.agent/rules/base.md`** for tech stack, design system, financial rules, and verification expectations.
+3. **Read `.agent/rules/design-reference.md`** for OLFi visual and copy rules.
+4. **Know `.agent/workflows/ralph-loop.md`** before declaring code complete.
+5. **Know `.agent/workflows/verification.md`** to catch stubs, broken wiring, and placeholder behavior.
+6. **Know `.agent/workflows/debug-loop.md`** for structured debugging.
 
 This workspace contains mobile and web applications built with:
 - **Mobile:** React Native (Expo) with TypeScript
-- **Web:** Next.js, Vite, or vanilla HTML/CSS/JS
-- **Deployment:** Local Xcode builds for iOS (no EAS), Vercel for web
+- **Web:** Next.js for the marketing site and admin dashboard
+- **Prototype:** Vercel project `olfi-prototype`, used for static/mobile-web testing
+- **Deployment:** Local Xcode builds for iOS, Vercel for web/admin/prototype
 
 ---
+
+## Surface Selection Rule
+
+Before editing, state the target surface:
+
+| Surface | Canonical Location |
+|:--|:--|
+| Mobile app | `app/` |
+| Marketing site | `web/` |
+| Admin dashboard | `admin/` |
+| Prototype | Vercel project `olfi-prototype` and explicitly named prototype assets |
+| Backend | `supabase/` |
+| Docs / planning | `docs/`, `research/`, `reference/`, `workflows/`, `checklists/` |
+
+Avoid cross-surface edits unless the user explicitly asks for them. `shared/` is reference/historical by default.
 
 ## Core Principles
 
@@ -27,8 +44,9 @@ For iOS apps:
 - ✅ **Always use local Xcode builds** via `build-ios.sh`
 - ✅ **Upload via Transporter** (free Mac App Store app)
 - ✅ **Test via TestFlight** (free, unlimited builds)
-- ✅ **Reference:** `03-workflows/XCODE_GUIDE.md`
+- ✅ **Reference:** `workflows/XCODE_GUIDE.md`
 - ✅ **Launch workflow:** `.agent/workflows/app-store-launch.md`
+- ✅ **Canonical workspace:** `app/ios/OLFi.xcworkspace`
 
 **When user says "ready for production" or "deploy to App Store":**
 → Follow `.agent/workflows/app-store-launch.md` exactly
@@ -48,7 +66,18 @@ When a project has native iOS code (`ios/` directory exists):
 - The `build-ios.sh` script includes all necessary patches
 - Never suggest renaming project paths
 
-### 3. Code Quality Standards
+### 3. Technical Identifier Safety
+
+OLFi still uses several legacy technical identifiers with `buyout` in them:
+
+- `com.mahmoudahmedalaa.buyout`
+- Expo slug `buyout`
+- URL scheme `buyout`
+- Supabase project name `buyout`
+
+Do not rename these as casual cleanup. Treat technical identifier migration as a dedicated release task with App Store, Supabase, OAuth, deep-link, and installed-app continuity checks.
+
+### 4. Code Quality Standards
 
 **Before any production deployment:**
 
@@ -65,7 +94,7 @@ npm test
 - No placeholder content
 - All features fully functional
 
-### 4. Version Management
+### 5. Version Management
 
 **Semantic versioning:**
 - Patch: `1.0.0 → 1.0.1` (bug fixes)
@@ -112,7 +141,7 @@ npm run build
 ### Project Structure
 
 ```
-buyout/
+olfi/
 ├── .agent/
 │   ├── AGENTS.md              # This file
 │   ├── rules/
@@ -124,24 +153,30 @@ buyout/
 │       ├── dev-quick-reference.md # Quick dev commands
 │       ├── ralph-loop.md      # Build/lint verification loop
 │       └── verification.md    # 4-level feature verification
-├── app/                       # Application code (Expo Router)
-├── ios/                       # Native iOS code
-├── assets/                    # Images, fonts
-├── app.json                   # Expo config
-└── build-ios.sh              # iOS build script
+├── app/                       # Expo React Native app
+├── web/                       # Next.js marketing site
+├── admin/                     # Next.js internal admin dashboard
+├── docs/                      # All project documentation
+├── assets/                    # Shared brand assets
+├── shared/                    # Historical/reference collaborator assets
+├── archive/                   # Archived local leftovers, read-only by default
+├── agent-config/              # Agent rules, skills, scripts
+├── workflows/                 # Dev, deployment, Xcode guides
+└── supabase/                  # DB migrations & config
 ```
 
 ### Project Structure (React Native/Expo)
 
 ```
-project/
-├── src/                      # Application code
-├── ios/                      # Native iOS code (if exists)
-├── android/                  # Native Android code (if exists)
-├── assets/                   # Images, fonts, etc.
+app/
+├── app/                      # Expo Router screens
+├── components/               # Reusable UI/domain components
+├── hooks/                    # Data and feature hooks
+├── lib/                      # Supabase, auth, constants, calculations
+├── ios/                      # Native iOS workspace/project for Xcode
+├── assets/                   # Images, icons, splash assets
 ├── app.json                  # Expo config
-├── build-ios.sh             # iOS build script (copy from template)
-└── build/                    # Build artifacts (gitignored)
+└── build-ios.sh              # Local iOS build helper
 ```
 
 ---
@@ -246,7 +281,7 @@ What changed?
 ### When Starting Work
 
 1. **Check for existing workflows** in `.agent/workflows/`
-2. **Read relevant documentation** in `03-workflows/`
+2. **Read relevant documentation** in `workflows/`
 3. **Understand project structure** before making changes
 4. **Ask clarifying questions** if user intent is unclear
 

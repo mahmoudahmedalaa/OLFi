@@ -1,4 +1,4 @@
-# BuyOut Infrastructure Cost Projections
+# OLFi Infrastructure Cost Projections
 
 As a FinTech app, we expect high computational bursts (during edge function calculation engines) but relatively low overall storage requirements initially.
 

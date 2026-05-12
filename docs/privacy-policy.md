@@ -3,12 +3,12 @@ layout: default
 title: Privacy Policy
 ---
 
-# Privacy Policy for BuyOut
+# Privacy Policy for OLFi
 
 **Last Updated and Effective Date: February 22, 2026**
 
 ## 1. Introduction
-Welcome to BuyOut ("Company", "we", "our", "us"). We respect your privacy and are committed to protecting your personal data in accordance with the applicable data protection laws of the United Arab Emirates (UAE) and other relevant regulations. This Privacy Policy comprehensively details how we collect, use, process, disclose, and safeguard your information when you use our mobile application, website, and related financial services (collectively, the "Service").
+Welcome to OLFi ("Company", "we", "our", "us"). We respect your privacy and are committed to protecting your personal data in accordance with the applicable data protection laws of the United Arab Emirates (UAE) and other relevant regulations. This Privacy Policy comprehensively details how we collect, use, process, disclose, and safeguard your information when you use our mobile application, website, and related financial services (collectively, the "Service").
 
 By accessing or using the Service, you signify that you have read, understood, and agree to our collection, storage, use, and disclosure of your personal information as described in this Privacy Policy. If you do not agree, you must immediately discontinue use of the Service.
 
@@ -36,7 +36,7 @@ We collect information that identifies, relates to, describes, or could reasonab
 
 ## 4. How We Use Your Information
 We strictly limit the Processing of your data to specific, legitimate purposes:
-1.  **Service Delivery:** To create, manage, and secure your account, authenticate your identity, and provide the core functionalities of the BuyOut app.
+1.  **Service Delivery:** To create, manage, and secure your account, authenticate your identity, and provide the core functionalities of the OLFi app.
 2.  **Financial Calculations & Matching:** To accurately calculate potential refinance savings, EMI restructuring, and Debt-to-Income (DTI) ratios. We use financial algorithms to match your profile with the most suitable banking products and consolidation offers available in the market.
 3.  **Application Processing:** To facilitate and securely transmit your loan application and supporting documents to our partnered financial institutions when you explicitly choose to 'Accept Offer'.
 4.  **Service Improvement:** To analyze usage trends, debug errors, and improve our mathematical algorithms and consolidation engines.
@@ -78,6 +78,6 @@ We may periodically update this Privacy Policy to reflect changes in our practic
 ## 10. Contact Us
 If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact our Data Protection Officer at:
 
-**BuyOut Technologies FZ-LLC**  
-**Email:** legal@buyout.ae  
+**OLFi Technologies FZ-LLC**  
+**Email:** legal@olfi.ae
 **Address:** [Insert UAE Office Address Here]  

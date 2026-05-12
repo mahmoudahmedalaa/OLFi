@@ -1,6 +1,6 @@
 # Version Control & Git Flow Runbook
 
-This document defines the strict Git workflow all engineers must follow to ensure repository stability for the BuyOut application.
+This document defines the strict Git workflow all engineers must follow to ensure repository stability for the OLFi application.
 
 ## 1. Branch Naming Conventions
 Never commit directly to `main`. All work must be done on isolated branches following this prefix convention:

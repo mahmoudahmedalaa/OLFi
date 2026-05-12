@@ -1,4 +1,4 @@
-# Backend Structure — BuyOut MVP
+# Backend Structure — OLFi MVP
 
 > Supabase-powered backend with PostgreSQL, Edge Functions, Auth, and Realtime.
 

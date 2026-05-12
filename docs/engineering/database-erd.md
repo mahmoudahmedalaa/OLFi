@@ -1,6 +1,6 @@
-# BuyOut Database Entity-Relationship Diagram (ERD) & Schema
+# OLFi Database Entity-Relationship Diagram (ERD) & Schema
 
-BuyOut uses PostgreSQL hosted on Supabase. Our architecture prioritizes strict Row Level Security (RLS) to ensure users can *only* ever see or manipulate their own financial data.
+OLFi uses PostgreSQL hosted on Supabase. Our architecture prioritizes strict Row Level Security (RLS) to ensure users can *only* ever see or manipulate their own financial data.
 
 ## Core Tables Overview
 

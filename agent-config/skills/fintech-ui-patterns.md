@@ -3,7 +3,7 @@ description: 'FinTech UI Patterns & Best Practices'
 ---
 # FinTech UI Patterns & Best Practices
 
-This document serves as the design knowledge hub for building modern, trustworthy, and aesthetically premium financial interfaces for the BuyOut project.
+This document serves as the design knowledge hub for building modern, trustworthy, and aesthetically premium financial interfaces for the OLFi project.
 
 ## Core Principles
 
@@ -39,4 +39,4 @@ Used for the home screen or summary views.
 
 ### 3. Loading & State Transitions
 *   **Avoid:** Generic text like "Loading..." or endless circular spinners taking up the whole screen.
-*   **Prefer:** Contextual phrasing specific to BuyOut (e.g., "Analyzing top consolidation offers...") and skeleton screens that fade in and out.
+*   **Prefer:** Contextual phrasing specific to OLFi (e.g., "Analyzing top consolidation offers...") and skeleton screens that fade in and out.
