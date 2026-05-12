@@ -6,10 +6,11 @@
 
 1. **Read `PROJECT_MAP.md`** to identify the target surface and avoid editing the wrong app.
 2. **Read `.agent/rules/base.md`** for tech stack, design system, financial rules, and verification expectations.
-3. **Read `.agent/rules/design-reference.md`** for OLFi visual and copy rules.
-4. **Know `.agent/workflows/ralph-loop.md`** before declaring code complete.
-5. **Know `.agent/workflows/verification.md`** to catch stubs, broken wiring, and placeholder behavior.
-6. **Know `.agent/workflows/debug-loop.md`** for structured debugging.
+3. **Read `.agent/rules/agent-discipline.md`** for Karpathy-inspired coding guardrails: assumptions, simplicity, surgical diffs, and verification.
+4. **Read `.agent/rules/design-reference.md`** for OLFi visual and copy rules.
+5. **Know `.agent/workflows/ralph-loop.md`** before declaring code complete.
+6. **Know `.agent/workflows/verification.md`** to catch stubs, broken wiring, and placeholder behavior.
+7. **Know `.agent/workflows/debug-loop.md`** for structured debugging.
 
 This workspace contains mobile and web applications built with:
 - **Mobile:** React Native (Expo) with TypeScript
