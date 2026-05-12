@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { getSupabase } from '@/utils/supabase';
+import { Check, CreditCard, Sparkles } from 'lucide-react';
 
 export function WaitlistCTA() {
     const t = useTranslations('waitlist');
@@ -72,7 +73,7 @@ export function WaitlistCTA() {
     };
 
     return (
-        <section className="py-24 bg-base-dark relative border-t border-white/5" id="waitlist">
+        <section className="scroll-mt-28 py-24 bg-base-dark relative border-t border-white/5" id="waitlist">
             <div className="container mx-auto px-6 max-w-5xl">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -149,9 +150,9 @@ export function WaitlistCTA() {
                             className="flex flex-wrap items-center justify-center gap-6 mb-12"
                         >
                             {[
-                                { icon: t('perk1_icon'), label: t('perk1_label') },
-                                { icon: t('perk2_icon'), label: t('perk2_label') },
-                                { icon: t('perk3_icon'), label: t('perk3_label') },
+                                { Icon: Sparkles, label: t('perk1_label') },
+                                { Icon: Check, label: t('perk2_label') },
+                                { Icon: CreditCard, label: t('perk3_label') },
                             ].map((perk, i) => (
                                 <motion.div
                                     key={i}
@@ -161,8 +162,8 @@ export function WaitlistCTA() {
                                     }}
                                     className="flex items-center gap-2 text-sm text-base-beige/70"
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal text-[10px]">
-                                        {perk.icon}
+                                    <div className="w-6 h-6 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal">
+                                        <perk.Icon className="h-3.5 w-3.5" />
                                     </div>
                                     <span>{perk.label}</span>
                                 </motion.div>

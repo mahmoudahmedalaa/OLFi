@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
@@ -40,12 +40,13 @@ export function FeaturesAccordion() {
     ];
 
     const [activeFeature, setActiveFeature] = useState(featuresList[0]);
+    const reduceMotion = useReducedMotion();
 
     const sectionRef = useRef<HTMLElement>(null);
     const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
     return (
-        <section ref={sectionRef} id="features" className="py-24 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
+        <section ref={sectionRef} id="features" className="scroll-mt-28 py-24 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
             <div className="container mx-auto px-6 max-w-7xl">
                 {/* Renalta-style Subtle Box Wrapper */}
                 <motion.div
@@ -75,7 +76,7 @@ export function FeaturesAccordion() {
                                 <button
                                     key={feature.id}
                                     onClick={() => setActiveFeature(feature)}
-                                    className={`text-left p-5 transition-all duration-300 rounded-xl border flex flex-col gap-1 relative overflow-hidden ${activeFeature.id === feature.id
+                                    className={`cursor-pointer text-left p-5 transition-all duration-300 rounded-xl border flex flex-col gap-1 relative overflow-hidden ${activeFeature.id === feature.id
                                         ? 'bg-white border-base-dark/10 shadow-sm'
                                         : 'bg-transparent border-transparent hover:border-base-dark/5'
                                         }`}
@@ -119,7 +120,7 @@ export function FeaturesAccordion() {
                         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #011819 0px, #011819 1px, transparent 1px, transparent 20px)" }} />
 
                         <motion.div
-                            animate={{ y: [0, -10, 0] }}
+                            animate={reduceMotion ? { y: 0 } : { y: [0, -10, 0] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                             className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10"
                         >
@@ -139,6 +140,7 @@ export function FeaturesAccordion() {
                                         alt={activeFeature.title}
                                         fill
                                         className="object-cover"
+                                        sizes="300px"
                                         priority
                                     />
                                 </motion.div>

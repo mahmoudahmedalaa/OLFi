@@ -37,7 +37,14 @@ export function Navigation() {
 
             <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
                 <Link href="/" className="flex items-center">
-                    <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={100} height={40} className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
+                    <Image
+                        src="/assets/olfi-logo.png"
+                        alt="OLFi Logo"
+                        width={79}
+                        height={32}
+                        preload
+                        className="opacity-90 hover:opacity-100 transition-opacity"
+                    />
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">

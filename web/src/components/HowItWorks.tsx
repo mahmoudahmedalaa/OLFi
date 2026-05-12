@@ -46,15 +46,16 @@ export function HowItWorks() {
     const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
     return (
-        <section ref={sectionRef} id="how-it-works" className="py-32 bg-base-dark relative border-t border-white/5">
+        <section ref={sectionRef} id="how-it-works" className="scroll-mt-28 py-28 bg-base-dark relative border-t border-white/5">
             <div className="container mx-auto px-6 max-w-7xl">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-24"
+                    className="text-center mb-20"
                 >
-                    <h2 className="text-5xl font-bold tracking-tighter text-base-beige mb-6">
+                    <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">How it works</span>
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-base-beige mb-6">
                         Your path to stability
                     </h2>
                     <p className="text-xl text-base-beige/60 max-w-2xl mx-auto">
@@ -66,7 +67,7 @@ export function HowItWorks() {
                     variants={containerVariants}
                     initial="hidden"
                     animate={isInView ? "show" : "hidden"}
-                    className="grid md:grid-cols-3 gap-12 relative"
+                    className="grid md:grid-cols-3 gap-10 relative"
                 >
                     {/* Animated connecting line */}
                     <motion.div

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -19,17 +19,18 @@ const fadeUp = {
 
 export function Hero() {
     const t = useTranslations('hero');
+    const reduceMotion = useReducedMotion();
     return (
         <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
             {/* Animated Ambient Orbs */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                 <motion.div
-                    animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
+                    animate={reduceMotion ? { opacity: 0.18 } : { scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                     className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-brand-teal blur-[120px]"
                 />
                 <motion.div
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }}
+                    animate={reduceMotion ? { opacity: 0.08 } : { scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
                     className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-[#00ffd1] blur-[150px]"
                 />
@@ -82,7 +83,7 @@ export function Hero() {
                     >
                         {/* Phone Frame Mockup container with gentle float */}
                         <motion.div
-                            animate={{ y: [0, -8, 0] }}
+                            animate={reduceMotion ? { y: 0 } : { y: [0, -8, 0] }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                             className="relative aspect-[9/19.5] w-full rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-2xl overflow-hidden"
                         >
@@ -94,12 +95,14 @@ export function Hero() {
                                 alt="OLFi Dashboard App Interface"
                                 fill
                                 className="object-cover z-10"
+                                sizes="320px"
                                 priority
                             />
 
                             {/* Screen reflection */}
                             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent z-20 pointer-events-none" />
                         </motion.div>
+
                     </motion.div>
 
                 </div>

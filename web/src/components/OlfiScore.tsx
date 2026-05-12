@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
@@ -24,13 +24,13 @@ const brands = [
 ];
 
 // Compute orbital positions in a circle around center
-function getOrbitalStyle(index: number, total: number, radius: number) {
+function getOrbitalStyle(index: number, total: number, radius: number, xOffset = 40, yOffset = 20) {
     const angle = (index / total) * 2 * Math.PI - Math.PI / 2;
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
     return {
-        left: `calc(50% + ${x}px - 40px)`,
-        top: `calc(50% + ${y}px - 20px)`,
+        left: `calc(50% + ${x}px - ${xOffset}px)`,
+        top: `calc(50% + ${y}px - ${yOffset}px)`,
     };
 }
 
@@ -53,10 +53,11 @@ function getChipAnimation(index: number) {
 
 export function OlfiScore() {
     const t = useTranslations('olfiScore');
+    const reduceMotion = useReducedMotion();
 
     // Responsive radii: tighter on mobile, wider on large screens
     const orbitRadiusDesktop = 220;
-    const orbitRadiusMobile = 160;
+    const orbitRadiusMobile = 135;
 
     return (
         <section className="py-24 bg-base-dark border-t border-white/5 text-base-beige relative font-sans overflow-hidden">
@@ -124,19 +125,19 @@ export function OlfiScore() {
                     </div>
 
                     {/* Right Column: Floating Data Ecosystem */}
-                    <div className="relative p-8 lg:p-0 h-[500px] lg:h-full flex items-center justify-center overflow-visible lg:overflow-hidden lg:min-h-[650px] border-l border-white/5 bg-gradient-to-br from-black/20 to-transparent">
+                    <div className="relative p-8 lg:p-0 h-[440px] sm:h-[500px] lg:h-full flex items-center justify-center overflow-visible lg:overflow-hidden lg:min-h-[650px] border-l border-white/5 bg-gradient-to-br from-black/20 to-transparent">
 
                         {/* Central Hub: OLFi Score */}
                         <motion.div
-                            className="relative z-20 w-56 h-56 rounded-full border border-brand-teal/30 bg-base-dark shadow-[0_0_60px_rgba(0,229,255,0.15)] flex flex-col items-center justify-center backdrop-blur-md"
-                            animate={{ y: [-12, 12, -12] }}
+                            className="relative z-20 w-44 h-44 sm:w-56 sm:h-56 rounded-full border border-brand-teal/30 bg-base-dark shadow-[0_0_60px_rgba(0,229,255,0.15)] flex flex-col items-center justify-center backdrop-blur-md"
+                            animate={reduceMotion ? { y: 0 } : { y: [-12, 12, -12] }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                         >
                             {/* Inner glowing core */}
                             <div className="absolute inset-0 rounded-full bg-brand-teal/10 blur-xl" />
                             <div className="absolute inset-3 rounded-full border border-white/5 bg-gradient-to-br from-white/5 to-transparent flex flex-col items-center justify-center shadow-inner pt-2">
-                                <Image src="/assets/olfi-logo.png" alt="OLFi" width={80} height={32} className="w-auto h-8 mb-2 opacity-90 brightness-150" />
-                                <span className="relative text-3xl font-serif italic tracking-tight bg-gradient-to-br from-[#E2F2EE] via-white to-[#8A9C98] bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)] text-center leading-tight">
+                                <Image src="/assets/olfi-logo.png" alt="OLFi" width={79} height={32} className="mb-2 opacity-90 brightness-150" />
+                                <span className="relative text-2xl sm:text-3xl font-serif italic tracking-tight bg-gradient-to-br from-[#E2F2EE] via-white to-[#8A9C98] bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(255,255,255,0.2)] text-center leading-tight">
                                     {t('olfiScoreText')}
                                 </span>
                             </div>
@@ -144,13 +145,13 @@ export function OlfiScore() {
                             {/* Rotating Inner Ring */}
                             <motion.div
                                 className="absolute -inset-8 rounded-full border border-brand-teal/15 border-t-brand-teal/50"
-                                animate={{ rotate: 360 }}
+                                animate={reduceMotion ? { rotate: 0 } : { rotate: 360 }}
                                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                             />
                             {/* Rotating Outer Ring */}
                             <motion.div
                                 className="absolute -inset-16 rounded-full border border-white/5 border-b-white/20"
-                                animate={{ rotate: -360 }}
+                                animate={reduceMotion ? { rotate: 0 } : { rotate: -360 }}
                                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                             />
                         </motion.div>
@@ -165,7 +166,7 @@ export function OlfiScore() {
                                     key={brand.name}
                                     className="absolute z-30 hidden lg:flex"
                                     style={desktopPos}
-                                    animate={chipAnim}
+                                    animate={reduceMotion ? { y: 0, x: 0, rotate: 0, scale: 1 } : chipAnim}
                                     transition={{ duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
                                 >
                                     <div
@@ -202,7 +203,7 @@ export function OlfiScore() {
 
                         {/* Mobile: Show brand chips in a compact arranged layout */}
                         {brands.map((brand, i) => {
-                            const mobilePos = getOrbitalStyle(i, brands.length, orbitRadiusMobile);
+                            const mobilePos = getOrbitalStyle(i, brands.length, orbitRadiusMobile, 24, 14);
                             const chipAnim = getChipAnimation(i);
 
                             return (
@@ -210,7 +211,7 @@ export function OlfiScore() {
                                     key={`m-${brand.name}`}
                                     className="absolute z-30 flex lg:hidden"
                                     style={mobilePos}
-                                    animate={chipAnim}
+                                    animate={reduceMotion ? { y: 0, x: 0, rotate: 0, scale: 1 } : chipAnim}
                                     transition={{ duration: 5 + (i % 3), repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
                                 >
                                     <div
@@ -246,7 +247,7 @@ export function OlfiScore() {
                                 strokeWidth="2.5"
                                 fill="none"
                                 strokeDasharray="5 15"
-                                animate={{ strokeDashoffset: [0, -200] }}
+                                animate={reduceMotion ? { strokeDashoffset: 0 } : { strokeDashoffset: [0, -200] }}
                                 transition={{ duration: 6, ease: "linear", repeat: Infinity }}
                             />
                             <motion.path
@@ -255,7 +256,7 @@ export function OlfiScore() {
                                 strokeWidth="1"
                                 fill="none"
                                 strokeDasharray="3 12"
-                                animate={{ strokeDashoffset: [200, 0] }}
+                                animate={reduceMotion ? { strokeDashoffset: 0 } : { strokeDashoffset: [200, 0] }}
                                 transition={{ duration: 8, ease: "linear", repeat: Infinity }}
                             />
                         </svg>

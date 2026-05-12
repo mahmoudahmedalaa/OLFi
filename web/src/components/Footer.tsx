@@ -30,7 +30,7 @@ export function Footer() {
                 <motion.h2
                     variants={fadeUp}
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] as const }}
-                    className="text-5xl sm:text-7xl md:text-8xl lg:text-[110px] leading-[0.9] font-bold tracking-tighter text-brand-teal italic mb-12 text-center uppercase break-words"
+                    className="text-4xl sm:text-7xl md:text-8xl lg:text-[104px] leading-[0.92] font-bold tracking-tighter text-brand-teal italic mb-12 text-center uppercase break-words"
                 >
                     {t('headline')}
                 </motion.h2>
@@ -62,7 +62,7 @@ export function Footer() {
                 className="container mx-auto px-6 max-w-7xl pt-8 flex flex-col md:flex-row items-center justify-between gap-6"
             >
                 <Link href="/" className="flex items-center">
-                    <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={86} height={32} className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
+                    <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={79} height={32} className="opacity-90 hover:opacity-100 transition-opacity" />
                 </Link>
 
                 <div className="flex flex-wrap justify-center gap-6 text-sm text-white/70">

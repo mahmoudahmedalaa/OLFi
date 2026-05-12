@@ -79,7 +79,7 @@ export function SavingsCalculator() {
     };
 
     return (
-        <section ref={sectionRef} className="py-24 bg-base-dark relative border-t border-white/5" id="savings">
+        <section ref={sectionRef} className="scroll-mt-28 py-24 bg-base-dark relative border-t border-white/5" id="savings">
             <div className="container mx-auto px-6 max-w-7xl">
                 <motion.div
                     variants={sectionVariants}
@@ -188,7 +188,7 @@ export function SavingsCalculator() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={isInView ? { opacity: 1, scale: 1 } : {}}
                         transition={{ delay: 0.5, type: "spring", stiffness: 150, damping: 20 }}
-                        className="relative z-10 flex flex-col items-center justify-center text-center p-12 bg-black/40 rounded-3xl border border-white/5 backdrop-blur-sm"
+                        className="relative z-10 flex flex-col items-center justify-center text-center p-8 sm:p-12 bg-black/40 rounded-3xl border border-white/5 backdrop-blur-sm"
                     >
                         <div className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#4FD1C5] mb-4">
                             {formatCurrency(animatedSavings)}
@@ -202,7 +202,7 @@ export function SavingsCalculator() {
 
                         <a
                             href="#waitlist"
-                            className="mt-10 px-8 py-4 w-full text-center bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark rounded-full font-bold transition-all duration-300"
+                            className="mt-10 px-8 py-4 w-full text-center bg-base-beige text-base-dark border border-base-beige hover:opacity-90 rounded-xl font-bold transition-opacity duration-300"
                         >
                             {t('getOffer')}
                         </a>

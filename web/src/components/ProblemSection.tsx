@@ -122,7 +122,7 @@ export function ProblemSection() {
                         return (
                             <TiltCard
                                 key={idx}
-                                className="bg-white/50 border border-base-dark/5 rounded-2xl p-8 hover:border-brand-teal/20 hover:shadow-xl hover:shadow-base-dark/[0.02] transition-all duration-300 relative overflow-hidden group cursor-default"
+                                className="min-h-[260px] bg-white/55 border border-base-dark/5 rounded-2xl p-8 hover:border-brand-teal/25 hover:shadow-xl hover:shadow-base-dark/[0.035] transition-all duration-300 relative overflow-hidden group cursor-default"
                             >
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-base-dark/[0.03] rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110" />
                                 <motion.div

@@ -18,7 +18,7 @@ export function FAQAccordion() {
     ];
 
     return (
-        <section id="faq" className="py-32 bg-base-dark border-t border-white/5">
+        <section id="faq" className="scroll-mt-28 py-32 bg-base-dark border-t border-white/5">
             <div className="container mx-auto px-6 max-w-3xl">
                 <h2 className="text-5xl font-bold tracking-tighter text-base-beige mb-16 text-center">
                     {t('headline')}
@@ -32,7 +32,7 @@ export function FAQAccordion() {
                                 }`}
                         >
                             <button
-                                className="w-full text-left p-6 flex justify-between items-center"
+                                className="w-full cursor-pointer text-left p-6 flex justify-between items-center"
                                 onClick={() => setOpen(open === idx ? null : idx)}
                             >
                                 <span className="font-medium text-lg text-base-beige pr-8">{faq.q}</span>

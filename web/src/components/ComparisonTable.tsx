@@ -89,7 +89,7 @@ export function ComparisonTable() {
     ];
 
     return (
-        <section id="compare" className="py-32 bg-base-beige text-base-dark relative">
+        <section id="compare" className="scroll-mt-28 py-32 bg-base-beige text-base-dark relative">
 
             <div className="container mx-auto px-6 max-w-5xl relative z-10">
                 <motion.div

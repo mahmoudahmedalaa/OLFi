@@ -1,6 +1,7 @@
 import { Navigation } from '@/components/Navigation';
 import { Hero } from '@/components/Hero';
 import { ProblemSection } from '@/components/ProblemSection';
+import { HowItWorks } from '@/components/HowItWorks';
 import { SavingsCalculator } from '@/components/SavingsCalculator';
 import { FeaturesAccordion } from '@/components/FeaturesAccordion';
 import { OlfiScore } from '@/components/OlfiScore';
@@ -17,6 +18,7 @@ export default function Home() {
       <Navigation />
       <Hero />
       <ProblemSection />
+      <HowItWorks />
       <SavingsCalculator />
       <FeaturesAccordion />
       <IslamicFinanceQA />
