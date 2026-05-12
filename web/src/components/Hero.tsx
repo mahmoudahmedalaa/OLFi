@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { ShieldCheck } from 'lucide-react';
 
 const stagger = {
     hidden: {},
@@ -21,57 +20,57 @@ const fadeUp = {
 export function Hero() {
     const t = useTranslations('hero');
     return (
-        <section className="relative min-h-screen overflow-hidden bg-base-dark pt-36 pb-16 md:pt-40">
-            <div className="absolute inset-0 z-0 pointer-events-none surface-grid-dark opacity-45" />
-            <div className="absolute inset-x-0 bottom-0 z-0 h-28 bg-gradient-to-b from-transparent to-base-beige" />
+        <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
+            {/* Animated Ambient Orbs */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                <motion.div
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-brand-teal blur-[120px]"
+                />
+                <motion.div
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                    className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-[#00ffd1] blur-[150px]"
+                />
+            </div>
+
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
-                <div className="grid min-h-[calc(100vh-12rem)] items-center gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
                     <motion.div
                         variants={stagger}
                         initial="hidden"
                         animate="show"
-                        className="relative flex max-w-2xl flex-col gap-8"
+                        className="relative flex flex-col gap-8 max-w-xl border border-white/10 rounded-3xl p-8 sm:p-12"
                     >
 
-                        <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-base-beige/70">
-                            <span className="font-mono text-xs uppercase tracking-[0.2em] text-brand-teal">{t('earlyAccess')}</span>
-                            <span className="hidden h-px w-10 bg-white/20 sm:block" />
-                            <span className="inline-flex items-center gap-2">
-                                <ShieldCheck className="h-4 w-4 text-brand-teal" />
-                                {t('sharia')}
-                            </span>
+                        <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-3">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-brand-teal/20 bg-brand-teal/5 hover:bg-brand-teal/10 transition-all cursor-default">
+                                <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
+                                <span className="text-[11px] font-bold tracking-wider text-white uppercase">{t('earlyAccess')}</span>
+                            </div>
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all cursor-default text-amber-500">
+                                <span className="text-[11px] font-bold tracking-wider uppercase text-white">{t('sharia')}</span>
+                            </div>
                         </motion.div>
 
-                        <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl lg:text-[86px] font-bold tracking-tighter leading-[0.95] text-base-beige">
+                        <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tighter leading-[1.1] text-base-beige">
                             {t('headlineLine1')} <br className="hidden sm:block" /> {t('headlineLine2')} <br />
-                            <em className="text-brand-teal italic font-medium">{t('headlineLine3')}</em>
+                            <em className="text-[#4FD1C5] italic font-medium">{t('headlineLine3')}</em>
                         </motion.h1>
 
-                        <motion.p variants={fadeUp} className="max-w-xl text-lg sm:text-xl text-base-beige/74 leading-relaxed">
+                        <motion.p variants={fadeUp} className="text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl">
                             {t('subheadline')}
                         </motion.p>
 
-                        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 pt-1">
+                        <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center gap-4 pt-4">
                             <Link
                                 href="#waitlist"
-                                className="flex w-full items-center justify-center rounded-lg border border-base-beige bg-base-beige px-8 py-4 text-center text-base font-semibold text-base-dark transition-opacity duration-200 hover:opacity-90 sm:w-auto"
+                                className="w-full sm:w-auto bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark text-lg font-medium px-8 py-3.5 rounded-lg transition-all duration-300 text-center flex items-center justify-center"
                             >
                                 {t('joinWaitlist')}
                             </Link>
-                        </motion.div>
-
-                        <motion.div variants={fadeUp} className="grid max-w-xl grid-cols-3 gap-5 border-t border-white/10 pt-6">
-                            {[
-                                ['01', 'Map liabilities'],
-                                ['02', 'Filter offers'],
-                                ['03', 'Apply cleanly'],
-                            ].map(([num, label]) => (
-                                <div key={num}>
-                                    <p className="font-mono text-xl text-base-beige">{num}</p>
-                                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-base-beige/45">{label}</p>
-                                </div>
-                            ))}
                         </motion.div>
                     </motion.div>
 
@@ -79,26 +78,15 @@ export function Hero() {
                         initial={{ opacity: 0, y: 50, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] as const }}
-                        className="relative mx-auto hidden w-full max-w-[560px] md:block lg:ml-auto"
+                        className="relative lg:ml-auto w-full max-w-[320px] mx-auto hidden lg:block"
                     >
-                        <div className="absolute -left-10 top-10 hidden w-[280px] rounded-2xl border border-white/10 bg-[#061f20] p-5 xl:block">
-                            <div className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
-                                <span className="text-xs uppercase tracking-[0.18em] text-base-beige/45">Debt portfolio</span>
-                                <span className="font-mono text-brand-teal">AED</span>
-                            </div>
-                            {[
-                                ['Outstanding balance', '120,000'],
-                                ['Estimated monthly relief', '1,520'],
-                                ['Best matched rate', '4.49%'],
-                            ].map(([label, value]) => (
-                                <div key={label} className="flex flex-col gap-1 border-b border-white/5 py-3 last:border-0">
-                                    <span className="text-sm text-base-beige/58">{label}</span>
-                                    <span className="font-mono text-base-beige">{value}</span>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="relative ml-auto aspect-[9/19.5] w-[310px] overflow-hidden rounded-[46px] border-[8px] border-[#111616] bg-base-dark shadow-[0_30px_90px_rgba(0,0,0,0.42)]">
+                        {/* Phone Frame Mockup container with gentle float */}
+                        <motion.div
+                            animate={{ y: [0, -8, 0] }}
+                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                            className="relative aspect-[9/19.5] w-full rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-2xl overflow-hidden"
+                        >
+                            {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />
 
                             <Image
@@ -106,24 +94,12 @@ export function Hero() {
                                 alt="OLFi Dashboard App Interface"
                                 fill
                                 className="object-cover z-10"
-                                sizes="310px"
                                 priority
                             />
 
+                            {/* Screen reflection */}
                             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent z-20 pointer-events-none" />
-                        </div>
-
-                        <div className="absolute bottom-12 left-4 w-[280px] rounded-2xl border border-brand-teal/25 bg-base-dark p-5">
-                            <p className="text-xs uppercase tracking-[0.18em] text-brand-teal">Application clarity</p>
-                            <div className="mt-4 h-1.5 rounded-full bg-white/10">
-                                <div className="h-full w-[64%] rounded-full bg-brand-teal" />
-                            </div>
-                            <div className="mt-4 flex justify-between text-xs text-base-beige/56">
-                                <span>Matched</span>
-                                <span>Docs</span>
-                                <span>Bank review</span>
-                            </div>
-                        </div>
+                        </motion.div>
                     </motion.div>
 
                 </div>

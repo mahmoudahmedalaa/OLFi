@@ -15,10 +15,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 @keyframes borderTrace {
   0% {
     offset-distance: 0%;
@@ -26,39 +22,5 @@ html {
 
   100% {
     offset-distance: 100%;
-  }
-}
-
-.surface-grid-dark {
-  background-image:
-    linear-gradient(rgba(225, 222, 209, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(225, 222, 209, 0.055) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-
-.surface-grid-light {
-  background-image:
-    linear-gradient(rgba(1, 24, 25, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(1, 24, 25, 0.055) 1px, transparent 1px);
-  background-size: 56px 56px;
-}
-
-.fine-noise {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.055) 0.7px, transparent 0.7px);
-  background-size: 12px 12px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
   }
 }

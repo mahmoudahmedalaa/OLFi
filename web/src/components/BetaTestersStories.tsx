@@ -29,16 +29,16 @@ export function BetaTestersStories() {
     ];
 
     return (
-        <section className="py-28 bg-base-beige relative border-t border-base-dark/5">
+        <section className="py-24 bg-base-beige relative border-t border-base-dark/5">
             <div className="container mx-auto px-6 max-w-7xl">
-                <div className="mb-16 max-w-3xl">
+                <div className="text-center mb-16 max-w-2xl mx-auto">
                     <span className="text-brand-teal uppercase tracking-[0.2em] font-mono text-sm mb-4 block">{t('label')}</span>
-                    <h2 className="text-4xl md:text-6xl font-bold tracking-tighter text-base-dark">
+                    <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-base-dark">
                         {t('headline')}
                     </h2>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-px overflow-hidden rounded-2xl border border-base-dark/10 bg-base-dark/10">
+                <div className="grid md:grid-cols-3 gap-6">
                     {testimonialsList.map((testimonial, i) => (
                         <motion.div
                             key={i}
@@ -46,7 +46,7 @@ export function BetaTestersStories() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: i * 0.1 }}
-                            className="bg-base-beige p-8 transition-colors duration-200 hover:bg-white/55"
+                            className="bg-white/60 border border-base-dark/5 rounded-2xl p-8 hover:bg-white hover:border-brand-teal/30 hover:shadow-md transition-all duration-300"
                         >
                             <div className="flex gap-1 mb-6 text-amber-500">
                                 {[...Array(5)].map((_, idx) => (

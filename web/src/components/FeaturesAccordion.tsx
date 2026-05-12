@@ -45,14 +45,14 @@ export function FeaturesAccordion() {
     const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
     return (
-        <section ref={sectionRef} id="features" className="scroll-mt-28 py-28 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
+        <section ref={sectionRef} id="features" className="py-24 bg-base-beige border-t border-base-dark/5 text-base-dark relative">
             <div className="container mx-auto px-6 max-w-7xl">
                 {/* Renalta-style Subtle Box Wrapper */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
-                    className="border border-base-dark/10 rounded-2xl overflow-hidden bg-base-beige grid lg:grid-cols-2 shadow-sm"
+                    className="border border-base-dark/10 rounded-3xl overflow-hidden bg-base-beige grid lg:grid-cols-2 shadow-sm"
                 >
 
                     {/* Left Column: Text & Tabs */}
@@ -70,12 +70,12 @@ export function FeaturesAccordion() {
                             </p>
                         </motion.div>
 
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-3">
                             {featuresList.map((feature) => (
                                 <button
                                     key={feature.id}
                                     onClick={() => setActiveFeature(feature)}
-                                    className={`cursor-pointer text-left p-5 transition-colors duration-200 rounded-lg border flex flex-col gap-1 relative overflow-hidden ${activeFeature.id === feature.id
+                                    className={`text-left p-5 transition-all duration-300 rounded-xl border flex flex-col gap-1 relative overflow-hidden ${activeFeature.id === feature.id
                                         ? 'bg-white border-base-dark/10 shadow-sm'
                                         : 'bg-transparent border-transparent hover:border-base-dark/5'
                                         }`}
@@ -114,8 +114,15 @@ export function FeaturesAccordion() {
                     </div>
 
                     {/* Right Column: Visual Mockup */}
-                    <div className="relative p-8 lg:p-16 bg-[#e9e6d9] flex items-center justify-center overflow-hidden min-h-[600px] surface-grid-light">
-                        <div className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10">
+                    <div className="relative p-8 lg:p-16 bg-[#e9e6d9] flex items-center justify-center overflow-hidden min-h-[600px]">
+                        {/* Wavy subtle background line pattern */}
+                        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #011819 0px, #011819 1px, transparent 1px, transparent 20px)" }} />
+
+                        <motion.div
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            className="relative w-full max-w-[300px] mx-auto rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-xl overflow-hidden aspect-[9/19.5] z-10"
+                        >
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />
                             <AnimatePresence mode="wait">
@@ -132,12 +139,11 @@ export function FeaturesAccordion() {
                                         alt={activeFeature.title}
                                         fill
                                         className="object-cover"
-                                        sizes="300px"
                                         priority
                                     />
                                 </motion.div>
                             </AnimatePresence>
-                        </div>
+                        </motion.div>
                     </div>
 
                 </motion.div>

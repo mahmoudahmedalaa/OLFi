@@ -89,7 +89,7 @@ export function ComparisonTable() {
     ];
 
     return (
-        <section id="compare" className="scroll-mt-28 py-32 bg-base-beige text-base-dark relative surface-grid-light">
+        <section id="compare" className="py-32 bg-base-beige text-base-dark relative">
 
             <div className="container mx-auto px-6 max-w-5xl relative z-10">
                 <motion.div
@@ -97,17 +97,17 @@ export function ComparisonTable() {
                     whileInView="show"
                     viewport={{ once: true, margin: "-80px" }}
                     variants={{ hidden: {}, show: { transition: { staggerChildren: 0.15 } } }}
-                    className="mb-16 max-w-3xl"
+                    className="text-center mb-16"
                 >
-                    <motion.h2 variants={headerFadeUp} className="text-5xl md:text-6xl font-bold tracking-tighter mb-5">
+                    <motion.h2 variants={headerFadeUp} className="text-5xl font-bold tracking-tighter mb-4">
                         {t('headline')}
                     </motion.h2>
-                    <motion.p variants={headerFadeUp} className="text-lg text-base-dark/70 max-w-xl">
+                    <motion.p variants={headerFadeUp} className="text-lg text-base-dark/70 max-w-xl mx-auto">
                         {t('subheadline')}
                     </motion.p>
                 </motion.div>
 
-                <div className="w-full overflow-x-auto rounded-2xl border border-base-dark/10 bg-base-beige">
+                <div className="w-full">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr>
@@ -126,7 +126,7 @@ export function ComparisonTable() {
                                     initial="hidden"
                                     whileInView="show"
                                     viewport={{ once: true, margin: "-40px" }}
-                                    className="group hover:bg-white/45 transition-colors cursor-default"
+                                    className="group hover:bg-white/50 transition-colors cursor-default"
                                 >
                                     <td className="py-6 font-semibold text-lg relative">
                                         <span className="flex items-center gap-2 group/tooltip cursor-help relative w-fit">
@@ -157,7 +157,7 @@ export function ComparisonTable() {
                                         )}
                                     </td>
 
-                                    <td className="py-6 text-center bg-base-dark relative">
+                                    <td className="py-6 text-center bg-brand-teal/5 relative">
                                         {idx === 0 && <div className="absolute inset-x-0 top-0 h-px bg-brand-teal/20" />}
                                         {idx === compareData.length - 1 && <div className="absolute inset-x-0 bottom-0 h-px bg-brand-teal/20" />}
 

@@ -42,7 +42,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
     return (
         <LanguageContext.Provider value={{ language, setLanguage, isRtl: language === "ar" }}>
-            <NextIntlClientProvider locale={language} messages={messagesMap[language]} timeZone="Asia/Dubai">
+            <NextIntlClientProvider locale={language} messages={messagesMap[language]}>
                 {children}
             </NextIntlClientProvider>
         </LanguageContext.Provider>

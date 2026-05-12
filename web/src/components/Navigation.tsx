@@ -9,6 +9,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 export function Navigation() {
     const { scrollY } = useScroll();
     const bgOpacity = useTransform(scrollY, [0, 80], [0, 1]);
+    const borderOpacity = useTransform(scrollY, [0, 80], [0, 0.08]);
     const t = useTranslations('nav');
     const { language, setLanguage } = useLanguage();
 
@@ -21,29 +22,22 @@ export function Navigation() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
-            className="fixed top-0 left-0 right-0 z-50 px-4 py-4"
+            className="fixed top-0 left-0 right-0 z-50 py-6"
         >
             {/* Scroll-aware glass background */}
             <motion.div
-                className="absolute inset-0 -z-10"
+                className="absolute inset-0 backdrop-blur-xl -z-10"
                 style={{
                     opacity: bgOpacity,
-                    backgroundColor: 'rgba(1, 24, 25, 0.72)',
+                    backgroundColor: 'rgba(1, 16, 17, 0.85)',
+                    borderBottom: '1px solid',
+                    borderColor: useTransform(borderOpacity, (v) => `rgba(255,255,255,${v})`),
                 }}
             />
 
-            <div
-                className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/10 bg-base-dark/80 px-4 py-3 shadow-[0_16px_50px_rgba(0,0,0,0.18)] md:px-5"
-            >
+            <div className="container mx-auto px-6 max-w-7xl flex items-center justify-between">
                 <Link href="/" className="flex items-center">
-                    <Image
-                        src="/assets/olfi-logo.png"
-                        alt="OLFi Logo"
-                        width={79}
-                        height={32}
-                        loading="eager"
-                        className="opacity-90 transition-opacity hover:opacity-100"
-                    />
+                    <Image src="/assets/olfi-logo.png" alt="OLFi Logo" width={100} height={40} className="w-auto h-8 opacity-90 hover:opacity-100 transition-opacity" />
                 </Link>
 
                 <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
@@ -56,13 +50,13 @@ export function Navigation() {
                 <div className="flex items-center gap-4">
                     <button
                         onClick={toggleLanguage}
-                        className="cursor-pointer text-sm font-medium text-white/75 transition-colors hover:text-base-beige"
+                        className="text-white hover:text-base-beige text-sm font-medium transition-colors cursor-pointer"
                     >
                         {language === 'en' ? 'العربية' : 'EN'}
                     </button>
                     <Link
                         href="#waitlist"
-                        className="flex items-center gap-2 rounded-lg border border-base-beige bg-base-beige px-5 py-2.5 text-sm font-semibold text-base-dark transition-opacity duration-200 hover:opacity-90"
+                        className="bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark text-sm font-medium px-5 py-2.5 rounded-lg transition-all duration-300 flex items-center gap-2"
                     >
                         {t('joinWaitlist')}
                     </Link>

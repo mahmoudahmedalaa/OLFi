@@ -13,14 +13,16 @@ export function IslamicFinanceQA() {
     ];
 
     return (
-        <section className="py-28 bg-base-dark relative border-t border-white/5" id="islamic-qa">
+        <section className="py-24 bg-base-dark relative border-t border-white/5" id="islamic-qa">
             <div className="container mx-auto px-6 max-w-7xl">
-                <div className="bg-[#061f20] border border-white/10 rounded-2xl p-8 lg:p-14 relative overflow-hidden">
+                <div className="bg-base-dark border border-white/10 rounded-3xl p-8 lg:p-16 relative overflow-hidden">
 
                     <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
                         {/* Text Content */}
                         <div>
-                            <p className="mb-6 font-mono text-xs font-bold tracking-[0.2em] uppercase text-brand-teal">{t('label')}</p>
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6">
+                                <span className="text-xs font-bold tracking-wide uppercase text-white">{t('label')}</span>
+                            </div>
                             <h2 className="text-4xl lg:text-5xl font-bold tracking-tighter text-base-beige leading-tight mb-6 mt-4">
                                 {t('headlineLine1')} <br />
                                 {t('headlineLine2')}
@@ -36,7 +38,7 @@ export function IslamicFinanceQA() {
                                 className="flex items-center gap-4 mt-2"
                             >
                                 <div className="relative">
-                                    <div className="w-16 h-16 rounded-full bg-base-dark border border-brand-teal/25 flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center">
                                         <svg className="w-7 h-7 text-brand-teal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                                             <path d="M9 12l2 2 4-4" />
@@ -58,7 +60,7 @@ export function IslamicFinanceQA() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
-                                className="bg-base-dark border border-white/10 rounded-2xl p-6 w-full"
+                                className="bg-white/5 border border-white/10 rounded-2xl p-6 w-full"
                             >
                                 <div className="text-xs font-mono text-white/50 tracking-widest uppercase mb-3">{t('youAsked')}</div>
                                 <div className="text-base text-white/90 italic">
@@ -72,18 +74,18 @@ export function IslamicFinanceQA() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="bg-base-beige text-base-dark border border-base-beige/20 rounded-2xl p-6 self-start w-full relative overflow-hidden"
+                                className="bg-brand-teal/10 border border-brand-teal/20 rounded-2xl p-6 self-start w-full relative overflow-hidden"
                             >
-                                <div className="text-xs font-mono text-base-dark/50 tracking-widest uppercase mb-6 relative z-10">{t('resultLabel')}</div>
+                                <div className="text-xs font-mono text-brand-teal tracking-widest uppercase mb-6 relative z-10">{t('resultLabel')}</div>
 
                                 <div className="space-y-4 relative z-10">
                                     {offersList.map((offer, i) => (
-                                        <div key={i} className="flex justify-between items-center py-2 border-b border-base-dark/10 last:border-0 last:pb-0">
+                                        <div key={i} className="flex justify-between items-center py-2 border-b border-brand-teal/10 last:border-0 last:pb-0">
                                             <div className="flex flex-col gap-1">
-                                                <span className="text-sm font-semibold text-base-dark">{offer.bank}</span>
-                                                <span className="text-xs text-base-dark/55">{offer.product}</span>
+                                                <span className="text-sm font-medium text-base-beige">{offer.bank}</span>
+                                                <span className="text-xs text-white/60">{offer.product}</span>
                                             </div>
-                                            <span className="text-base-dark font-mono font-bold tracking-tight">{offer.rate}</span>
+                                            <span className="text-brand-teal font-mono font-bold tracking-tight">{offer.rate}</span>
                                         </div>
                                     ))}
                                 </div>

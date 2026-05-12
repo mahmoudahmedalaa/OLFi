@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { getSupabase } from '@/utils/supabase';
-import { Check, CreditCard, Sparkles } from 'lucide-react';
 
 export function WaitlistCTA() {
     const t = useTranslations('waitlist');
@@ -73,19 +72,22 @@ export function WaitlistCTA() {
     };
 
     return (
-        <section className="scroll-mt-28 py-28 bg-base-dark relative border-t border-white/5" id="waitlist">
+        <section className="py-24 bg-base-dark relative border-t border-white/5" id="waitlist">
             <div className="container mx-auto px-6 max-w-5xl">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
-                    className="bg-[#061f20] border border-white/10 rounded-2xl p-8 md:p-16 lg:p-20 text-center relative overflow-hidden"
+                    className="bg-brand-teal/[0.03] border border-brand-teal/20 rounded-[2rem] p-8 md:p-16 lg:p-20 text-center relative overflow-hidden"
                 >
 
 
                     <div className="relative z-10">
-                        <p className="mb-8 font-mono text-xs font-bold tracking-[0.2em] uppercase text-brand-teal">{t('label')}</p>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-8 mx-auto">
+                            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse shadow-[0_0_8px_rgba(45,212,191,0.8)]" />
+                            <span className="text-xs font-bold tracking-wide uppercase text-white">{t('label')}</span>
+                        </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-base-beige mb-6">
                             {t('headlinePart1')} <br className="hidden sm:block" />
@@ -122,7 +124,7 @@ export function WaitlistCTA() {
                                         className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-base-beige placeholder:text-base-beige/30 focus:outline-none focus:border-brand-teal focus:ring-1 focus:ring-brand-teal transition-all"
                                         disabled={loading}
                                     />
-                                    <button type="submit" disabled={loading} className="cursor-pointer bg-base-beige text-base-dark border border-base-beige font-bold px-8 py-4 rounded-xl hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <button type="submit" disabled={loading} className="cursor-pointer bg-transparent text-base-beige border border-white/10 font-bold px-8 py-4 rounded-xl hover:bg-white hover:text-base-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                                         {loading ? t('btnJoining') : t('btnJoin')}
                                     </button>
                                 </form>
@@ -147,9 +149,9 @@ export function WaitlistCTA() {
                             className="flex flex-wrap items-center justify-center gap-6 mb-12"
                         >
                             {[
-                                { Icon: Sparkles, label: t('perk1_label') },
-                                { Icon: Check, label: t('perk2_label') },
-                                { Icon: CreditCard, label: t('perk3_label') },
+                                { icon: t('perk1_icon'), label: t('perk1_label') },
+                                { icon: t('perk2_icon'), label: t('perk2_label') },
+                                { icon: t('perk3_icon'), label: t('perk3_label') },
                             ].map((perk, i) => (
                                 <motion.div
                                     key={i}
@@ -159,8 +161,8 @@ export function WaitlistCTA() {
                                     }}
                                     className="flex items-center gap-2 text-sm text-base-beige/70"
                                 >
-                                    <div className="w-7 h-7 rounded-full bg-base-dark border border-brand-teal/20 flex items-center justify-center text-brand-teal">
-                                        <perk.Icon className="h-3.5 w-3.5" />
+                                    <div className="w-6 h-6 rounded-full bg-brand-teal/10 border border-brand-teal/20 flex items-center justify-center text-brand-teal text-[10px]">
+                                        {perk.icon}
                                     </div>
                                     <span>{perk.label}</span>
                                 </motion.div>
@@ -169,7 +171,7 @@ export function WaitlistCTA() {
 
                         {/* Countdown */}
                         <div className="flex justify-center">
-                            <div className="inline-flex border border-white/10 rounded-xl overflow-hidden bg-base-dark">
+                            <div className="inline-flex border border-white/10 rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm">
                                 {[
                                     { value: timeLeft.days, label: t('countdown_days') },
                                     { value: timeLeft.hours, label: t('countdown_hours') },

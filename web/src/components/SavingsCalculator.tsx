@@ -79,13 +79,13 @@ export function SavingsCalculator() {
     };
 
     return (
-        <section ref={sectionRef} className="py-28 bg-base-dark relative border-t border-white/5" id="savings">
+        <section ref={sectionRef} className="py-24 bg-base-dark relative border-t border-white/5" id="savings">
             <div className="container mx-auto px-6 max-w-7xl">
                 <motion.div
                     variants={sectionVariants}
                     initial="hidden"
                     animate={isInView ? "show" : "hidden"}
-                    className="grid lg:grid-cols-[1fr_0.9fr] gap-12 lg:gap-20 items-center border border-white/10 rounded-2xl p-8 lg:p-14 relative overflow-hidden bg-[#061f20]"
+                    className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center bg-white/[0.02] border border-white/5 rounded-3xl p-8 lg:p-16 relative overflow-hidden"
                 >
 
                     <div className="relative z-10 flex flex-col gap-10">
@@ -94,15 +94,15 @@ export function SavingsCalculator() {
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
                                 transition={{ delay: 0.2 }}
-                                className="mb-6 w-fit font-mono text-xs font-bold uppercase tracking-[0.2em] text-brand-teal"
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-teal/20 bg-brand-teal/10 w-fit mb-6"
                             >
-                                {t('label')}
+                                <span className="text-xs font-bold tracking-wide uppercase text-white">{t('label')}</span>
                             </motion.div>
                             <motion.h2
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                                 transition={{ delay: 0.3, duration: 0.6 }}
-                                className="text-4xl lg:text-6xl font-bold tracking-tighter text-base-beige leading-tight"
+                                className="text-4xl lg:text-5xl font-bold tracking-tighter text-base-beige leading-tight"
                             >
                                 {t('headline')}
                             </motion.h2>
@@ -128,7 +128,7 @@ export function SavingsCalculator() {
                                     step="5000"
                                     value={balance}
                                     onChange={(e) => setBalance(Number(e.target.value))}
-                                    className="w-full h-1.5 bg-white/[0.12] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-base-dark"
+                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_12px_rgba(0,229,255,0.5)] [&::-webkit-slider-thumb]:transition-shadow [&::-webkit-slider-thumb]:hover:shadow-[0_0_20px_rgba(0,229,255,0.8)]"
                                     id="slBalance"
                                 />
                             </motion.div>
@@ -152,7 +152,7 @@ export function SavingsCalculator() {
                                     step="0.5"
                                     value={rate}
                                     onChange={(e) => setRate(Number(e.target.value))}
-                                    className="w-full h-1.5 bg-white/[0.12] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-base-dark"
+                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_12px_rgba(0,229,255,0.5)] [&::-webkit-slider-thumb]:transition-shadow [&::-webkit-slider-thumb]:hover:shadow-[0_0_20px_rgba(0,229,255,0.8)]"
                                     id="slRate"
                                 />
                             </motion.div>
@@ -176,7 +176,7 @@ export function SavingsCalculator() {
                                     step="1"
                                     value={term}
                                     onChange={(e) => setTerm(Number(e.target.value))}
-                                    className="w-full h-1.5 bg-white/[0.12] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-base-dark"
+                                    className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-brand-teal [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_12px_rgba(0,229,255,0.5)] [&::-webkit-slider-thumb]:transition-shadow [&::-webkit-slider-thumb]:hover:shadow-[0_0_20px_rgba(0,229,255,0.8)]"
                                     id="slTerm"
                                 />
                             </motion.div>
@@ -188,10 +188,9 @@ export function SavingsCalculator() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={isInView ? { opacity: 1, scale: 1 } : {}}
                         transition={{ delay: 0.5, type: "spring", stiffness: 150, damping: 20 }}
-                        className="relative z-10 flex flex-col justify-center p-8 md:p-10 bg-base-dark rounded-2xl border border-white/10"
+                        className="relative z-10 flex flex-col items-center justify-center text-center p-12 bg-black/40 rounded-3xl border border-white/5 backdrop-blur-sm"
                     >
-                        <p className="mb-4 font-mono text-xs uppercase tracking-[0.18em] text-base-beige/45">Projected impact</p>
-                        <div className="text-5xl lg:text-7xl font-bold tracking-tighter text-brand-teal mb-4">
+                        <div className="text-5xl lg:text-7xl font-bold tracking-tighter text-[#4FD1C5] mb-4">
                             {formatCurrency(animatedSavings)}
                         </div>
                         <p className="text-lg text-base-beige/80 mb-6">
@@ -203,7 +202,7 @@ export function SavingsCalculator() {
 
                         <a
                             href="#waitlist"
-                            className="mt-10 px-8 py-4 w-full text-center bg-base-beige text-base-dark border border-base-beige hover:opacity-90 rounded-lg font-bold transition-opacity duration-200"
+                            className="mt-10 px-8 py-4 w-full text-center bg-transparent text-base-beige border border-white/10 hover:bg-white hover:text-base-dark rounded-full font-bold transition-all duration-300"
                         >
                             {t('getOffer')}
                         </a>
