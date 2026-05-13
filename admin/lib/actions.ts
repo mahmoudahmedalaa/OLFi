@@ -86,6 +86,18 @@ export type AdminApplicationEvent = {
     created_at: string;
 };
 
+type ActionResult<T> =
+    | { data: T; error: null }
+    | { data: null; error: string };
+
+function getSafeErrorMessage(error: unknown) {
+    if (error instanceof Error) return error.message;
+    if (error && typeof error === 'object' && 'message' in error) {
+        return String((error as { message?: unknown }).message);
+    }
+    return 'Unknown admin data error.';
+}
+
 // ── Banks ───────────────────────────────────────────
 export async function fetchBanks() {
     const { data, error } = await supabase.from('banks').select('*').order('name');
@@ -207,6 +219,15 @@ export async function fetchApplications() {
         .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
+}
+
+export async function fetchApplicationsResult(): Promise<ActionResult<Awaited<ReturnType<typeof fetchApplications>>>> {
+    try {
+        const data = await fetchApplications();
+        return { data, error: null };
+    } catch (error) {
+        return { data: null, error: getSafeErrorMessage(error) };
+    }
 }
 
 async function recordApplicationEvent(payload: {

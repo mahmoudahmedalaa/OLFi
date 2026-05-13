@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import {
     fetchApplicationDocuments,
     fetchApplicationEvents,
-    fetchApplications,
+    fetchApplicationsResult,
     getDocumentSignedUrl,
     updateApplicationDocumentStatus,
     updateApplicationStatus,
@@ -13,7 +13,8 @@ import {
     type AdminApplicationEvent,
 } from '@/lib/actions';
 
-type Application = Awaited<ReturnType<typeof fetchApplications>>[number];
+type ApplicationsResult = Awaited<ReturnType<typeof fetchApplicationsResult>>;
+type Application = NonNullable<ApplicationsResult['data']>[number];
 type ActionType = 'review' | 'docs' | 'approve' | 'reject';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -77,7 +78,15 @@ export default function ApplicationsPage() {
     const load = useCallback(async () => {
         try {
             setLoadError(null);
-            const data = await fetchApplications();
+            const result = await fetchApplicationsResult();
+            if (result.error) {
+                setLoadError(result.error);
+                setApplications([]);
+                setSelectedAppId(null);
+                return;
+            }
+
+            const data = result.data ?? [];
             setApplications(data);
             setSelectedAppId((current) => current || data[0]?.id || null);
         } catch (e) {
