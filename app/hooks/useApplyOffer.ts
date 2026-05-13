@@ -17,9 +17,9 @@ export interface ApplicationData {
 }
 
 export const CALLBACK_TIMES = [
-    { key: 'morning' as const, label: 'Morning', sublabel: '9AM — 12PM', icon: 'sunny-outline' },
-    { key: 'afternoon' as const, label: 'Afternoon', sublabel: '12PM — 5PM', icon: 'partly-sunny-outline' },
-    { key: 'evening' as const, label: 'Evening', sublabel: '5PM — 9PM', icon: 'moon-outline' },
+    { key: 'morning' as const, label: 'Morning', sublabel: '9AM - 12PM', icon: 'sunny-outline' },
+    { key: 'afternoon' as const, label: 'Afternoon', sublabel: '12PM - 5PM', icon: 'partly-sunny-outline' },
+    { key: 'evening' as const, label: 'Evening', sublabel: '5PM - 9PM', icon: 'moon-outline' },
 ];
 
 export function useApplyOffer() {

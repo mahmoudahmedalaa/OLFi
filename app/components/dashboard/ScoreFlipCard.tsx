@@ -175,7 +175,7 @@ function AecbContent({ onFlip }: { onFlip: () => void }) {
     return (
         <View style={styles.scoreContent} pointerEvents="box-none">
             {/* Header row */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md }} pointerEvents="box-none">
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm }} pointerEvents="box-none">
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                     <Ionicons name="shield-checkmark" size={18} color={brandGreen} />
                     <Text style={{ ...Typography.captionBold, color: theme.colors.textPrimary, textTransform: 'uppercase', letterSpacing: 0.8 }}>
@@ -206,27 +206,27 @@ function AecbContent({ onFlip }: { onFlip: () => void }) {
                 </View>
             ) : aecbStatus === 'pending' ? (
                 /* Pending state */
-                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }} pointerEvents="box-none">
-                    <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: `${Colors.warning}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.md }}>
-                        <Ionicons name="time-outline" size={28} color={Colors.warning} />
+                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', paddingBottom: Spacing.xs }} pointerEvents="box-none">
+                    <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: `${Colors.warning}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.sm }}>
+                        <Ionicons name="time-outline" size={24} color={Colors.warning} />
                     </View>
                     <Text style={{ ...Typography.h3, color: theme.colors.textPrimary, marginBottom: Spacing.xs, textAlign: 'center' }}>
                         {t('scoreCard.aecbPending')}
                     </Text>
-                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', paddingHorizontal: Spacing.lg }}>
+                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', paddingHorizontal: Spacing.sm, lineHeight: 18 }}>
                         {t('scoreCard.aecbPendingDesc')}
                     </Text>
                 </View>
             ) : (
                 /* Locked state */
-                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }} pointerEvents="box-none">
-                    <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: `${brandGreen}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.md }}>
-                        <Ionicons name="lock-closed" size={28} color={brandGreen} />
+                <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center', paddingBottom: Spacing.xs }} pointerEvents="box-none">
+                    <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: `${brandGreen}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.sm }}>
+                        <Ionicons name="lock-closed" size={24} color={brandGreen} />
                     </View>
                     <Text style={{ ...Typography.h3, color: theme.colors.textPrimary, marginBottom: Spacing.xs, textAlign: 'center' }}>
                         {t('scoreCard.aecbLocked')}
                     </Text>
-                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginBottom: Spacing.lg, paddingHorizontal: Spacing.md }}>
+                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginBottom: Spacing.md, paddingHorizontal: Spacing.sm, lineHeight: 18 }}>
                         {t('scoreCard.aecbLockedDesc')}
                     </Text>
                     <TouchableOpacity
@@ -235,7 +235,7 @@ function AecbContent({ onFlip }: { onFlip: () => void }) {
                         style={{
                             backgroundColor: brandGreen,
                             borderRadius: 24,
-                            paddingVertical: 10,
+                            paddingVertical: 11,
                             paddingHorizontal: 20,
                             flexDirection: 'row',
                             alignItems: 'center',
@@ -291,12 +291,13 @@ export function ScoreFlipCard() {
             <View style={styles.container}>
                 <View style={styles.cardContainer}>
                     {/* Front Side: OLFi Score */}
-                    <Animated.View style={[styles.card, frontAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-                        {/* Background Pressable to catch empty space taps */}
-                        <TouchableOpacity activeOpacity={1} style={[StyleSheet.absoluteFillObject, { zIndex: 0 }]} onPress={flipCard} />
-                        <View style={[styles.touchableArea, { pointerEvents: 'box-none', zIndex: 1 }]}>
+                    <Animated.View
+                        pointerEvents={isFlipped ? 'none' : 'auto'}
+                        style={[styles.card, frontAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+                    >
+                        <View style={styles.touchableArea}>
                             {hasDebts ? (
-                                <View style={styles.scoreContent} pointerEvents="box-none">
+                                <View style={styles.scoreContent}>
                                     {/* Header row */}
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md }} pointerEvents="box-none">
                                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -324,8 +325,8 @@ export function ScoreFlipCard() {
                                         </View>
                                     </View>
 
-                                    {/* Score circle — always dark bg to avoid light-on-light */}
-                                    <View style={{ alignItems: 'center', marginVertical: Spacing.xs }} pointerEvents="box-none">
+                                    {/* Score circle - always dark bg to avoid light-on-light */}
+                                    <TouchableOpacity onPress={flipCard} activeOpacity={0.8} style={{ alignItems: 'center', marginVertical: Spacing.xs }}>
                                         <View style={[styles.scoreCircle, { borderColor: olfiData.color, backgroundColor: `${olfiData.color}12` }]}>
                                             <Text style={{ fontSize: 36, fontWeight: '800', color: theme.colors.textPrimary }}>
                                                 {olfiData.score}
@@ -334,15 +335,17 @@ export function ScoreFlipCard() {
                                                 {t(`scoreCard.${olfiData.label}`)}
                                             </Text>
                                         </View>
-                                    </View>
+                                    </TouchableOpacity>
 
                                     {/* Dynamic bottom footer based on current score label */}
-                                    <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginTop: Spacing.sm }}>
-                                        {footerText} {hasDebts ? `• ${t('scoreCard.tapToFlip')}` : ''}
-                                    </Text>
+                                    <TouchableOpacity onPress={flipCard} activeOpacity={0.7}>
+                                        <Text style={{ ...Typography.caption, color: theme.colors.textSecondary, textAlign: 'center', marginTop: Spacing.sm }}>
+                                            {footerText} {hasDebts ? `• ${t('scoreCard.tapToFlip')}` : ''}
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             ) : (
-                                <View style={[styles.scoreContent, { justifyContent: 'center', alignItems: 'center' }]} pointerEvents="box-none">
+                                <View style={[styles.scoreContent, { justifyContent: 'center', alignItems: 'center' }]}>
                                     <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: `${Colors.brand.emerald}15`, alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.md }}>
                                         <Ionicons name="lock-closed" size={20} color={Colors.brand.emerald} />
                                     </View>
@@ -371,10 +374,12 @@ export function ScoreFlipCard() {
                         </View>
                     </Animated.View>
 
-                    {/* Back Side: AECB Score — on-brand, themed */}
-                    <Animated.View style={[styles.card, styles.cardBack, backAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
-                        <TouchableOpacity activeOpacity={1} style={[StyleSheet.absoluteFillObject, { zIndex: 0 }]} onPress={flipCard} />
-                        <View style={[styles.touchableArea, { pointerEvents: 'box-none', zIndex: 1 }]}>
+                    {/* Back Side: AECB Score - on-brand, themed */}
+                    <Animated.View
+                        pointerEvents={isFlipped ? 'auto' : 'none'}
+                        style={[styles.card, styles.cardBack, backAnimatedStyle, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+                    >
+                        <View style={styles.touchableArea}>
                             <AecbContent onFlip={flipCard} />
                         </View>
                     </Animated.View>
@@ -396,7 +401,7 @@ const styles = StyleSheet.create({
     },
     cardContainer: {
         width: '100%',
-        height: 240,
+        height: 280,
     },
     card: {
         width: '100%',
@@ -416,7 +421,7 @@ const styles = StyleSheet.create({
     },
     touchableArea: {
         flex: 1,
-        padding: Spacing.xl,
+        padding: 20,
     },
     scoreContent: {
         flex: 1,

@@ -72,7 +72,7 @@ export default function OTPScreen() {
                         });
                     }
                     // Navigate to KYC step 1 (post-auth setup flow)
-                    // Note: do NOT setLoading(false) here — component will unmount
+                    // Note: do NOT setLoading(false) here - component will unmount
                     router.replace('/(auth)/kyc/step1' as any);
                 }
             } catch (e: unknown) {

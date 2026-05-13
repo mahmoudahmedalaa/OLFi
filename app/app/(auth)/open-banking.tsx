@@ -252,7 +252,7 @@ export default function OpenBankingScreen() {
 
     const handleBankPress = (bankId: BankId) => {
         if (connectedBanks.has(bankId)) {
-            // Already connected — toggle off
+            // Already connected - toggle off
             setConnectedBanks((prev) => {
                 const next = new Set(prev);
                 next.delete(bankId);
@@ -371,7 +371,7 @@ export default function OpenBankingScreen() {
                     Select one or more banks
                 </Text>
 
-                {/* Bank list — vertical scrollable fixed area */}
+                {/* Bank list - vertical scrollable fixed area */}
                 <View style={[styles.bankListContainer, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}>
                     {UAE_BANKS.map((bank, index) => {
                         const connected = connectedBanks.has(bank.id);

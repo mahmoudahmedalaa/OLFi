@@ -2,7 +2,7 @@
  * Analytics Tracker
  * 
  * Lightweight event tracking that stores events in Supabase.
- * All calls are fire-and-forget — never blocks UI.
+ * All calls are fire-and-forget - never blocks UI.
  */
 import { supabase } from './supabase';
 import { Platform } from 'react-native';
@@ -35,7 +35,7 @@ export function trackEvent(
 ) {
     if (!_userId) return;
 
-    // Fire and forget — don't await
+    // Fire and forget - don't await
     (async () => {
         try {
             await supabase
@@ -51,7 +51,7 @@ export function trackEvent(
                     session_id: _sessionId,
                 });
         } catch {
-            // Silent fail — analytics should never block UX
+            // Silent fail - analytics should never block UX
         }
     })();
 }

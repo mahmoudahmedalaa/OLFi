@@ -1,4 +1,4 @@
-// Arabic translations — ported from web/messages/ar.json + mobile-specific additions
+// Arabic translations - ported from web/messages/ar.json + mobile-specific additions
 import type { TranslationKeys } from './en';
 
 const ar: TranslationKeys = {
@@ -159,7 +159,7 @@ const ar: TranslationKeys = {
         explainFairDesc: 'التزاماتك الشهرية تضغط على دخلك. توحيد ديونك مع OLFi قد يخفض تقييمك فوراً.',
         explainPoor: 'ضعيف (300–549)',
         explainPoorDesc: 'حجم ديونك مرتفع نسبةً لدخلك. OLFi يمكنه مساعدتك بإعادة الهيكلة وتخفيف الضغط.',
-        explainFormula: 'يُحسب التقييم من نسبة الدين إلى الدخل والرصيد الكلي والقسط الشهري — محدّث لحظياً.',
+        explainFormula: 'يُحسب التقييم من نسبة الدين إلى الدخل والرصيد الكلي والقسط الشهري - محدّث لحظياً.',
     },
 
     // ── Financial Health Card ───────────────────────────────────────────────
@@ -279,7 +279,7 @@ const ar: TranslationKeys = {
         title: 'ربط حسابك البنكي',
         subtitle: 'يستخدم OLFi الخدمات المصرفية المفتوحة لقراءة معاملاتك بأمان وتقديم عروض مخصصة لك',
         readOnly: 'صلاحية قراءة فقط',
-        readOnlyDesc: 'لا يمكننا تحريك أموالك — أبداً',
+        readOnlyDesc: 'لا يمكننا تحريك أموالك - أبداً',
         bankLevel: 'تشفير على مستوى البنوك',
         bankLevelDesc: 'مدعوم من Lean Technologies، خاضع لرقابة المصرف المركزي',
         revoke: 'إلغاء في أي وقت',

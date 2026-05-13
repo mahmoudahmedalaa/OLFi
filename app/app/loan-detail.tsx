@@ -213,15 +213,19 @@ export default function LoanDetailScreen() {
                                 <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary }}>
                                     {loan.bank_name || 'Unknown Bank'}
                                 </Text>
-                                <Text style={{ fontSize: 14, color: theme.colors.textSecondary, marginTop: 2, flexDirection: 'row', alignItems: 'center' }}>
-                                    {formatType(loan.loan_type)} Finance •{' '}
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 2, flexWrap: 'wrap' }}>
+                                    <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+                                        {formatType(loan.loan_type)} Finance •
+                                    </Text>
                                     <TermTooltip
                                         term="Profit Rate"
-                                        definition="The annual profit rate on your Islamic finance facility. Unlike conventional interest, this is a fixed agreed cost of the product — not compound interest."
+                                        definition="The annual profit rate on your Islamic finance facility. It is the agreed cost of financing, not compound interest."
                                         labelStyle={{ fontSize: 14, color: theme.colors.textSecondary }}
                                     />
-                                    {' '}{loan.interest_rate}%
-                                </Text>
+                                    <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
+                                        {loan.interest_rate}%
+                                    </Text>
+                                </View>
                             </View>
                             <View style={{
                                 backgroundColor: loan.status === 'active' ? `${Colors.brand.emerald}15` : `${Colors.warning}15`,
@@ -269,7 +273,7 @@ export default function LoanDetailScreen() {
                         <StatCard
                             icon="cash-outline"
                             label="Monthly EMI"
-                            tooltip="Equated Monthly Instalment — your fixed monthly repayment covering both the original amount and the profit portion of your facility."
+                            tooltip="Equated Monthly Instalment - your fixed monthly repayment covering both the original amount and the profit portion of your facility."
                             value={formatAED(loan.monthly_emi)}
                             color="#011819"
                             theme={theme}
@@ -321,7 +325,7 @@ export default function LoanDetailScreen() {
                         <DetailRow label="Original Amount" value={formatAED(loan.original_amount)} theme={theme} />
                         <DetailRow label="Amount Paid" value={formatAED(paidAmount)} theme={theme} />
                         <DetailRow label="Remaining Balance" value={formatAED(loan.remaining_amount)} theme={theme} />
-                        <DetailRow label="Total Profit" value={totalInterest > 0 ? formatAED(totalInterest) : '—'} theme={theme} />
+                        <DetailRow label="Total Profit" value={totalInterest > 0 ? formatAED(totalInterest) : '-'} theme={theme} />
                         <DetailRow label="Tenure" value={`${loan.tenure_months} months`} theme={theme} />
                         <DetailRow label="Added" value={new Date(loan.created_at).toLocaleDateString('en-AE', { month: 'short', day: 'numeric', year: 'numeric' })} theme={theme} last />
                     </View>

@@ -54,11 +54,11 @@ const TAB_GUIDANCE: Record<CalcMode, { title: string; description: string }> = {
     },
     affordability: {
         title: '🏦 Affordability Check',
-        description: 'Find out the maximum financing you can qualify for based on your salary. UAE banks cap your total monthly debt payments at 50% of your salary — this is called the Debt Burden Ratio (DBR).',
+        description: 'Find out the maximum financing you can qualify for based on your salary. UAE banks cap your total monthly debt payments at 50% of your salary. This is called the Debt Burden Ratio (DBR).',
     },
     comparison: {
         title: '⚖️ Current Loan vs New Offer',
-        description: 'Enter your existing loan details alongside a new buyout offer. See the true difference in monthly payments, total interest paid, and how long before the switch pays off — including restructuring costs.',
+        description: 'Enter your existing loan details alongside a new buyout offer. See the true difference in monthly payments, total interest paid, and how long before the switch pays off, including restructuring costs.',
     },
 };
 
@@ -267,7 +267,7 @@ export default function CalculatorScreen() {
                                         >
                                             <TermTooltip
                                                 term="Monthly EMI"
-                                                definition="Equated Monthly Instalment — your fixed monthly repayment covering both the principal and the profit/interest portion."
+                                                definition="Equated Monthly Instalment. This is your fixed monthly repayment covering both principal and profit or interest."
                                                 labelStyle={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: 0.5 }}
                                             />
                                             <Text style={{ fontSize: 34, fontWeight: '800', color: '#fff', marginTop: 4 }}>
@@ -290,7 +290,7 @@ export default function CalculatorScreen() {
                                             borderColor: theme.colors.border,
                                         }}>
                                             <Text style={{ fontSize: 12, color: theme.colors.textSecondary, lineHeight: 18 }}>
-                                                💡 <Text style={{ fontWeight: '600' }}>Interest Share</Text> means {emiResult.interestPct.toFixed(1)}% of every payment goes to interest — only {(100 - emiResult.interestPct).toFixed(1)}% reduces your actual loan balance.
+                                                💡 For every AED 100 you pay, AED {emiResult.interestPct.toFixed(0)} goes to interest and AED {(100 - emiResult.interestPct).toFixed(0)} reduces your loan balance.
                                             </Text>
                                         </View>
 
@@ -482,7 +482,7 @@ export default function CalculatorScreen() {
                                                     {affordResult.dbrUsed.toFixed(1)}% used
                                                 </Text>
                                                 <Text style={{ fontSize: 12, color: theme.colors.textTertiary }}>
-                                                    {affordResult.dbrUsed > 50 ? '❌ Over limit — banks will likely reject' : affordResult.dbrUsed > 35 ? '⚠️ Approaching limit' : '✅ Healthy — good approval odds'}
+                                                    {affordResult.dbrUsed > 50 ? '❌ Over limit - banks will likely reject' : affordResult.dbrUsed > 35 ? '⚠️ Approaching limit' : '✅ Healthy - good approval odds'}
                                                 </Text>
                                             </View>
                                         </View>
@@ -558,7 +558,7 @@ export default function CalculatorScreen() {
                                                 <View style={{ flex: 1 }}>
                                                     <TermTooltip
                                                         term="Monthly EMI"
-                                                        definition="Equated Monthly Instalment — your current fixed monthly repayment."
+                                                        definition="Equated Monthly Instalment. This is your current fixed monthly repayment."
                                                         labelStyle={{ fontSize: 11, color: theme.colors.textTertiary }}
                                                     />
                                                     <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.emiCur)}</Text>
@@ -597,7 +597,7 @@ export default function CalculatorScreen() {
                                                 <View style={{ flex: 1 }}>
                                                     <TermTooltip
                                                         term="Monthly EMI"
-                                                        definition="Equated Monthly Instalment — your new fixed monthly repayment if you switch to this offer."
+                                                        definition="Equated Monthly Instalment. This is your new fixed monthly repayment if you switch to this offer."
                                                         labelStyle={{ fontSize: 11, color: theme.colors.textTertiary }}
                                                     />
                                                     <Text style={{ fontSize: 16, fontWeight: '700', color: theme.colors.textPrimary }}>{formatAEDFull(compResult.emiNew)}</Text>
@@ -647,7 +647,7 @@ export default function CalculatorScreen() {
                                                 <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8, paddingTop: 8, borderTopWidth: 1, borderTopColor: `${Colors.brand.emerald}20` }}>
                                                     <Ionicons name="time-outline" size={16} color={theme.colors.textSecondary} style={{ marginTop: 1 }} />
                                                     <Text style={{ fontSize: 13, color: theme.colors.textSecondary, flex: 1, flexWrap: 'wrap' }}>
-                                                        {'Breakeven in '}<Text style={{ fontWeight: '700', color: theme.colors.textPrimary }}>{compResult.breakevenMonths} months</Text>{' — after ~AED 1,500 restructuring fee'}
+                                                        {'Breakeven in '}<Text style={{ fontWeight: '700', color: theme.colors.textPrimary }}>{compResult.breakevenMonths} months</Text>{' after an estimated AED 1,500 restructuring fee'}
                                                     </Text>
                                                 </View>
                                             )}
@@ -662,19 +662,19 @@ export default function CalculatorScreen() {
                 <InfoBottomSheet
                     bottomSheetRef={dbrSheetRef}
                     title="Debt Burden Ratio (DBR)"
-                    description="DBR is the percentage of your monthly salary that goes towards paying all debts combined — loans, credit cards, car finance, everything."
+                    description="DBR is the percentage of your monthly salary used to pay all debts combined, including loans, credit cards, and car finance."
                     insightTitle="UAE Central Bank Rule"
-                    insightText="By regulation, your total monthly debt payments cannot exceed 50% of your gross salary. Banks will reject your application if your DBR is already at or above this limit — even if you have a good credit score."
+                    insightText="By regulation, your total monthly debt payments cannot exceed 50% of your gross salary. Banks will reject your application if your DBR is already at or above this limit, even if you have a good credit score."
                     footerText="Tip: Consolidating multiple loans into one lower-rate facility reduces your DBR and improves approval odds."
                 />
 
                 <InfoBottomSheet
                     bottomSheetRef={interestRateSheetRef}
                     title="Interest Rate"
-                    description="This is the annual interest rate on your current loan — the primary cost of borrowing. Enter the rate from your existing loan agreement or bank statement."
+                    description="This is the annual interest rate on your current loan. It is the primary cost of borrowing. Enter the rate from your existing loan agreement or bank statement."
                     insightTitle="How it affects you"
                     insightText="Even a 1% difference in interest rate can cost or save you tens of thousands of dirhams over a full loan term. OLFi finds you the lowest available rate on the market to minimise this cost."
-                    footerText="For Islamic financing, this is called the Profit Rate — mathematically equivalent for comparison purposes."
+                    footerText="For Islamic financing, this is called the Profit Rate. It is mathematically equivalent for comparison purposes."
                 />
             </SafeAreaView>
         </BottomSheetModalProvider>

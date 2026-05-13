@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (mounted) setPostAuthSetupState(val === 'true');
         }).catch(() => { });
 
-        // Subscribe first — guarantees no session events are missed
+        // Subscribe first - guarantees no session events are missed
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             (_event, session) => {
                 if (!mounted) return;
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // getSession() hydrates from the stored token on first mount.
         // onAuthStateChange will also fire SIGNED_IN so we don't set loading:false here
-        // — we let the listener do it to avoid a double-state-update race.
+        // - we let the listener do it to avoid a double-state-update race.
         supabase.auth.getSession().then(({ data: { session } }) => {
             if (!mounted) return;
             // Only set state if the listener hasn't fired yet (loading still true)

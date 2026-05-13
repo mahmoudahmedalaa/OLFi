@@ -1,5 +1,5 @@
 /**
- * Refinance Calculator — Pure functions for loan comparison and savings calculation
+ * Refinance Calculator - Pure functions for loan comparison and savings calculation
  * BuyOut Phase 4.1
  */
 
@@ -46,9 +46,9 @@ export interface RefinanceResult {
  * Calculate monthly EMI using standard reducing balance formula
  * EMI = P × r × (1 + r)^n / ((1 + r)^n - 1)
  *
- * @param principal — Loan principal (remaining amount)
- * @param annualRate — Annual interest rate as percentage (e.g. 5.99)
- * @param tenureMonths — Number of months
+ * @param principal - Loan principal (remaining amount)
+ * @param annualRate - Annual interest rate as percentage (e.g. 5.99)
+ * @param tenureMonths - Number of months
  */
 export function calculateEMI(
     principal: number,

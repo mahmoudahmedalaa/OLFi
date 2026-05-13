@@ -67,14 +67,17 @@ export function FinancialHealthCard({
                             <Text style={{ fontSize: 18, fontWeight: '700', color: healthScore.color }}>
                                 {healthScore.label}
                             </Text>
-                            <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 2, flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2, flexWrap: 'wrap' }}>
                                 <TermTooltip
                                     term="Debt-to-Income Ratio (DTI)"
                                     short="Debt-to-Income (DTI)"
-                                    definition="Your total monthly debt payments divided by your gross monthly income. UAE banks typically approve financing up to 50% DTI."
+                                    definition="The share of your gross monthly income used for debt payments. UAE lenders usually require this to stay at or below 50%."
                                     labelStyle={{ fontSize: 13, color: theme.colors.textSecondary }}
-                                />{' '}{dtiRatio}%
-                            </Text>
+                                />
+                                <Text style={{ fontSize: 13, color: theme.colors.textSecondary }}>
+                                    {dtiRatio}%
+                                </Text>
+                            </View>
                         </View>
                     </View>
 
@@ -137,7 +140,7 @@ export function FinancialHealthCard({
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
                         <TermTooltip
                             term="Total Profit Paid"
-                            definition="The total profit amount you pay on top of the original amount borrowed. Refinancing at a lower rate directly reduces this."
+                            definition="The profit cost you pay above the amount borrowed. A lower rate can reduce this cost."
                             labelStyle={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5, color: theme.colors.textTertiary }}
                         />
                     </View>

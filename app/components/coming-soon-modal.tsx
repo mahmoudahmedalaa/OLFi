@@ -169,7 +169,7 @@ export function ComingSoonModal({
             await AsyncStorage.setItem(`@olfi_notify_${user.id}_${feature.key}`, 'true');
             setNotified(true);
         } catch {
-            // Silently fail — not critical
+            // Silently fail - not critical
             setNotified(true);
         }
     };

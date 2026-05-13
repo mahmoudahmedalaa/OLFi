@@ -3,11 +3,11 @@
  * 
  * Central source of truth for colors, spacing, and typography.
  * Used for inline styles when NativeWind classes aren't sufficient (e.g., LinearGradient).
- * Tailwind classes should be preferred — these are for programmatic use only.
+ * Tailwind classes should be preferred - these are for programmatic use only.
  */
 
 export const Colors = {
-    // Brand palette — fintech premium, dark-first
+    // Brand palette - fintech premium, dark-first
     brand: {
         emerald: '#10B981',      // Emerald 500
         emeraldLight: '#34D399', // Emerald 400

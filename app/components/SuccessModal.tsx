@@ -215,7 +215,7 @@ export default function SuccessModal({
                                 />
                                 <SummaryRow
                                     label="Monthly EMI"
-                                    tooltip="Equated Monthly Instalment — your fixed monthly repayment covering principal and profit."
+                                    tooltip="Equated Monthly Instalment - your fixed monthly repayment covering principal and profit."
                                     value={`AED ${loanSummary.emi.toLocaleString()}`}
                                     theme={theme}
                                     isLast

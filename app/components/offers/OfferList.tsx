@@ -241,7 +241,7 @@ export default function OfferList({
                                             color: Colors.brand.emerald,
                                         }}
                                     >
-                                        {product.interest_rate_min || '—'}%
+                                        {product.interest_rate_min || '-'}%
                                     </Text>
                                     <Text
                                         style={{
@@ -285,7 +285,7 @@ export default function OfferList({
                                             marginTop: 2,
                                         }}
                                     >
-                                        {product.max_tenure_months || '—'} months
+                                        {product.max_tenure_months || '-'} months
                                     </Text>
                                 </View>
                                 <View style={{ flex: 1, alignItems: 'flex-end' }}>
@@ -309,7 +309,7 @@ export default function OfferList({
                                     >
                                         {product.max_amount
                                             ? `AED ${Number(product.max_amount).toLocaleString()}`
-                                            : '—'}
+                                            : '-'}
                                     </Text>
                                 </View>
                             </View>

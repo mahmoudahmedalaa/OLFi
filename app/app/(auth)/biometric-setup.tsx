@@ -46,7 +46,7 @@ export default function BiometricSetupScreen() {
                 const userBiometricKey = `${BIOMETRIC_KEY_PREFIX}${user?.id}`;
                 await AsyncStorage.setItem(userBiometricKey, 'true');
 
-                // Navigate to open banking — postAuthSetupPending cleared there
+                // Navigate to open banking - postAuthSetupPending cleared there
                 router.replace('/(auth)/open-banking' as any);
             }
         } catch (e: unknown) {
@@ -57,7 +57,7 @@ export default function BiometricSetupScreen() {
     }, [user]);
 
     const handleSkip = async () => {
-        // Navigate to open banking — postAuthSetupPending cleared there
+        // Navigate to open banking - postAuthSetupPending cleared there
         router.replace('/(auth)/open-banking' as any);
     };
 

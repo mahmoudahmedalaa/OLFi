@@ -20,7 +20,7 @@ export const config = {
     '--color-primary-900': '6 62 46',
     '--color-primary-950': '2 44 34',
 
-    /* Secondary — Slate neutrals */
+    /* Secondary - Slate neutrals */
     '--color-secondary-0': '248 250 252',
     '--color-secondary-50': '241 245 249',
     '--color-secondary-100': '226 232 240',
@@ -34,7 +34,7 @@ export const config = {
     '--color-secondary-900': '2 6 23',
     '--color-secondary-950': '0 0 0',
 
-    /* Tertiary — Teal accent */
+    /* Tertiary - Teal accent */
     '--color-tertiary-50': '240 253 250',
     '--color-tertiary-100': '204 251 241',
     '--color-tertiary-200': '153 246 228',
@@ -171,7 +171,7 @@ export const config = {
     '--color-primary-900': '209 250 229',
     '--color-primary-950': '236 253 245',
 
-    /* Secondary — Slate (inverted for dark mode) */
+    /* Secondary - Slate (inverted for dark mode) */
     '--color-secondary-0': '0 0 0',
     '--color-secondary-50': '2 6 23',
     '--color-secondary-100': '15 23 42',
@@ -185,7 +185,7 @@ export const config = {
     '--color-secondary-900': '241 245 249',
     '--color-secondary-950': '248 250 252',
 
-    /* Tertiary — Teal */
+    /* Tertiary - Teal */
     '--color-tertiary-50': '4 47 46',
     '--color-tertiary-100': '19 78 74',
     '--color-tertiary-200': '17 94 89',
@@ -282,7 +282,7 @@ export const config = {
     '--color-outline-900': '248 250 252',
     '--color-outline-950': '255 255 255',
 
-    /* Background — Dark slate-based */
+    /* Background - Dark slate-based */
     '--color-background-0': '15 23 42',
     '--color-background-50': '30 41 59',
     '--color-background-100': '51 65 85',

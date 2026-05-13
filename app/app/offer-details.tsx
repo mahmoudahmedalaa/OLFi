@@ -416,7 +416,7 @@ export default function OfferDetailsScreen() {
                                                         <TermTooltip
                                                             term="New Monthly EMI"
                                                             short="New EMI"
-                                                            definition="Equated Monthly Instalment — your new fixed monthly repayment if you refinance with this product."
+                                                            definition="Equated Monthly Instalment - your new fixed monthly repayment if you refinance with this product."
                                                             labelStyle={{ fontSize: 10, color: theme.colors.textTertiary }}
                                                         />
                                                     }
@@ -490,7 +490,7 @@ export default function OfferDetailsScreen() {
                                             label={
                                                 <TermTooltip
                                                     term="Monthly EMI"
-                                                    definition="Equated Monthly Instalment — your total fixed monthly payment covering profit and principal."
+                                                    definition="Equated Monthly Instalment - your total fixed monthly payment covering profit and principal."
                                                     labelStyle={{ fontSize: 13, color: theme.colors.textTertiary }}
                                                 />
                                             }

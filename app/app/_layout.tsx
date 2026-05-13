@@ -113,7 +113,7 @@ function RootLayoutInner() {
           // If we have a user, check their specific key first
           let userVal = await AsyncStorage.getItem(onboardingKey);
           if (userVal !== 'true') {
-            // Check device fallback — if device is true, user doesn't need to re-onboard
+            // Check device fallback - if device is true, user doesn't need to re-onboard
             const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
             if (deviceVal === 'true') {
               userVal = 'true';
@@ -122,7 +122,7 @@ function RootLayoutInner() {
           }
           setOnboardingDone(userVal === 'true');
         } else {
-          // No user — check device-level flag for pre-login onboarding
+          // No user - check device-level flag for pre-login onboarding
           const deviceVal = await AsyncStorage.getItem('buyout_onboarding_completed');
           setOnboardingDone(deviceVal === 'true');
         }
@@ -146,7 +146,7 @@ function RootLayoutInner() {
   // Listen for setup completion (clear flag when navigating away from auth)
   useEffect(() => {
     if (segments[0] === '(tabs)' && postAuthSetupPending) {
-      // User reached dashboard — clear the pending flag
+      // User reached dashboard - clear the pending flag
       setPostAuthSetupPending(false);
     }
   }, [segments, postAuthSetupPending, setPostAuthSetupPending]);
@@ -169,7 +169,7 @@ function RootLayoutInner() {
     if (biometricCheckedForUser.current === user.id) return;
     biometricCheckedForUser.current = user.id;
 
-    // Don't lock during post-auth setup — read latest value from storage directly
+    // Don't lock during post-auth setup - read latest value from storage directly
     AsyncStorage.getItem('@olfi_post_auth_setup_pending').then((pending) => {
       if (pending === 'true') {
         setBiometricLocked(false);

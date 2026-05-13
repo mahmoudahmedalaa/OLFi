@@ -47,7 +47,7 @@ export default function SecuritySettingsScreen() {
 
     const handleBiometricToggle = async (newValue: boolean) => {
         if (newValue) {
-            // Turning ON — check hardware + authenticate
+            // Turning ON - check hardware + authenticate
             const compatible = await LocalAuthentication.hasHardwareAsync();
             if (!compatible) {
                 Alert.alert('Not Available', 'Your device does not support biometric authentication.');
@@ -69,7 +69,7 @@ export default function SecuritySettingsScreen() {
             }
             // If cancelled/failed, toggle stays OFF
         } else {
-            // Turning OFF — require biometric confirmation
+            // Turning OFF - require biometric confirmation
             const result = await LocalAuthentication.authenticateAsync({
                 promptMessage: 'Authenticate to disable biometric lock',
                 fallbackLabel: 'Use Passcode',
@@ -111,7 +111,7 @@ export default function SecuritySettingsScreen() {
     const handleDeleteAccount = () => {
         Alert.alert(
             'Delete Account',
-            'Are you sure you want to permanently delete your account? All your data — loans, applications, and profile — will be permanently deleted. This cannot be undone.',
+            'Are you sure you want to permanently delete your account? All your data - loans, applications, and profile - will be permanently deleted. This cannot be undone.',
             [
                 { text: 'Cancel', style: 'cancel' },
                 {

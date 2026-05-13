@@ -1,5 +1,5 @@
 /**
- * TermTooltip — reusable inline tooltip for acronyms and financial jargon.
+ * TermTooltip - reusable inline tooltip for acronyms and financial jargon.
  *
  * Usage:
  *   <TermTooltip term="EMI" definition="Equated Monthly Instalment..." />
@@ -10,12 +10,13 @@
  */
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, TextStyle, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import Popover, { PopoverPlacement } from 'react-native-popover-view';
 import { useTheme } from '@/lib/theme-context';
 import { Colors, BorderRadius, Typography } from '@/lib/constants';
 
 interface TermTooltipProps {
-    /** The full term — shown bold in the popover title */
+    /** The full term - shown bold in the popover title */
     term: string;
     /** Plain-English explanation shown in the popover body */
     definition: string;
@@ -28,21 +29,24 @@ interface TermTooltipProps {
 export function TermTooltip({ term, definition, short, labelStyle }: TermTooltipProps) {
     const { theme } = useTheme();
     const [visible, setVisible] = useState(false);
+    const iconColor = typeof labelStyle?.color === 'string' ? labelStyle.color : Colors.brand.emerald;
 
     return (
         <Popover
             isVisible={visible}
             onRequestClose={() => setVisible(false)}
-            from={(sourceRef, showPopover) => (
+            from={(sourceRef) => (
                 <TouchableOpacity
                     ref={sourceRef as any}
-                    onPress={showPopover}
-                    hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
+                    onPress={() => setVisible(true)}
+                    hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
                     activeOpacity={0.7}
+                    style={styles.trigger}
                 >
                     <Text style={[styles.label, { color: Colors.brand.emerald }, labelStyle]}>
                         {short ?? term}
                     </Text>
+                    <Ionicons name="information-circle-outline" size={14} color={iconColor} />
                 </TouchableOpacity>
             )}
             placement={PopoverPlacement.BOTTOM}
@@ -70,10 +74,14 @@ export function TermTooltip({ term, definition, short, labelStyle }: TermTooltip
 }
 
 const styles = StyleSheet.create({
+    trigger: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        alignSelf: 'flex-start',
+    },
     label: {
         ...Typography.captionBold,
-        textDecorationLine: 'underline',
-        textDecorationStyle: 'dotted',
     },
     popTitle: {
         ...Typography.bodyBold,

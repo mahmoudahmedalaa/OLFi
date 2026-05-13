@@ -39,7 +39,7 @@ We do NOT collect or store:
         icon: 'people-outline',
         content: `We share your data only when necessary:
 
-• **Banks & Financial Institutions**: Your loan and profile data is shared ONLY with banks you explicitly apply to — never without your consent
+• **Banks & Financial Institutions**: Your loan and profile data is shared ONLY with banks you explicitly apply to - never without your consent
 • **UAE Regulatory Bodies**: When required by law (e.g., AECB, UAE Central Bank)
 • **Service Providers**: Our hosting (Supabase) and analytics providers operate under strict data processing agreements
 

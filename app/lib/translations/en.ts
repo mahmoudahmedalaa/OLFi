@@ -1,4 +1,4 @@
-// Translation key shape — both en.ts and ar.ts must satisfy this interface
+// Translation key shape - both en.ts and ar.ts must satisfy this interface
 export interface TranslationKeys {
     common: {
         continue: string; back: string; skip: string; save: string; cancel: string;

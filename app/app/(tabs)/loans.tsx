@@ -432,10 +432,10 @@ export default function LoansScreen() {
                                                 </View>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                                     <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>
-                                                        {item.start_date?.substring(0, 7) || '—'}
+                                                        {item.start_date?.substring(0, 7) || '-'}
                                                     </Text>
                                                     <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>
-                                                        {item.end_date?.substring(0, 7) || '—'}
+                                                        {item.end_date?.substring(0, 7) || '-'}
                                                     </Text>
                                                 </View>
                                             </View>
