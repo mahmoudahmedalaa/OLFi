@@ -64,8 +64,9 @@ export default function ApplicationsPage() {
     const [documents, setDocuments] = useState<AdminApplicationDocument[]>([]);
     const [events, setEvents] = useState<AdminApplicationEvent[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [detailsLoading, setDetailsLoading] = useState(false);
-    const [filter, setFilter] = useState('action_needed');
+    const [filter, setFilter] = useState('all');
     const [actionModal, setActionModal] = useState<{ type: ActionType; app: Application } | null>(null);
     const [documentModal, setDocumentModal] = useState<{ status: 'verified' | 'rejected' | 'pending'; document: AdminApplicationDocument } | null>(null);
     const [notes, setNotes] = useState('');
@@ -75,11 +76,13 @@ export default function ApplicationsPage() {
 
     const load = useCallback(async () => {
         try {
+            setLoadError(null);
             const data = await fetchApplications();
             setApplications(data);
             setSelectedAppId((current) => current || data[0]?.id || null);
         } catch (e) {
             console.error('Failed to load applications:', e);
+            setLoadError(e instanceof Error ? e.message : 'Failed to load applications.');
         } finally {
             setLoading(false);
         }
@@ -207,6 +210,13 @@ export default function ApplicationsPage() {
                     Refresh
                 </button>
             </div>
+
+            {loadError && (
+                <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-200">
+                    <p className="font-semibold">Could not load applications.</p>
+                    <p className="mt-1 text-red-100/80">{loadError}</p>
+                </div>
+            )}
 
             <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                 {[
