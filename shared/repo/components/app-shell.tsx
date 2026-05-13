@@ -68,14 +68,21 @@ export function AppShell() {
   };
 
   const handleSignOut = async () => {
-    await fetch('/api/auth/me', { method: 'DELETE', credentials: 'same-origin' });
-    setUser(null);
-    setTab('home');
     try {
+      await fetch('/api/auth/me', { method: 'DELETE', credentials: 'same-origin', cache: 'no-store' });
+    } catch (error) {
+      console.warn('Sign out request failed, clearing local demo state anyway:', error);
+    } finally {
+      setUser(null);
+      setOffer(null);
+      setApp(null);
+      setTab('home');
       localStorage.removeItem('olfi_screen');
       sessionStorage.removeItem('olfi_phone');
-    } catch {}
-    setScreen('welcome');
+      document.cookie = 'olfi_token=; Max-Age=0; path=/; SameSite=Lax';
+      setScreen('welcome');
+      window.history.replaceState(null, '', '/');
+    }
   };
 
   const props = { navigate, onTab, t, lang, setLang: handleLang, user, onSignOut: handleSignOut };

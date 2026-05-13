@@ -9,9 +9,11 @@ Do not merge to `main` until the preview, mobile archive, and user sign-off are 
 
 | Status | Area | Task | Evidence |
 | --- | --- | --- | --- |
-| Done | Mobile release | Bump iOS TestFlight build number to `43` without changing bundle IDs, slug, schemes, or project IDs. | `app npm run check:ios-build` passed |
+| Done | Mobile release | Bump iOS TestFlight build number to `44` without changing bundle IDs, slug, schemes, or project IDs. | `app npm run check:ios-build` passed |
 | Done | Mobile app | Replace consumer-facing "facility" copy with clearer debt/loan/product/application terminology. | `rg "Facility|facility|facilities" app shared/repo` returned no matches |
 | Done | Mobile app | Fix offer apply eligibility so saved debts do not trigger a misleading modal. | `app npx tsc --noEmit` and `app npm run lint` passed |
+| Done | Mobile app | Fix live application submission failure caused by missing submission metadata schema. | Supabase migration `20260513205248_application_submission_hardening.sql` applied to remote |
+| Done | Mobile app | Clean up the Offers header and consolidation selector so copy and controls do not crowd each other. | `app npx tsc --noEmit` and `app npm run lint` passed |
 | Done | Admin | Upgrade `/applications` into a clearer operations tracker with applicant, current debt, target product, financial outcome, documents, workflow, notes, and timeline. | `admin npx tsc --noEmit`, `admin npm run lint`, and `admin npm run build` passed |
 | Done | Web | Fix the recurring hero flash on `https://olfi.vercel.app/` without removing animations or changing the visual direction. | `web npm run build` passed; local hero idled for 22 seconds in Playwright |
 | Done | Prototype | Fix sign-out on `https://olfi-prototype.vercel.app/` so auth and persisted screen state clear reliably. | `shared/repo npm run build` passed; local Playwright sign-out returned to welcome and cleared `olfi_token` |
@@ -27,7 +29,7 @@ Do not merge to `main` until the preview, mobile archive, and user sign-off are 
 
 ## Release Notes To Confirm
 
-- Next iOS/TestFlight build number: `43`.
+- Next iOS/TestFlight build number: `44`.
 - Existing technical identifiers remain unchanged:
   - Expo slug: `buyout`
   - iOS bundle ID: `com.mahmoudahmedalaa.buyout`
@@ -36,9 +38,10 @@ Do not merge to `main` until the preview, mobile archive, and user sign-off are 
 
 ## Verification Log
 
-- `app npm run check:ios-build`: Expo `ios.buildNumber`, iOS `Info.plist`, and Xcode `CURRENT_PROJECT_VERSION` all report `43`.
+- `app npm run check:ios-build`: Expo `ios.buildNumber`, iOS `Info.plist`, and Xcode `CURRENT_PROJECT_VERSION` all report `44`.
 - `app npx tsc --noEmit`: passed.
 - `app npm run lint`: passed.
+- `supabase migration list`: local and remote match through `20260513205248`.
 - `admin npx tsc --noEmit`: passed.
 - `admin npm run lint`: passed.
 - `admin npm run build`: passed.

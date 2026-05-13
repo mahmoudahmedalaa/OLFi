@@ -50,10 +50,10 @@ export default function LoanSelection({
                         </View>
                         <View style={{ flex: 1, minWidth: 0 }}>
                             <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.textPrimary }}>
-                                Consolidation builder
+                                Build a combined offer
                             </Text>
                             <Text style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 2, lineHeight: 17 }}>
-                                Select at least 2 financing items to compare one combined offer.
+                                Choose at least 2 saved debts to compare one lower monthly payment.
                             </Text>
                         </View>
                         <TouchableOpacity
@@ -69,12 +69,12 @@ export default function LoanSelection({
                             }}
                         >
                             <Text style={{ fontSize: 12, fontWeight: '800', color: Colors.brand.emerald }}>
-                                {selectedLoanIds.size === userLoans.length ? 'Clear' : 'Select all'}
+                                {selectedLoanIds.size === userLoans.length ? 'Clear' : 'All debts'}
                             </Text>
                         </TouchableOpacity>
                     </View>
                     <Text style={{ fontSize: 11, color: theme.colors.textTertiary, marginTop: 10 }}>
-                        {selectedLoanIds.size} of {userLoans.length} selected
+                        {selectedLoanIds.size} of {userLoans.length} debts selected
                     </Text>
                 </View>
             </View>

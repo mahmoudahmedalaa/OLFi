@@ -63,20 +63,23 @@ export default function OffersScreen() {
         <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg }]} edges={['top']}>
             {/* Header */}
             <View style={[styles.header, { backgroundColor: theme.colors.bg }]}>
-                <View style={{ flex: 1 }}>
+                <View style={styles.headerText}>
                     <Text style={[styles.greeting, { color: theme.colors.textSecondary }]}>
-                        {t('offers.subtitle')}
+                        Personalised matches for your saved debts
                     </Text>
                     <Text style={[styles.title, { color: theme.colors.textPrimary }]}>
                         {t('offers.title')}
+                    </Text>
+                    <Text style={[styles.headerDescription, { color: theme.colors.textSecondary }]}>
+                        Compare finance products, check savings, and apply when the numbers work.
                     </Text>
                 </View>
                 <TouchableOpacity
                     onPress={() => setShowFilterModal(true)}
                     activeOpacity={0.7}
                     style={{
-                        width: 40,
-                        height: 40,
+                        width: 46,
+                        height: 46,
                         borderRadius: BorderRadius.md,
                         backgroundColor: totalActiveFilters > 0
                             ? `${Colors.brand.emerald}15`
@@ -91,7 +94,7 @@ export default function OffersScreen() {
                 >
                     <Ionicons
                         name="options-outline"
-                        size={20}
+                        size={22}
                         color={totalActiveFilters > 0 ? Colors.brand.emerald : theme.colors.textSecondary}
                     />
                     {totalActiveFilters > 0 && (
@@ -184,20 +187,31 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingHorizontal: Spacing.xl,
         paddingTop: Platform.OS === 'android' ? Spacing.xl : 10,
-        paddingBottom: Spacing.xl,
+        paddingBottom: Spacing.lg,
+        gap: Spacing.md,
+    },
+    headerText: {
+        flex: 1,
+        minWidth: 0,
     },
     greeting: {
-        ...Typography.body,
+        ...Typography.caption,
         fontWeight: '500',
-        marginBottom: Spacing.xs,
+        marginBottom: 6,
     },
     title: {
-        fontSize: 28,
+        fontSize: 30,
         fontWeight: '700',
-        letterSpacing: -0.5,
+        letterSpacing: 0,
+        lineHeight: 36,
+    },
+    headerDescription: {
+        ...Typography.caption,
+        marginTop: 8,
+        lineHeight: 19,
     },
     scrollView: {
         flex: 1,

@@ -7,7 +7,7 @@ type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dark';
 
 interface Props {
   children: React.ReactNode;
-  onPress?: () => void;
+  onPress?: () => void | Promise<void>;
   variant?: Variant;
   style?: CSSProperties;
   small?: boolean;
@@ -25,15 +25,19 @@ const VARIANTS: Record<Variant, CSSProperties> = {
 export function Btn({ children, onPress, variant = 'primary', style = {}, small = false, disabled = false }: Props) {
   const [pressed, setPressed] = useState(false);
   return (
-    <div
+    <button
+      type="button"
+      disabled={disabled}
       onMouseDown={() => !disabled && setPressed(true)}
-      onMouseUp={() => { setPressed(false); !disabled && onPress?.(); }}
+      onMouseUp={() => setPressed(false)}
       onMouseLeave={() => setPressed(false)}
       onTouchStart={() => !disabled && setPressed(true)}
-      onTouchEnd={() => { setPressed(false); !disabled && onPress?.(); }}
+      onTouchEnd={() => setPressed(false)}
+      onClick={() => { if (!disabled) void onPress?.(); }}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         borderRadius: 14, fontSize: small ? 13 : 16, fontWeight: 700,
+        fontFamily: 'inherit',
         cursor: disabled ? 'not-allowed' : 'pointer',
         padding: small ? '10px 18px' : '15px 20px', width: '100%',
         opacity: disabled ? 0.5 : pressed ? 0.82 : 1,
@@ -41,6 +45,6 @@ export function Btn({ children, onPress, variant = 'primary', style = {}, small 
         transition: 'all 0.15s', userSelect: 'none',
         ...VARIANTS[variant], ...style,
       }}
-    >{children}</div>
+    >{children}</button>
   );
 }

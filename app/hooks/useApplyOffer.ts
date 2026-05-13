@@ -163,21 +163,35 @@ export function useApplyOffer() {
 
         setSubmitting(true);
         try {
+            const applicationPayload = {
+                user_id: user.id,
+                user_loan_id: params.loanId,
+                bank_product_id: params.productId,
+                status: 'submitted',
+                monthly_savings: dynamicMonthlySavings,
+                total_savings: dynamicTotalSavings,
+                new_rate: parseFloat(params.newRate || '0'),
+                new_emi: dynamicEmi,
+                selected_tenure_months: selectedTenure,
+            };
+
             const { error } = await supabase
                 .from('refinance_applications')
-                .insert({
-                    user_id: user.id,
-                    user_loan_id: params.loanId,
-                    bank_product_id: params.productId,
-                    status: 'submitted',
-                    monthly_savings: dynamicMonthlySavings,
-                    total_savings: dynamicTotalSavings,
-                    new_rate: parseFloat(params.newRate || '0'),
-                    new_emi: dynamicEmi,
-                    selected_tenure_months: selectedTenure,
-                });
+                .insert(applicationPayload);
 
-            if (error) throw error;
+            if (error) {
+                const message = `${error.message || ''} ${error.details || ''}`;
+                if (message.includes('selected_tenure_months')) {
+                    const fallbackPayload: Record<string, unknown> = { ...applicationPayload };
+                    delete fallbackPayload.selected_tenure_months;
+                    const { error: fallbackError } = await supabase
+                        .from('refinance_applications')
+                        .insert(fallbackPayload);
+                    if (fallbackError) throw fallbackError;
+                } else {
+                    throw error;
+                }
+            }
 
             const profileUpdates: any = {};
             if (formData.phone) profileUpdates.phone = formData.phone;
@@ -185,20 +199,26 @@ export function useApplyOffer() {
             if (formData.employer) profileUpdates.employer = formData.employer;
 
             if (Object.keys(profileUpdates).length > 0) {
-                await supabase.from('profiles').upsert({
+                const { error: profileError } = await supabase.from('profiles').upsert({
                     id: user.id,
                     ...profileUpdates,
                     updated_at: new Date().toISOString(),
                 });
+                if (profileError) {
+                    console.warn('Application submitted, but profile update failed:', profileError);
+                }
             }
 
-            await supabase.from('notifications').insert({
+            const { error: notificationError } = await supabase.from('notifications').insert({
                 user_id: user.id,
                 title: 'Application Submitted! 🎉',
                 body: `Your refinance application for ${params.bankName} has been submitted. We'll review it shortly.`,
                 type: 'offer',
                 data: { screen: 'my-applications' },
             });
+            if (notificationError) {
+                console.warn('Application submitted, but notification insert failed:', notificationError);
+            }
 
             setSubmitted(true);
             trackApplicationSubmitted(params.productId as string, Number(params.monthlySavings) || 0);

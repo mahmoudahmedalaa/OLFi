@@ -16,7 +16,9 @@ export function ProfileScreen({ navigate, onTab, t, lang, setLang, user, onSignO
     try {
       localStorage.removeItem('olfi_screen');
       sessionStorage.removeItem('olfi_phone');
+      document.cookie = 'olfi_token=; Max-Age=0; path=/; SameSite=Lax';
     } catch {}
+    window.history.replaceState(null, '', '/');
     navigate('welcome');
   };
 
