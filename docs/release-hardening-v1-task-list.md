@@ -48,3 +48,7 @@ Do not merge to `main` until the preview, mobile archive, and user sign-off are 
   - Landing page hero opened at `http://localhost:3100`, idled for 22 seconds, and retained the same animated design without removing motion.
   - Prototype profile sign-out opened at `http://localhost:3101`, clicked Sign Out, returned to welcome, `olfi_screen` became `"welcome"`, and `olfi_token` was absent.
   - Admin `/applications` opened locally at `http://localhost:3102/applications` and rendered the upgraded queue/detail layout. Local data load showed `Invalid API key` because local admin env differs from Vercel; Vercel preview should use configured environment variables.
+- Vercel branch previews for commit `ddd152d`:
+  - Admin: `https://olfi-admin-82x40jar9-mahmoud-alaaeldins-projects.vercel.app` is `READY`.
+  - Web: `https://olfi-bdzlt62wh-mahmoud-alaaeldins-projects.vercel.app` is `READY`.
+  - Prototype: `https://olfi-prototype-m7eorpp7q-mahmoud-alaaeldins-projects.vercel.app` is `READY`.
