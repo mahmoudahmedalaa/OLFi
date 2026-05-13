@@ -105,6 +105,12 @@ export default function LoansScreen() {
     const activeLoans = loans.filter((l) => l.status === 'active');
     const totalDebt = activeLoans.reduce((sum, l) => sum + l.remaining_amount, 0);
     const totalEmi = activeLoans.reduce((sum, l) => sum + l.monthly_emi, 0);
+    const originalDebt = activeLoans.reduce((sum, l) => sum + l.original_amount, 0);
+    const repaymentProgress = originalDebt > 0 ? Math.round((1 - totalDebt / originalDebt) * 100) : 0;
+    const highestRateLoan = activeLoans.reduce<UserLoan | null>(
+        (highest, loan) => (!highest || loan.interest_rate > highest.interest_rate ? loan : highest),
+        null
+    );
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -130,61 +136,45 @@ export default function LoansScreen() {
             {!loading && activeLoans.length > 0 && (
                 <View
                     style={{
-                        flexDirection: 'row',
-                        gap: Spacing['2xl'],
+                        gap: Spacing.md,
                         marginTop: Spacing.lg,
                         marginBottom: Spacing.lg,
+                        marginHorizontal: Spacing.xl,
                         paddingVertical: Spacing.md,
-                        paddingHorizontal: Spacing.xl,
+                        paddingHorizontal: Spacing.lg,
                         backgroundColor: theme.colors.card,
                         borderRadius: BorderRadius.md,
                         borderWidth: 1,
                         borderColor: theme.colors.border,
                     }}
                 >
-                    <View style={{ flex: 1 }}>
-                        <Text
-                            style={{
-                                ...Typography.overline,
-                                color: theme.colors.textTertiary,
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            {t('debts.totalDebt')}
-                        </Text>
-                        <Text
-                            style={{
-                                ...Typography.h3,
-                                fontWeight: '700',
-                                color: theme.colors.textPrimary,
-                                marginTop: Spacing.xs,
-                            }}
-                        >
-                            AED {totalDebt.toLocaleString()}
-                        </Text>
+                    <View style={{ flexDirection: 'row', gap: Spacing.md }}>
+                        <SummaryMetric label="Outstanding" value={`AED ${totalDebt.toLocaleString()}`} />
+                        <View style={{ width: 1, backgroundColor: theme.colors.border }} />
+                        <SummaryMetric label="Monthly" value={`AED ${totalEmi.toLocaleString()}`} />
+                        <View style={{ width: 1, backgroundColor: theme.colors.border }} />
+                        <SummaryMetric label="Repaid" value={`${repaymentProgress}%`} />
                     </View>
-                    <View style={{ width: 1, backgroundColor: theme.colors.border }} />
-                    <View style={{ flex: 1 }}>
-                        <Text
+                    {highestRateLoan && (
+                        <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => router.push('/(tabs)/offers')}
                             style={{
-                                ...Typography.overline,
-                                color: theme.colors.textTertiary,
-                                textTransform: 'uppercase',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 8,
+                                backgroundColor: `${Colors.brand.emerald}10`,
+                                borderRadius: BorderRadius.sm,
+                                padding: 10,
                             }}
                         >
-                            {t('debts.monthlyPayments')}
-                        </Text>
-                        <Text
-                            style={{
-                                ...Typography.h3,
-                                fontWeight: '700',
-                                color: theme.colors.textPrimary,
-                                marginTop: Spacing.xs,
-                            }}
-                        >
-                            AED {totalEmi.toLocaleString()}
-                        </Text>
-                    </View>
+                            <Ionicons name="trending-down" size={16} color={Colors.brand.emerald} />
+                            <Text style={{ flex: 1, fontSize: 12, lineHeight: 17, color: theme.colors.textSecondary }}>
+                                Highest rate: <Text style={{ fontWeight: '700', color: theme.colors.textPrimary }}>{highestRateLoan.bank_name || 'Loan'}</Text> at {highestRateLoan.interest_rate}%. Compare offers to lower it.
+                            </Text>
+                            <Ionicons name="chevron-forward" size={16} color={Colors.brand.emerald} />
+                        </TouchableOpacity>
+                    )}
                 </View>
             )}
 
@@ -529,6 +519,37 @@ export default function LoansScreen() {
 
 function formatType(type: string) {
     return type.replace(/_/g, ' ').replace(/^\w/, (c) => c.toUpperCase());
+}
+
+function SummaryMetric({ label, value }: { label: string; value: string }) {
+    const { theme } = useTheme();
+    return (
+        <View style={{ flex: 1 }}>
+            <Text
+                style={{
+                    ...Typography.overline,
+                    color: theme.colors.textTertiary,
+                    textTransform: 'uppercase',
+                }}
+                numberOfLines={1}
+            >
+                {label}
+            </Text>
+            <Text
+                style={{
+                    fontSize: 15,
+                    fontWeight: '800',
+                    color: theme.colors.textPrimary,
+                    marginTop: Spacing.xs,
+                }}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.78}
+            >
+                {value}
+            </Text>
+        </View>
+    );
 }
 
 function StatusBadge({ status }: { status: string }) {

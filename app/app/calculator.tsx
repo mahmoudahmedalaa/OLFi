@@ -49,8 +49,8 @@ function stripFormatting(val: string): string {
 
 const TAB_GUIDANCE: Record<CalcMode, { title: string; description: string }> = {
     emi: {
-        title: '💰 EMI Calculator',
-        description: 'Enter your current loan details to see your exact monthly payment, total cost, and how much goes to interest. Use this to understand what you are paying right now.',
+        title: 'EMI Calculator',
+        description: 'EMI means Equated Monthly Instalment: the fixed amount you pay each month. Enter your financing details to see the monthly payment, total cost, and interest share.',
     },
     affordability: {
         title: '🏦 Affordability Check',

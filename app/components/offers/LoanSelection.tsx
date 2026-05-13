@@ -25,20 +25,58 @@ export default function LoanSelection({
 
     return (
         <View style={{ marginBottom: 24 }}>
-            <View style={{ paddingHorizontal: 20, marginBottom: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View>
-                    <Text style={{ fontSize: 15, fontWeight: '600', color: theme.colors.textPrimary }}>
-                        Select financing to consolidate
-                    </Text>
-                    <Text style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 2 }}>
-                        Choose 2 or more financing options to see consolidation offers
+            <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
+                <View
+                    style={{
+                        backgroundColor: theme.colors.card,
+                        borderRadius: BorderRadius.lg,
+                        borderWidth: 1,
+                        borderColor: theme.colors.border,
+                        padding: 14,
+                    }}
+                >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <View
+                            style={{
+                                width: 34,
+                                height: 34,
+                                borderRadius: 17,
+                                backgroundColor: `${Colors.brand.emerald}15`,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Ionicons name="git-merge-outline" size={17} color={Colors.brand.emerald} />
+                        </View>
+                        <View style={{ flex: 1, minWidth: 0 }}>
+                            <Text style={{ fontSize: 15, fontWeight: '700', color: theme.colors.textPrimary }}>
+                                Consolidation builder
+                            </Text>
+                            <Text style={{ fontSize: 12, color: theme.colors.textSecondary, marginTop: 2, lineHeight: 17 }}>
+                                Select at least 2 financing items to compare one combined offer.
+                            </Text>
+                        </View>
+                        <TouchableOpacity
+                            onPress={selectAllLoans}
+                            activeOpacity={0.8}
+                            style={{
+                                paddingHorizontal: 10,
+                                paddingVertical: 7,
+                                borderRadius: BorderRadius.sm,
+                                backgroundColor: selectedLoanIds.size === userLoans.length ? `${Colors.brand.emerald}20` : theme.colors.cardElevated,
+                                borderWidth: 1,
+                                borderColor: selectedLoanIds.size === userLoans.length ? Colors.brand.emerald : theme.colors.border,
+                            }}
+                        >
+                            <Text style={{ fontSize: 12, fontWeight: '800', color: Colors.brand.emerald }}>
+                                {selectedLoanIds.size === userLoans.length ? 'Clear' : 'Select all'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={{ fontSize: 11, color: theme.colors.textTertiary, marginTop: 10 }}>
+                        {selectedLoanIds.size} of {userLoans.length} selected
                     </Text>
                 </View>
-                <TouchableOpacity onPress={selectAllLoans}>
-                    <Text style={{ fontSize: 13, fontWeight: '600', color: Colors.brand.emerald }}>
-                        {selectedLoanIds.size === userLoans.length ? 'Deselect All' : 'Select All'}
-                    </Text>
-                </TouchableOpacity>
             </View>
 
             <ScrollView
