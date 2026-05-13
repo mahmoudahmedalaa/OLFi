@@ -208,17 +208,55 @@ export async function deleteNotification(id: string) {
 
 // ── Applications ────────────────────────────────────
 export async function fetchApplications() {
-    const { data, error } = await supabase
+    const { data: applications, error } = await supabase
         .from('refinance_applications')
-        .select(`
-            *,
-            profile:profiles!refinance_applications_user_id_fkey (first_name, last_name, full_name),
-            user_loan:user_loans!refinance_applications_user_loan_id_fkey (bank_name, loan_type, remaining_amount, interest_rate),
-            bank_product:bank_products!refinance_applications_bank_product_id_fkey (name, bank:banks!bank_products_bank_id_fkey (name))
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
     if (error) throw error;
-    return data || [];
+
+    const rows = applications || [];
+    if (rows.length === 0) return [];
+
+    const userIds = [...new Set(rows.map((app) => app.user_id).filter(Boolean))];
+    const loanIds = [...new Set(rows.map((app) => app.user_loan_id).filter(Boolean))];
+    const productIds = [...new Set(rows.map((app) => app.bank_product_id).filter(Boolean))];
+
+    const [profiles, loans, products] = await Promise.all([
+        userIds.length
+            ? supabase.from('profiles').select('id, first_name, last_name, full_name').in('id', userIds)
+            : Promise.resolve({ data: [], error: null }),
+        loanIds.length
+            ? supabase.from('user_loans').select('id, bank_name, loan_type, remaining_amount, interest_rate').in('id', loanIds)
+            : Promise.resolve({ data: [], error: null }),
+        productIds.length
+            ? supabase.from('bank_products').select('id, name, bank_id').in('id', productIds)
+            : Promise.resolve({ data: [], error: null }),
+    ]);
+
+    if (profiles.error) throw profiles.error;
+    if (loans.error) throw loans.error;
+    if (products.error) throw products.error;
+
+    const bankIds = [...new Set((products.data || []).map((product) => product.bank_id).filter(Boolean))];
+    const banks = bankIds.length
+        ? await supabase.from('banks').select('id, name').in('id', bankIds)
+        : { data: [], error: null };
+    if (banks.error) throw banks.error;
+
+    const profileById = new Map((profiles.data || []).map((profile) => [profile.id, profile]));
+    const loanById = new Map((loans.data || []).map((loan) => [loan.id, loan]));
+    const bankById = new Map((banks.data || []).map((bank) => [bank.id, bank]));
+    const productById = new Map((products.data || []).map((product) => [
+        product.id,
+        { ...product, bank: product.bank_id ? bankById.get(product.bank_id) || null : null },
+    ]));
+
+    return rows.map((app) => ({
+        ...app,
+        profile: profileById.get(app.user_id) || null,
+        user_loan: loanById.get(app.user_loan_id) || null,
+        bank_product: productById.get(app.bank_product_id) || null,
+    }));
 }
 
 export async function fetchApplicationsResult(): Promise<ActionResult<Awaited<ReturnType<typeof fetchApplications>>>> {
