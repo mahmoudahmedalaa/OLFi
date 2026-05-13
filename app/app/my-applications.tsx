@@ -29,6 +29,7 @@ interface Application {
     rejection_reason: string | null;
     created_at: string;
     updated_at: string;
+    documents: ApplicationDocument[];
     user_loan: {
         id: string;
         bank_name: string | null;
@@ -46,9 +47,18 @@ interface Application {
     } | null;
 }
 
+interface ApplicationDocument {
+    id: string;
+    application_id: string | null;
+    document_type: string;
+    file_name: string | null;
+    status: string;
+    created_at: string;
+}
+
 type IoniconName = ComponentProps<typeof Ionicons>['name'];
 type RelatedOne<T> = T | T[] | null;
-type ApplicationRow = Omit<Application, 'user_loan' | 'bank_product'> & {
+type ApplicationRow = Omit<Application, 'user_loan' | 'bank_product' | 'documents'> & {
     user_loan: RelatedOne<NonNullable<Application['user_loan']>>;
     bank_product: RelatedOne<NonNullable<Application['bank_product']>>;
 };
@@ -58,9 +68,10 @@ function unwrapRelated<T>(value: RelatedOne<T>): T | null {
     return value;
 }
 
-function normalizeApplication(row: ApplicationRow): Application {
+function normalizeApplication(row: ApplicationRow, documents: ApplicationDocument[] = []): Application {
     return {
         ...row,
+        documents,
         user_loan: unwrapRelated(row.user_loan),
         bank_product: unwrapRelated(row.bank_product),
     };
@@ -99,6 +110,44 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: Ionico
     },
 };
 
+const TIMELINE_STEPS = [
+    { key: 'submitted', label: 'Submitted', description: 'Application received by OLFi.' },
+    { key: 'under_review', label: 'Review', description: 'Bank eligibility checks are in progress.' },
+    { key: 'documents_required', label: 'Documents', description: 'Supporting documents may be requested.' },
+    { key: 'approved', label: 'Decision', description: 'Final bank decision is posted here.' },
+] as const;
+
+const STATUS_PROGRESS: Record<string, number> = {
+    submitted: 0,
+    under_review: 1,
+    documents_required: 2,
+    approved: 3,
+    rejected: 3,
+};
+
+function getBankMessage(status: string, bankName: string, adminNotes: string | null, rejectionReason: string | null) {
+    if (status === 'documents_required') {
+        return adminNotes || `${bankName} needs supporting documents before continuing the review. Upload them here and OLFi will keep the application moving.`;
+    }
+    if (status === 'under_review') {
+        return adminNotes || `${bankName} is reviewing your refinance profile. We will update this tracker as soon as the bank responds.`;
+    }
+    if (status === 'approved') {
+        return adminNotes || `${bankName} has approved this offer. OLFi will help coordinate the next steps.`;
+    }
+    if (status === 'rejected') {
+        return rejectionReason || `${bankName} could not proceed with this application. You can compare other offers from the offers tab.`;
+    }
+    return adminNotes || `OLFi has submitted your details to ${bankName}. The next update will appear here.`;
+}
+
+function formatDocumentType(type: string) {
+    return type
+        .split('_')
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+}
+
 export default function MyApplicationsScreen() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [loading, setLoading] = useState(true);
@@ -133,7 +182,29 @@ export default function MyApplicationsScreen() {
 
             if (error) throw error;
             const rows = (data || []) as unknown as ApplicationRow[];
-            setApplications(rows.map(normalizeApplication));
+            const applicationIds = rows.map((row) => row.id);
+            let documentsByApplication = new Map<string, ApplicationDocument[]>();
+
+            if (applicationIds.length > 0) {
+                const { data: documentRows, error: documentsError } = await supabase
+                    .from('user_documents')
+                    .select('id, application_id, document_type, file_name, status, created_at')
+                    .eq('user_id', user.id)
+                    .in('application_id', applicationIds)
+                    .order('created_at', { ascending: false });
+
+                if (!documentsError && documentRows) {
+                    documentsByApplication = documentRows.reduce((map, document) => {
+                        if (!document.application_id) return map;
+                        const current = map.get(document.application_id) || [];
+                        current.push(document as ApplicationDocument);
+                        map.set(document.application_id, current);
+                        return map;
+                    }, new Map<string, ApplicationDocument[]>());
+                }
+            }
+
+            setApplications(rows.map((row) => normalizeApplication(row, documentsByApplication.get(row.id) || [])));
         } catch {
             setApplications([]);
         } finally {
@@ -247,6 +318,10 @@ export default function MyApplicationsScreen() {
                         const bankName = app.bank_product?.bank?.name || 'Bank';
                         const loanBank = app.user_loan?.bank_name || 'Your';
                         const loanType = app.user_loan?.loan_type || 'loan';
+                        const progressIndex = STATUS_PROGRESS[app.status] ?? 0;
+                        const bankMessage = getBankMessage(app.status, bankName, app.admin_notes, app.rejection_reason);
+                        const needsDocuments = app.status === 'documents_required';
+                        const latestDocument = app.documents[0];
 
                         return (
                             <View
@@ -345,46 +420,119 @@ export default function MyApplicationsScreen() {
                                         </View>
                                     </View>
 
-                                    {/* Admin notes / rejection */}
-                                    {app.status === 'rejected' && app.rejection_reason && (
-                                        <View
-                                            style={{
-                                                backgroundColor: '#EF444410',
-                                                borderRadius: BorderRadius.sm,
-                                                padding: 12,
-                                                marginTop: 12,
-                                                flexDirection: 'row',
-                                                gap: 8,
-                                            }}
-                                        >
-                                            <Ionicons name="information-circle" size={16} color="#EF4444" style={{ marginTop: 1 }} />
-                                            <Text style={{ fontSize: 13, color: '#EF4444', flex: 1 }}>
-                                                {app.rejection_reason}
-                                            </Text>
-                                        </View>
-                                    )}
+                                    {/* Bank message */}
+                                    <View
+                                        style={{
+                                            backgroundColor: app.status === 'rejected' ? '#EF444410' : needsDocuments ? '#F9731610' : `${Colors.brand.emerald}08`,
+                                            borderRadius: BorderRadius.md,
+                                            padding: 12,
+                                            marginTop: 12,
+                                            flexDirection: 'row',
+                                            gap: 8,
+                                        }}
+                                    >
+                                        <Ionicons
+                                            name={app.status === 'rejected' ? 'information-circle' : needsDocuments ? 'document-text' : 'chatbubble-ellipses'}
+                                            size={17}
+                                            color={statusConfig.color}
+                                            style={{ marginTop: 1 }}
+                                        />
+                                        <Text style={{ fontSize: 13, lineHeight: 19, color: theme.colors.textSecondary, flex: 1 }}>
+                                            {bankMessage}
+                                        </Text>
+                                    </View>
 
-                                    {app.status === 'documents_required' && app.admin_notes && (
+                                    {/* Document request */}
+                                    <View
+                                        style={{
+                                            marginTop: 12,
+                                            borderRadius: BorderRadius.md,
+                                            borderWidth: 1,
+                                            borderColor: needsDocuments ? '#F9731640' : theme.colors.border,
+                                            padding: 12,
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            gap: 12,
+                                        }}
+                                    >
                                         <View
                                             style={{
-                                                backgroundColor: '#F9731610',
-                                                borderRadius: BorderRadius.sm,
-                                                padding: 12,
-                                                marginTop: 12,
-                                                flexDirection: 'row',
-                                                gap: 8,
+                                                width: 38,
+                                                height: 38,
+                                                borderRadius: 19,
+                                                backgroundColor: needsDocuments ? '#F9731620' : `${Colors.brand.emerald}15`,
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
                                             }}
                                         >
-                                            <Ionicons name="document-text" size={16} color="#F97316" style={{ marginTop: 1 }} />
-                                            <Text style={{ fontSize: 13, color: '#F97316', flex: 1 }}>
-                                                {app.admin_notes}
+                                            <Ionicons name="folder-open" size={18} color={needsDocuments ? '#F97316' : Colors.brand.emerald} />
+                                        </View>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ fontSize: 13, fontWeight: '700', color: theme.colors.textPrimary }}>
+                                                {app.documents.length > 0 ? `${app.documents.length} document${app.documents.length === 1 ? '' : 's'} uploaded` : 'Documents'}
+                                            </Text>
+                                            <Text style={{ fontSize: 12, color: theme.colors.textTertiary, marginTop: 2 }} numberOfLines={1}>
+                                                {latestDocument ? `${formatDocumentType(latestDocument.document_type)} • ${latestDocument.status}` : needsDocuments ? 'Upload requested files for this bank.' : 'No files requested yet.'}
                                             </Text>
                                         </View>
-                                    )}
+                                        <TouchableOpacity
+                                            onPress={() => router.push({
+                                                pathname: '/application-documents' as any,
+                                                params: { applicationId: app.id, bankName },
+                                            })}
+                                            style={{
+                                                paddingHorizontal: 12,
+                                                paddingVertical: 8,
+                                                borderRadius: BorderRadius.sm,
+                                                backgroundColor: needsDocuments ? '#F97316' : `${Colors.brand.emerald}20`,
+                                            }}
+                                        >
+                                            <Text style={{ fontSize: 12, fontWeight: '700', color: needsDocuments ? '#fff' : Colors.brand.emerald }}>
+                                                {app.documents.length > 0 ? 'View' : 'Upload'}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
 
                                     {/* Timeline */}
                                     <View style={{ marginTop: 16 }}>
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                        {TIMELINE_STEPS.map((step, index) => {
+                                            const isRejectedDecision = app.status === 'rejected' && step.key === 'approved';
+                                            const isComplete = index < progressIndex || app.status === 'approved';
+                                            const isActive = index === progressIndex && app.status !== 'approved';
+                                            const dotColor = isRejectedDecision ? Colors.error : isComplete ? Colors.brand.emerald : isActive ? statusConfig.color : theme.colors.border;
+                                            return (
+                                                <View key={step.key} style={{ flexDirection: 'row', gap: 10 }}>
+                                                    <View style={{ alignItems: 'center' }}>
+                                                        <View
+                                                            style={{
+                                                                width: 18,
+                                                                height: 18,
+                                                                borderRadius: 9,
+                                                                backgroundColor: dotColor,
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                            }}
+                                                        >
+                                                            {(isComplete || isRejectedDecision) && (
+                                                                <Ionicons name={isRejectedDecision ? 'close' : 'checkmark'} size={12} color="#fff" />
+                                                            )}
+                                                        </View>
+                                                        {index < TIMELINE_STEPS.length - 1 && (
+                                                            <View style={{ width: 1, height: 24, backgroundColor: index < progressIndex ? `${Colors.brand.emerald}80` : theme.colors.border }} />
+                                                        )}
+                                                    </View>
+                                                    <View style={{ flex: 1, paddingBottom: index < TIMELINE_STEPS.length - 1 ? 10 : 0 }}>
+                                                        <Text style={{ fontSize: 12, fontWeight: '700', color: isActive || isComplete || isRejectedDecision ? theme.colors.textPrimary : theme.colors.textTertiary }}>
+                                                            {isRejectedDecision ? 'Decision posted' : step.label}
+                                                        </Text>
+                                                        <Text style={{ fontSize: 11, color: theme.colors.textTertiary, marginTop: 1 }}>
+                                                            {isRejectedDecision ? 'Bank could not proceed with this application.' : step.description}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                            );
+                                        })}
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
                                             <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: statusConfig.color }} />
                                             <Text style={{ fontSize: 11, color: theme.colors.textTertiary }}>
                                                 Last updated {formatDate(app.updated_at)} at {formatTime(app.updated_at)}

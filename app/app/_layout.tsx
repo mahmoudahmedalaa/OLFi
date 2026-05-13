@@ -258,6 +258,10 @@ function RootLayoutInner() {
               options={{ presentation: 'modal', title: 'My Applications', headerShown: false }}
             />
             <Stack.Screen
+              name="application-documents"
+              options={{ presentation: 'modal', title: 'Documents', headerShown: false }}
+            />
+            <Stack.Screen
               name="notifications"
               options={{ presentation: 'modal', title: 'Notifications' }}
             />
