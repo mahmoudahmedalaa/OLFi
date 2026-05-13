@@ -67,7 +67,18 @@ export function AppShell() {
     fetch('/api/auth/me', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lang: l }) }).catch(() => {});
   };
 
-  const props = { navigate, onTab, t, lang, setLang: handleLang, user };
+  const handleSignOut = async () => {
+    await fetch('/api/auth/me', { method: 'DELETE', credentials: 'same-origin' });
+    setUser(null);
+    setTab('home');
+    try {
+      localStorage.removeItem('olfi_screen');
+      sessionStorage.removeItem('olfi_phone');
+    } catch {}
+    setScreen('welcome');
+  };
+
+  const props = { navigate, onTab, t, lang, setLang: handleLang, user, onSignOut: handleSignOut };
 
   const screens: Record<Screen, React.ReactNode> = {
     welcome:      <WelcomeScreen {...props} />,

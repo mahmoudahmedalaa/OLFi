@@ -6,9 +6,17 @@ import { BottomTabs } from '@/components/ui/bottom-tabs';
 import { LangPicker } from '@/components/ui/lang-picker';
 import { Btn } from '@/components/ui/btn';
 
-export function ProfileScreen({ navigate, onTab, t, lang, setLang, user }: NavProps) {
+export function ProfileScreen({ navigate, onTab, t, lang, setLang, user, onSignOut }: NavProps) {
   const signOut = async () => {
-    await fetch('/api/auth/me', { method: 'DELETE' });
+    if (onSignOut) {
+      await onSignOut();
+      return;
+    }
+    await fetch('/api/auth/me', { method: 'DELETE', credentials: 'same-origin' });
+    try {
+      localStorage.removeItem('olfi_screen');
+      sessionStorage.removeItem('olfi_phone');
+    } catch {}
     navigate('welcome');
   };
 

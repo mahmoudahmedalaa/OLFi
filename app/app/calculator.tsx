@@ -665,7 +665,7 @@ export default function CalculatorScreen() {
                     description="DBR is the percentage of your monthly salary used to pay all debts combined, including loans, credit cards, and car finance."
                     insightTitle="UAE Central Bank Rule"
                     insightText="By regulation, your total monthly debt payments cannot exceed 50% of your gross salary. Banks will reject your application if your DBR is already at or above this limit, even if you have a good credit score."
-                    footerText="Tip: Consolidating multiple loans into one lower-rate facility reduces your DBR and improves approval odds."
+                    footerText="Tip: Consolidating multiple debts into one lower-rate loan reduces your DBR and improves approval odds."
                 />
 
                 <InfoBottomSheet

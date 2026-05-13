@@ -34,6 +34,15 @@ export async function PATCH(req: Request) {
 
 export async function DELETE() {
   const res = NextResponse.json({ success: true });
-  res.cookies.set({ name: 'olfi_token', value: '', maxAge: 0, path: '/' });
+  res.cookies.set({
+    name: 'olfi_token',
+    value: '',
+    maxAge: 0,
+    expires: new Date(0),
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
   return res;
 }

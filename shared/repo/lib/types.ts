@@ -94,4 +94,5 @@ export interface NavProps {
   setLang: (l: Lang) => void;
   t: Record<string, string>;
   user?: UserData | null;
+  onSignOut?: () => Promise<void>;
 }

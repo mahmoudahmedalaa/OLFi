@@ -4,7 +4,6 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Alert,
     ActivityIndicator,
     Animated,
 } from 'react-native';
@@ -68,7 +67,7 @@ export default function OfferDetailsScreen() {
             setProduct(productData);
             trackOfferViewed(productData.id, productData.bank?.name || '');
 
-            // Fetch user loans for comparison
+            // Fetch saved debts for comparison
             const { data: loanData, error: loanErr } = await supabase
                 .from('user_loans')
                 .select('*')
@@ -121,11 +120,13 @@ export default function OfferDetailsScreen() {
                 }
                 setRefinanceResults(results);
 
-                // Auto-select best result or passed loanId
-                if (params.loanId) {
+                // Auto-select the requested saved debt only when it is eligible; otherwise use the best eligible debt.
+                if (params.loanId && results.some((result) => result.productId === params.loanId)) {
                     setSelectedLoanId(params.loanId);
                 } else if (results.length > 0) {
                     setSelectedLoanId(results[0].productId);
+                } else {
+                    setSelectedLoanId(null);
                 }
             }
         } catch (e) {
@@ -146,6 +147,12 @@ export default function OfferDetailsScreen() {
 
     const selectedResult = refinanceResults.find((r) => r.productId === selectedLoanId);
     const selectedLoan = userLoans.find((l) => l.id === selectedLoanId);
+    const canApply = Boolean(selectedResult && selectedLoan && product && user);
+    const eligibilityMessage = userLoans.length === 0
+        ? 'Add a saved debt first so OLFi can compare it with this finance product.'
+        : refinanceResults.length === 0
+            ? 'This finance product cannot be matched to your saved debts right now.'
+            : 'Select one of your saved debts to continue.';
 
     const savingsTimeline = selectedResult
         ? generateSavingsTimeline(
@@ -156,11 +163,9 @@ export default function OfferDetailsScreen() {
         : [];
 
     const handleApply = () => {
-        if (!selectedResult || !selectedLoan || !product || !user) {
-            Alert.alert(
-                'Select a Facility',
-                'Please add and select a facility to compare savings before applying.'
-            );
+        const result = selectedResult;
+        const loan = selectedLoan;
+        if (!result || !loan || !product || !user) {
             return;
         }
 
@@ -170,16 +175,16 @@ export default function OfferDetailsScreen() {
                 productId: product.id,
                 productName: product.name,
                 bankName: product.bank?.name || '',
-                loanId: selectedLoan.id,
-                monthlySavings: String(selectedResult.monthlySavings),
-                totalSavings: String(selectedResult.netSavings),
-                newRate: String(selectedResult.newRate),
-                newEmi: String(selectedResult.newEmi),
-                loanRemainingAmount: String(selectedLoan.remaining_amount),
-                loanMonthlyEmi: String(selectedLoan.monthly_emi),
-                processingFee: String(selectedResult.processingFee),
+                loanId: loan.id,
+                monthlySavings: String(result.monthlySavings),
+                totalSavings: String(result.netSavings),
+                newRate: String(result.newRate),
+                newEmi: String(result.newEmi),
+                loanRemainingAmount: String(loan.remaining_amount),
+                loanMonthlyEmi: String(loan.monthly_emi),
+                processingFee: String(result.processingFee),
                 maxTenureMonths: String(product.max_tenure_months || 48),
-                defaultTenure: String(selectedResult.newTenureMonths),
+                defaultTenure: String(result.newTenureMonths),
             },
         });
     };
@@ -344,7 +349,7 @@ export default function OfferDetailsScreen() {
                             {userLoans.length > 1 && (
                                 <View style={{ paddingHorizontal: 20, marginBottom: 12 }}>
                                     <Text style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>
-                                        Compare Against
+                                        Compare Against Saved Debt
                                     </Text>
                                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
                                         {userLoans.filter(l => refinanceResults.some(r => r.productId === l.id)).map((loan) => {
@@ -368,7 +373,7 @@ export default function OfferDetailsScreen() {
                                                         fontWeight: '600',
                                                         color: isSelected ? '#fff' : theme.colors.textSecondary,
                                                     }}>
-                                                        {loan.bank_name || 'Facility'} • {formatAED(loan.remaining_amount)}
+                                                        {loan.bank_name || 'Saved debt'} • {formatAED(loan.remaining_amount)}
                                                     </Text>
                                                 </TouchableOpacity>
                                             );
@@ -427,7 +432,7 @@ export default function OfferDetailsScreen() {
                                                     label={
                                                         <TermTooltip
                                                             term="New Profit Rate"
-                                                            definition="The annual profit rate you would pay under the new Islamic finance facility, lower than your current rate."
+                                                            definition="The annual profit rate you would pay under the new Islamic finance product, lower than your current rate."
                                                             labelStyle={{ fontSize: 10, color: theme.colors.textTertiary }}
                                                         />
                                                     }
@@ -477,7 +482,7 @@ export default function OfferDetailsScreen() {
                                             label={
                                                 <TermTooltip
                                                     term="Profit Rate"
-                                                    definition="Annual profit rate on the Islamic finance facility, agreed upfront and fixed for the tenure."
+                                                    definition="Annual profit rate on the Islamic finance product, agreed upfront and fixed for the tenure."
                                                     labelStyle={{ fontSize: 13, color: theme.colors.textTertiary }}
                                                 />
                                             }
@@ -519,10 +524,10 @@ export default function OfferDetailsScreen() {
                             }}>
                                 <Ionicons name="calculator-outline" size={40} color={theme.colors.textTertiary} />
                                 <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textPrimary, marginTop: 12 }}>
-                                    Add a facility to see savings
+                                    Add a saved debt to see savings
                                 </Text>
                                 <Text style={{ fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 4 }}>
-                                    Track your current facility to see how much you could save by switching to this offer
+                                    Track your current debt to see how much you could save by switching to this offer.
                                 </Text>
                                 <TouchableOpacity
                                     onPress={() => router.push('/add-loan')}
@@ -539,7 +544,7 @@ export default function OfferDetailsScreen() {
                                         }}
                                     >
                                         <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>
-                                            Add Your Facility
+                                            Add Your Debt
                                         </Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
@@ -563,7 +568,7 @@ export default function OfferDetailsScreen() {
                                     No savings available
                                 </Text>
                                 <Text style={{ fontSize: 13, color: theme.colors.textSecondary, textAlign: 'center', marginTop: 4 }}>
-                                    Your current rates are already competitive! This offer doesn&apos;t provide meaningful savings for your loans.
+                                    This finance product does not match your saved debts or does not create meaningful savings right now.
                                 </Text>
                             </View>
                         </View>
@@ -590,9 +595,14 @@ export default function OfferDetailsScreen() {
                         borderTopColor: theme.colors.border,
                     }}
                 >
-                    <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting}>
+                    {!canApply && (
+                        <Text style={{ color: theme.colors.textSecondary, fontSize: 12, textAlign: 'center', marginBottom: 10, lineHeight: 17 }}>
+                            {eligibilityMessage}
+                        </Text>
+                    )}
+                    <TouchableOpacity onPress={handleApply} activeOpacity={0.8} disabled={submitting || !canApply}>
                         <LinearGradient
-                            colors={submitting ? ['#94A3B8', '#64748B'] : ['#011819', '#0A2525']}
+                            colors={submitting || !canApply ? ['#334155', '#1E293B'] : ['#011819', '#0A2525']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{
@@ -610,7 +620,7 @@ export default function OfferDetailsScreen() {
                                 <>
                                     <Ionicons name="checkmark-circle" size={20} color="#fff" />
                                     <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>
-                                        Apply for Finance
+                                        {canApply ? 'Apply for Finance' : 'Not Eligible Yet'}
                                     </Text>
                                 </>
                             )}

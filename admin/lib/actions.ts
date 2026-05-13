@@ -223,13 +223,13 @@ export async function fetchApplications() {
 
     const [profiles, loans, products] = await Promise.all([
         userIds.length
-            ? supabase.from('profiles').select('id, first_name, last_name, full_name').in('id', userIds)
+            ? supabase.from('profiles').select('id, first_name, last_name, full_name, phone, salary, employer, kyc_status').in('id', userIds)
             : Promise.resolve({ data: [], error: null }),
         loanIds.length
-            ? supabase.from('user_loans').select('id, bank_name, loan_type, remaining_amount, interest_rate').in('id', loanIds)
+            ? supabase.from('user_loans').select('id, bank_name, loan_type, original_amount, remaining_amount, interest_rate, monthly_emi, tenure_months, start_date, end_date, status').in('id', loanIds)
             : Promise.resolve({ data: [], error: null }),
         productIds.length
-            ? supabase.from('bank_products').select('id, name, bank_id').in('id', productIds)
+            ? supabase.from('bank_products').select('id, name, bank_id, product_type, interest_rate_min, interest_rate_max, min_amount, max_amount, min_tenure_months, max_tenure_months, processing_fee_pct, early_settlement_fee_pct, requires_salary_transfer, features, is_active').in('id', productIds)
             : Promise.resolve({ data: [], error: null }),
     ]);
 
@@ -239,7 +239,7 @@ export async function fetchApplications() {
 
     const bankIds = [...new Set((products.data || []).map((product) => product.bank_id).filter(Boolean))];
     const banks = bankIds.length
-        ? await supabase.from('banks').select('id, name').in('id', bankIds)
+        ? await supabase.from('banks').select('id, name, is_islamic, min_salary, website_url').in('id', bankIds)
         : { data: [], error: null };
     if (banks.error) throw banks.error;
 

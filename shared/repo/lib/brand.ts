@@ -44,7 +44,7 @@ export const TOOLTIPS: Record<string, { title: string; body: string }> = {
   },
   emi: {
     title: 'EMI (Equal Monthly Instalment)',
-    body: 'Your fixed monthly payment toward a loan or financing facility. It covers both the principal amount and the profit/interest. Refinancing typically aims to reduce your EMI by securing a lower profit rate or extending the tenure.',
+    body: 'Your fixed monthly payment toward a loan or finance product. It covers both the principal amount and the profit/interest. Refinancing typically aims to reduce your EMI by securing a lower profit rate or extending the tenure.',
   },
 };
 

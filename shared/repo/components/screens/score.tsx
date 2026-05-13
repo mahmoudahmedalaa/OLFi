@@ -28,7 +28,7 @@ const TIPS = [
 ];
 
 const CBUAE_FACTORS = [
-  { label:'Payment History',          score:85, detail:'On-time payments across all UAE credit facilities' },
+  { label:'Payment History',          score:85, detail:'On-time payments across all UAE loans and credit cards' },
   { label:'Credit Utilisation',       score:70, detail:'Current balance vs total credit limit across all cards' },
   { label:'Length of Credit History', score:78, detail:'Average age of all open credit accounts in UAE' },
   { label:'New Credit Enquiries',     score:82, detail:'Hard enquiries in the last 12 months' },

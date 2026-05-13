@@ -21,18 +21,18 @@ export function Hero() {
     const t = useTranslations('hero');
     const reduceMotion = useReducedMotion();
     return (
-        <section className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
+        <section className="relative isolate min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
             {/* Animated Ambient Orbs */}
-            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden [contain:paint]">
                 <motion.div
                     animate={reduceMotion ? { opacity: 0.18 } : { scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
                     transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-brand-teal blur-[120px]"
+                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-brand-teal blur-[120px] transform-gpu will-change-transform [backface-visibility:hidden]"
                 />
                 <motion.div
                     animate={reduceMotion ? { opacity: 0.08 } : { scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }}
                     transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                    className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-[#00ffd1] blur-[150px]"
+                    className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-[#00ffd1] blur-[150px] transform-gpu will-change-transform [backface-visibility:hidden]"
                 />
             </div>
 
@@ -85,7 +85,7 @@ export function Hero() {
                         <motion.div
                             animate={reduceMotion ? { y: 0 } : { y: [0, -8, 0] }}
                             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                            className="relative aspect-[9/19.5] w-full rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-2xl overflow-hidden"
+                            className="relative aspect-[9/19.5] w-full rounded-[48px] border-[8px] border-[#131313] bg-base-dark shadow-2xl overflow-hidden transform-gpu will-change-transform [backface-visibility:hidden]"
                         >
                             {/* Notch */}
                             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-[#131313] rounded-b-3xl z-20" />

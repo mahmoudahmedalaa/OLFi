@@ -59,6 +59,50 @@ function formatDocumentType(type: string) {
         .join(' ');
 }
 
+function formatType(type?: string | null) {
+    if (!type) return 'Not provided';
+    return type
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function formatPercent(value: unknown) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return 'Not provided';
+    return `${numeric.toFixed(2).replace(/\.00$/, '')}%`;
+}
+
+function getApplicationAge(app: Application) {
+    const created = new Date(app.created_at).getTime();
+    const days = Math.max(0, Math.floor((Date.now() - created) / 86400000));
+    if (days === 0) return 'Today';
+    if (days === 1) return '1 day';
+    return `${days} days`;
+}
+
+function getProductName(app: Application) {
+    return app.bank_product?.name || 'No product selected';
+}
+
+function getProductBank(app: Application) {
+    return app.bank_product?.bank?.name || 'No bank';
+}
+
+function getCurrentDebtName(app: Application) {
+    if (!app.user_loan) return 'No saved debt linked';
+    return `${app.user_loan.bank_name || 'Bank'} ${formatType(app.user_loan.loan_type)}`;
+}
+
+function getDocumentSummary(documents: AdminApplicationDocument[]) {
+    if (documents.length === 0) return 'No documents';
+    const pending = documents.filter((document) => document.status === 'pending').length;
+    const rejected = documents.filter((document) => document.status === 'rejected').length;
+    const verified = documents.filter((document) => document.status === 'verified').length;
+    if (rejected > 0) return `${rejected} rejected`;
+    if (pending > 0) return `${pending} pending`;
+    return `${verified}/${documents.length} verified`;
+}
+
 export default function ApplicationsPage() {
     const [applications, setApplications] = useState<Application[]>([]);
     const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
@@ -258,21 +302,19 @@ export default function ApplicationsPage() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.15fr)_minmax(420px,0.85fr)] gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1.2fr)_minmax(480px,0.8fr)] gap-6">
                 <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
                     <div className="px-5 py-4 border-b border-gray-800 flex items-center justify-between">
-                        <h2 className="font-semibold">Queue</h2>
+                        <div>
+                            <h2 className="font-semibold">Application Queue</h2>
+                            <p className="text-xs text-gray-500 mt-1">Applicant, current debt, target product, and action state in one scan.</p>
+                        </div>
                         <span className="text-xs text-gray-500">{filtered.length} shown</span>
                     </div>
                     <div className="divide-y divide-gray-800">
                         {filtered.map((app) => {
-                            const productInfo = app.bank_product
-                                ? `${app.bank_product.bank?.name || ''} ${app.bank_product.name}`.trim()
-                                : 'No product';
-                            const loanInfo = app.user_loan
-                                ? `${app.user_loan.bank_name || 'Bank'} ${app.user_loan.loan_type}`.replace(/_/g, ' ')
-                                : 'No loan';
                             const isSelected = selectedAppId === app.id;
+                            const documentState = app.status === 'documents_required' ? 'Docs needed' : 'No blocker';
 
                             return (
                                 <button
@@ -280,22 +322,29 @@ export default function ApplicationsPage() {
                                     onClick={() => setSelectedAppId(app.id)}
                                     className={`w-full text-left px-5 py-4 transition-colors ${isSelected ? 'bg-emerald-500/10' : 'hover:bg-gray-800/50'}`}
                                 >
-                                    <div className="flex items-start justify-between gap-4">
+                                    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(190px,0.7fr)_minmax(150px,0.55fr)] lg:items-center">
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <span className={`px-2 py-1 rounded-full border text-xs font-medium ${STATUS_COLORS[app.status] || 'bg-gray-800 text-gray-400 border-gray-700'}`}>
                                                     {STATUS_LABELS[app.status] || app.status}
                                                 </span>
                                                 <span className="text-xs text-gray-500">
-                                                    {new Date(app.updated_at || app.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                                                    {getApplicationAge(app)} old
                                                 </span>
                                             </div>
                                             <p className="font-semibold truncate">{getUserName(app)}</p>
-                                            <p className="text-sm text-gray-400 truncate">{loanInfo} to {productInfo}</p>
+                                            <p className="text-xs text-gray-500 font-mono mt-1">{app.id.slice(0, 8)}</p>
                                         </div>
-                                        <div className="text-right shrink-0">
+                                        <div className="min-w-0 text-sm">
+                                            <p className="text-gray-500 text-xs uppercase tracking-wide">Current debt</p>
+                                            <p className="text-gray-200 truncate mt-1">{getCurrentDebtName(app)}</p>
+                                            <p className="text-gray-500 text-xs uppercase tracking-wide mt-3">Target product</p>
+                                            <p className="text-gray-200 truncate mt-1">{getProductBank(app)} · {getProductName(app)}</p>
+                                        </div>
+                                        <div className="lg:text-right">
                                             <p className="text-emerald-300 font-semibold">{formatCurrency(app.monthly_savings)}/mo</p>
-                                            <p className="text-xs text-gray-500 mt-1">{app.new_rate}% new rate</p>
+                                            <p className="text-xs text-gray-500 mt-1">{formatPercent(app.new_rate)} new rate</p>
+                                            <p className="text-xs text-gray-500 mt-2">{documentState}</p>
                                         </div>
                                     </div>
                                 </button>
@@ -319,7 +368,7 @@ export default function ApplicationsPage() {
                                     <div>
                                         <p className="text-xs text-gray-500 uppercase tracking-wide">Selected Application</p>
                                         <h2 className="text-lg font-bold mt-1">{getUserName(selectedApp)}</h2>
-                                        <p className="text-sm text-gray-400 mt-1 font-mono">{selectedApp.id.slice(0, 8)}</p>
+                                        <p className="text-sm text-gray-400 mt-1 font-mono">{selectedApp.id.slice(0, 8)} · {getApplicationAge(selectedApp)} old</p>
                                     </div>
                                     <span className={`px-2 py-1 rounded-full border text-xs font-medium ${STATUS_COLORS[selectedApp.status] || 'bg-gray-800 text-gray-400 border-gray-700'}`}>
                                         {STATUS_LABELS[selectedApp.status] || selectedApp.status}
@@ -331,9 +380,61 @@ export default function ApplicationsPage() {
                                 <section className="grid grid-cols-2 gap-3">
                                     <InfoTile label="Monthly Savings" value={formatCurrency(selectedApp.monthly_savings)} tone="text-emerald-300" />
                                     <InfoTile label="Total Savings" value={formatCurrency(selectedApp.total_savings)} tone="text-emerald-300" />
-                                    <InfoTile label="New Rate" value={`${selectedApp.new_rate}%`} />
+                                    <InfoTile label="New Rate" value={formatPercent(selectedApp.new_rate)} />
                                     <InfoTile label="New EMI" value={formatCurrency(selectedApp.new_emi)} />
                                 </section>
+
+                                <section className="grid gap-3 md:grid-cols-2">
+                                    <DetailSection title="Applicant">
+                                        <DetailRow label="Name" value={getUserName(selectedApp)} />
+                                        <DetailRow label="Phone" value={selectedApp.profile?.phone || 'Not provided'} />
+                                        <DetailRow label="Employer" value={selectedApp.profile?.employer || 'Not provided'} />
+                                        <DetailRow label="Salary" value={selectedApp.profile?.salary ? formatCurrency(selectedApp.profile.salary) : 'Not provided'} />
+                                        <DetailRow label="KYC" value={formatType(selectedApp.profile?.kyc_status)} />
+                                    </DetailSection>
+
+                                    <DetailSection title="Current Debt">
+                                        <DetailRow label="Bank" value={selectedApp.user_loan?.bank_name || 'Not provided'} />
+                                        <DetailRow label="Type" value={formatType(selectedApp.user_loan?.loan_type)} />
+                                        <DetailRow label="Original Amount" value={selectedApp.user_loan?.original_amount ? formatCurrency(selectedApp.user_loan.original_amount) : 'Not provided'} />
+                                        <DetailRow label="Remaining" value={selectedApp.user_loan?.remaining_amount ? formatCurrency(selectedApp.user_loan.remaining_amount) : 'Not provided'} />
+                                        <DetailRow label="Current Rate" value={formatPercent(selectedApp.user_loan?.interest_rate)} />
+                                        <DetailRow label="Current EMI" value={selectedApp.user_loan?.monthly_emi ? formatCurrency(selectedApp.user_loan.monthly_emi) : 'Not provided'} />
+                                    </DetailSection>
+                                </section>
+
+                                <DetailSection title="Target Product">
+                                    <div className="grid gap-3 md:grid-cols-2">
+                                        <DetailRow label="Bank" value={getProductBank(selectedApp)} />
+                                        <DetailRow label="Product" value={getProductName(selectedApp)} />
+                                        <DetailRow label="Type" value={formatType(selectedApp.bank_product?.product_type)} />
+                                        <DetailRow label="Rate Range" value={`${formatPercent(selectedApp.bank_product?.interest_rate_min)} - ${formatPercent(selectedApp.bank_product?.interest_rate_max)}`} />
+                                        <DetailRow label="Amount Range" value={`${selectedApp.bank_product?.min_amount ? formatCurrency(selectedApp.bank_product.min_amount) : 'Not provided'} - ${selectedApp.bank_product?.max_amount ? formatCurrency(selectedApp.bank_product.max_amount) : 'Not provided'}`} />
+                                        <DetailRow label="Tenure" value={`${selectedApp.bank_product?.min_tenure_months || 'Not provided'} - ${selectedApp.bank_product?.max_tenure_months || 'Not provided'} months`} />
+                                        <DetailRow label="Processing Fee" value={formatPercent(selectedApp.bank_product?.processing_fee_pct)} />
+                                        <DetailRow label="Early Settlement" value={formatPercent(selectedApp.bank_product?.early_settlement_fee_pct)} />
+                                        <DetailRow label="Min Salary" value={selectedApp.bank_product?.bank?.min_salary ? formatCurrency(selectedApp.bank_product.bank.min_salary) : 'Not provided'} />
+                                        <DetailRow label="Islamic" value={selectedApp.bank_product?.bank?.is_islamic ? 'Yes' : 'No'} />
+                                    </div>
+                                    {Array.isArray(selectedApp.bank_product?.features) && selectedApp.bank_product.features.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 pt-3">
+                                            {selectedApp.bank_product.features.map((feature: string) => (
+                                                <span key={feature} className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200">
+                                                    {feature}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </DetailSection>
+
+                                <DetailSection title="Financial Outcome">
+                                    <div className="grid gap-3 md:grid-cols-4">
+                                        <InfoTile label="Monthly Savings" value={formatCurrency(selectedApp.monthly_savings)} tone="text-emerald-300" />
+                                        <InfoTile label="Total Savings" value={formatCurrency(selectedApp.total_savings)} tone="text-emerald-300" />
+                                        <InfoTile label="New Rate" value={formatPercent(selectedApp.new_rate)} />
+                                        <InfoTile label="New EMI" value={formatCurrency(selectedApp.new_emi)} />
+                                    </div>
+                                </DetailSection>
 
                                 <section className="bg-gray-950/60 border border-gray-800 rounded-xl p-4">
                                     <h3 className="text-sm font-semibold mb-3">Workflow Actions</h3>
@@ -347,7 +448,10 @@ export default function ApplicationsPage() {
 
                                 <section>
                                     <div className="flex items-center justify-between mb-3">
-                                        <h3 className="text-sm font-semibold">Documents</h3>
+                                        <div>
+                                            <h3 className="text-sm font-semibold">Documents</h3>
+                                            <p className="text-xs text-gray-500 mt-1">{getDocumentSummary(documents)}</p>
+                                        </div>
                                         {detailsLoading && <span className="text-xs text-gray-500">Loading...</span>}
                                     </div>
                                     <div className="space-y-2">
@@ -462,6 +566,24 @@ function InfoTile({ label, value, tone = 'text-white' }: { label: string; value:
         <div className="bg-gray-950/60 border border-gray-800 rounded-xl p-3">
             <p className="text-xs text-gray-500 mb-1">{label}</p>
             <p className={`font-semibold ${tone}`}>{value}</p>
+        </div>
+    );
+}
+
+function DetailSection({ title, children }: { title: string; children: ReactNode }) {
+    return (
+        <section className="bg-gray-950/60 border border-gray-800 rounded-xl p-4">
+            <h3 className="text-sm font-semibold mb-3">{title}</h3>
+            <div className="space-y-2">{children}</div>
+        </section>
+    );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+    return (
+        <div className="flex items-start justify-between gap-4 text-sm">
+            <span className="text-gray-500">{label}</span>
+            <span className="text-right text-gray-200">{value}</span>
         </div>
     );
 }

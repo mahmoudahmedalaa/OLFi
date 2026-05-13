@@ -117,7 +117,7 @@ export default function LoanDetailScreen() {
                         <Skeleton height={80} style={{ flex: 1 }} borderRadius={12} />
                     </View>
                     <Skeleton height={200} borderRadius={12} />
-                    <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 32, textAlign: 'center', letterSpacing: 0.3 }}>Fetching facility details...</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '500', color: Colors.brand.teal, fontStyle: 'italic', marginTop: 32, textAlign: 'center', letterSpacing: 0.3 }}>Fetching debt details...</Text>
                 </View>
             </SafeAreaView>
         );
@@ -219,7 +219,7 @@ export default function LoanDetailScreen() {
                                     </Text>
                                     <TermTooltip
                                         term="Profit Rate"
-                                        definition="The annual profit rate on your Islamic finance facility. It is the agreed cost of financing, not compound interest."
+                                        definition="The annual profit rate on your Islamic finance product. It is the agreed cost of financing, not compound interest."
                                         labelStyle={{ fontSize: 14, color: theme.colors.textSecondary }}
                                     />
                                     <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>
@@ -273,7 +273,7 @@ export default function LoanDetailScreen() {
                         <StatCard
                             icon="cash-outline"
                             label="Monthly EMI"
-                            tooltip="Equated Monthly Instalment - your fixed monthly repayment covering both the original amount and the profit portion of your facility."
+                            tooltip="Equated Monthly Instalment - your fixed monthly repayment covering both the original amount and the profit portion of your loan."
                             value={formatAED(loan.monthly_emi)}
                             color="#011819"
                             theme={theme}
@@ -364,7 +364,7 @@ export default function LoanDetailScreen() {
                                     Find Better Rates
                                 </Text>
                                 <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>
-                                    Compare transfer offers for this facility
+                                    Compare transfer offers for this debt
                                 </Text>
                             </View>
                             <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.8)" />
