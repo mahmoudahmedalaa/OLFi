@@ -52,10 +52,12 @@ export default function DocumentVaultPage() {
         loadDocuments(app.id, app.user_id);
     };
 
-    const getDocUrl = async (filepath: string) => {
-        if (!selectedApp) return;
+    const getDocUrl = async (document: UserDocument) => {
         try {
-            const signedUrl = await getDocumentSignedUrl(filepath, selectedApp.id, selectedApp.user_id);
+            const signedUrl = await getDocumentSignedUrl(
+                document.storage_path || document.file_url,
+                document.storage_bucket || 'user-documents'
+            );
             setActiveDocUrl(signedUrl);
         } catch (e) {
             console.error('Failed to get signed URL:', e);
@@ -143,13 +145,15 @@ export default function DocumentVaultPage() {
                                     documents.map((doc, idx) => (
                                         <button
                                             key={idx}
-                                            onClick={() => getDocUrl(doc.name)}
+                                            onClick={() => getDocUrl(doc)}
                                             className="text-left p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors border border-gray-700 flex items-center gap-3"
                                         >
                                             <span className="text-xl">📄</span>
                                             <div className="flex-1 truncate">
-                                                <p className="text-sm font-medium text-gray-200 truncate">{doc.name}</p>
-                                                <p className="text-xs text-gray-500">{(doc.metadata?.size / 1024).toFixed(1)} KB</p>
+                                                <p className="text-sm font-medium text-gray-200 truncate">{doc.file_name || doc.document_type}</p>
+                                                <p className="text-xs text-gray-500">
+                                                    {doc.file_size ? `${(doc.file_size / 1024).toFixed(1)} KB` : doc.status}
+                                                </p>
                                             </div>
                                         </button>
                                     ))

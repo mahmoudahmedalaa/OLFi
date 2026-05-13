@@ -3,8 +3,8 @@ import "./globals.css";
 import Sidebar from "./components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "BuyOut Admin",
-  description: "BuyOut Admin Panel — Manage banks, products, and users",
+  title: "OLFi Admin",
+  description: "OLFi Admin Panel - manage banks, products, users, and application operations",
 };
 
 export default function RootLayout({

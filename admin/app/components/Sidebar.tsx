@@ -52,7 +52,7 @@ export default function Sidebar() {
             {/* Logo */}
             <div className="p-6 border-b border-gray-800 sticky top-0 bg-gray-900 z-10">
                 <h1 className="text-xl font-bold text-emerald-400 tracking-tight">
-                    BuyOut<span className="text-gray-500 font-normal ml-1 text-sm">Admin</span>
+                    OLFi<span className="text-gray-500 font-normal ml-1 text-sm">Admin</span>
                 </h1>
             </div>
 
@@ -94,7 +94,7 @@ export default function Sidebar() {
 
             {/* Footer */}
             <div className="p-4 border-t border-gray-800 sticky bottom-0 bg-gray-900">
-                <p className="text-xs text-gray-500">BuyOut © 2026</p>
+                <p className="text-xs text-gray-500">OLFi © 2026</p>
             </div>
         </aside>
     );

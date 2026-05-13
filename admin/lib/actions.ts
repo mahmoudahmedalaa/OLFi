@@ -57,6 +57,35 @@ type RecentApplicationSummary = {
     } | null;
 };
 
+export type AdminApplicationDocument = {
+    id: string;
+    user_id: string;
+    application_id: string | null;
+    document_type: string;
+    file_name: string | null;
+    status: string;
+    notes: string | null;
+    storage_bucket: string | null;
+    storage_path: string | null;
+    file_url: string;
+    mime_type: string | null;
+    file_size: number | null;
+    created_at: string;
+    updated_at: string | null;
+};
+
+export type AdminApplicationEvent = {
+    id: string;
+    application_id: string;
+    user_id: string;
+    event_type: string;
+    status: string | null;
+    title: string;
+    body: string | null;
+    actor_type: string;
+    created_at: string;
+};
+
 // ── Banks ───────────────────────────────────────────
 export async function fetchBanks() {
     const { data, error } = await supabase.from('banks').select('*').order('name');
@@ -180,6 +209,28 @@ export async function fetchApplications() {
     return data || [];
 }
 
+async function recordApplicationEvent(payload: {
+    applicationId: string;
+    userId: string;
+    eventType: 'status_update' | 'document_request' | 'document_received' | 'document_verified' | 'document_rejected' | 'admin_note';
+    title: string;
+    body?: string | null;
+    status?: string | null;
+    metadata?: Record<string, unknown>;
+}) {
+    const { error } = await supabase.from('application_events').insert({
+        application_id: payload.applicationId,
+        user_id: payload.userId,
+        event_type: payload.eventType,
+        title: payload.title,
+        body: payload.body ?? null,
+        status: payload.status ?? null,
+        actor_type: 'admin',
+        metadata: payload.metadata ?? {},
+    });
+    if (error) throw error;
+}
+
 export async function updateApplicationStatus(
     id: string,
     status: string,
@@ -200,12 +251,46 @@ export async function updateApplicationStatus(
         .eq('id', id);
     if (error) throw error;
 
+    const eventCopy: Record<string, { title: string; body: string; type: 'status_update' | 'document_request' }> = {
+        under_review: {
+            title: 'Review started',
+            body: adminNotes || 'The bank is reviewing this refinance application.',
+            type: 'status_update',
+        },
+        documents_required: {
+            title: 'Documents requested',
+            body: adminNotes || 'Additional documents are needed before review can continue.',
+            type: 'document_request',
+        },
+        approved: {
+            title: 'Application approved',
+            body: adminNotes || 'The bank approved this refinance application.',
+            type: 'status_update',
+        },
+        rejected: {
+            title: 'Application not approved',
+            body: rejectionReason || 'The bank could not proceed with this refinance application.',
+            type: 'status_update',
+        },
+    };
+
+    if (userId && eventCopy[status]) {
+        await recordApplicationEvent({
+            applicationId: id,
+            userId,
+            eventType: eventCopy[status].type,
+            title: eventCopy[status].title,
+            body: eventCopy[status].body,
+            status,
+        });
+    }
+
     // Send notification to user
     if (userId) {
         const statusLabels: Record<string, string> = {
             under_review: 'Your application is now under review.',
             documents_required: 'Additional documents are needed for your application.',
-            approved: 'Congratulations! Your refinance application has been approved! 🎉',
+            approved: 'Your refinance application has been approved.',
             rejected: 'Unfortunately, your refinance application could not be approved.',
         };
         const body = statusLabels[status] || `Your application status has been updated to: ${status}`;
@@ -213,8 +298,81 @@ export async function updateApplicationStatus(
             user_id: userId,
             title: 'Application Update',
             body,
-            type: 'offer',
-            data: { screen: 'my-applications' },
+            type: status === 'documents_required' ? 'document' : 'offer',
+            data: { screen: 'my-applications', application_id: id },
+            application_id: id,
+        });
+    }
+}
+
+export async function fetchApplicationDocuments(applicationId: string): Promise<AdminApplicationDocument[]> {
+    const { data, error } = await supabase
+        .from('user_documents')
+        .select('id, user_id, application_id, document_type, file_name, status, notes, storage_bucket, storage_path, file_url, mime_type, file_size, created_at, updated_at')
+        .eq('application_id', applicationId)
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []) as AdminApplicationDocument[];
+}
+
+export async function fetchApplicationEvents(applicationId: string): Promise<AdminApplicationEvent[]> {
+    const { data, error } = await supabase
+        .from('application_events')
+        .select('id, application_id, user_id, event_type, status, title, body, actor_type, created_at')
+        .eq('application_id', applicationId)
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []) as AdminApplicationEvent[];
+}
+
+export async function updateApplicationDocumentStatus(
+    documentId: string,
+    status: 'verified' | 'rejected' | 'pending',
+    notes?: string | null
+) {
+    const { data: document, error: fetchError } = await supabase
+        .from('user_documents')
+        .select('id, user_id, application_id, document_type, file_name')
+        .eq('id', documentId)
+        .single();
+    if (fetchError) throw fetchError;
+
+    const { error } = await supabase
+        .from('user_documents')
+        .update({
+            status,
+            notes: notes ?? null,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', documentId);
+    if (error) throw error;
+
+    if (document.application_id) {
+        const documentLabel = String(document.document_type).replace(/_/g, ' ');
+        const eventType = status === 'verified' ? 'document_verified' : status === 'rejected' ? 'document_rejected' : 'document_received';
+        const title = status === 'verified'
+            ? 'Document accepted'
+            : status === 'rejected'
+                ? 'Document needs replacement'
+                : 'Document marked pending';
+        const body = notes || `${documentLabel} was marked ${status}.`;
+
+        await recordApplicationEvent({
+            applicationId: document.application_id,
+            userId: document.user_id,
+            eventType,
+            title,
+            body,
+            metadata: { document_id: document.id, document_type: document.document_type, file_name: document.file_name },
+        });
+
+        await supabase.from('notifications').insert({
+            user_id: document.user_id,
+            title,
+            body,
+            type: 'document',
+            data: { screen: 'my-applications', application_id: document.application_id, document_id: document.id },
+            application_id: document.application_id,
         });
     }
 }
@@ -414,19 +572,21 @@ export async function fetchUserDetail(userId: string) {
 }
 
 // ── Document Vault ──────────────────────────────────
-export async function fetchUserDocuments(appId: string, userId: string) {
-    const { data, error } = await supabase.storage.from('user_documents').list(`${userId}/${appId}`);
-    if (error) {
-        console.error('No documents found or bucket missing:', error.message);
-        return [];
-    }
-    return data || [];
+export async function fetchUserDocuments(appId: string, userId: string): Promise<AdminApplicationDocument[]> {
+    const { data, error } = await supabase
+        .from('user_documents')
+        .select('id, user_id, application_id, document_type, file_name, status, notes, storage_bucket, storage_path, file_url, mime_type, file_size, created_at, updated_at')
+        .eq('user_id', userId)
+        .eq('application_id', appId)
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []) as AdminApplicationDocument[];
 }
 
-export async function getDocumentSignedUrl(filepath: string, appId: string, userId: string) {
+export async function getDocumentSignedUrl(storagePath: string, bucket = 'user-documents') {
     const { data, error } = await supabase.storage
-        .from('user_documents')
-        .createSignedUrl(`${userId}/${appId}/${filepath}`, 3600); // 1 hour expiry
+        .from(bucket)
+        .createSignedUrl(storagePath, 3600); // 1 hour expiry
     if (error) throw error;
     return data.signedUrl;
 }
