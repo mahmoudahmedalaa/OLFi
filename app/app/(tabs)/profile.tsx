@@ -7,6 +7,7 @@ import {
     Alert,
     ActivityIndicator,
     RefreshControl,
+    Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,6 +67,17 @@ export default function ProfileScreen() {
 
     const handleSignOut = () => {
         hapticWarning();
+        if (Platform.OS === 'web') {
+            signOut()
+                .catch((e: any) => {
+                    console.warn('Sign-out failed, forcing local logout:', e);
+                })
+                .finally(() => {
+                    router.replace('/(auth)/login' as any);
+                });
+            return;
+        }
+
         Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
             { text: 'Cancel', style: 'cancel' },
             {
@@ -74,6 +86,7 @@ export default function ProfileScreen() {
                 onPress: async () => {
                     try {
                         await signOut();
+                        router.replace('/(auth)/login' as any);
                     } catch (e: any) {
                         Alert.alert('Error', e.message);
                     }

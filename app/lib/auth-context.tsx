@@ -29,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 const LEGACY_CREDENTIAL_KEYS = ['saved_email', 'saved_password'];
+const SUPABASE_AUTH_STORAGE_KEY = 'sb-uivkpqjdoqwgfhvnskaw-auth-token';
 
 async function clearLegacyCredentialSecrets() {
     if (Platform.OS === 'web') return;
@@ -36,6 +37,29 @@ async function clearLegacyCredentialSecrets() {
     await Promise.allSettled(
         LEGACY_CREDENTIAL_KEYS.map((key) => SecureStore.deleteItemAsync(key))
     );
+}
+
+async function clearStoredSupabaseSession() {
+    const knownKeys = [SUPABASE_AUTH_STORAGE_KEY];
+
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        try {
+            Object.keys(window.localStorage)
+                .filter((key) => key === SUPABASE_AUTH_STORAGE_KEY || (key.startsWith('sb-') && key.includes('auth-token')))
+                .forEach((key) => window.localStorage.removeItem(key));
+        } catch { }
+        return;
+    }
+
+    try {
+        const keys = await AsyncStorage.getAllKeys();
+        const authKeys = keys.filter((key) => key === SUPABASE_AUTH_STORAGE_KEY || (key.startsWith('sb-') && key.includes('auth-token')));
+        if (authKeys.length > 0) {
+            await AsyncStorage.multiRemove(authKeys);
+        }
+    } catch { }
+
+    await Promise.allSettled(knownKeys.map((key) => SecureStore.deleteItemAsync(key)));
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -127,7 +151,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signOut = async () => {
         clearAnalytics();
         await clearLegacyCredentialSecrets();
-        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+        setPostAuthSetupState(false);
+        await AsyncStorage.removeItem('@olfi_post_auth_setup_pending').catch(() => { });
+
+        try {
+            await Promise.race([
+                supabase.auth.signOut({ scope: 'local' }),
+                new Promise((resolve) => setTimeout(resolve, 2500)),
+            ]);
+        } catch (error) {
+            console.warn('Supabase sign-out failed, clearing local session anyway:', error);
+        }
+
+        await clearStoredSupabaseSession();
     };
 
     return (

@@ -9,7 +9,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "check:ios-build": "node scripts/check-ios-build-number.js 44"
+    "check:ios-build": "node scripts/check-ios-build-number.js 45"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
