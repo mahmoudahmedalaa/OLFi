@@ -18,6 +18,8 @@ Do not merge to `main` until the preview, mobile archive, and user sign-off are 
 | Done | Web | Fix the recurring hero flash on `https://olfi.vercel.app/` without removing animations or changing the visual direction. | `web npm run build` passed; local hero idled for 22 seconds in Playwright |
 | Done | Prototype | Fix sign-out on the actual Expo web prototype served by `olfi-prototype` so auth and persisted app state clear reliably. | `app npx tsc --noEmit`, `app npm run lint`, and `npx expo export -p web` passed |
 | Done | Design references | Install VoltAgent `awesome-design-md` as docs/reference material only. | Vendored under `docs/design-references/awesome-design-md` with OLFi notes |
+| Done | Supabase security | Harden application/document insert RLS so user-owned rows cannot link to another user's debt/application. | Migration `20260518202736_harden_application_document_rls.sql` applied; `supabase migration list` matches remote |
+| Done | Quality audit | Create a repeatable OLFi technical-debt and release-readiness audit skill. | Skill installed at `~/.codex/skills/olfi-quality-audit`; `quick_validate.py` passed |
 
 ## Terminology Standard
 
@@ -41,7 +43,7 @@ Do not merge to `main` until the preview, mobile archive, and user sign-off are 
 - `app npm run check:ios-build`: Expo `ios.buildNumber`, iOS `Info.plist`, and Xcode `CURRENT_PROJECT_VERSION` all report `45`.
 - `app npx tsc --noEmit`: passed.
 - `app npm run lint`: passed.
-- `supabase migration list`: local and remote match through `20260513205248`.
+- `supabase migration list`: local and remote match through `20260518202736`.
 - `admin npx tsc --noEmit`: passed.
 - `admin npm run lint`: passed.
 - `admin npm run build`: passed.

@@ -10,7 +10,7 @@ const SECTIONS = [
     {
         title: 'Information We Collect',
         icon: 'folder-outline',
-        content: `We collect information you provide directly when using BuyOut:
+        content: `We collect information you provide directly when using OLFi:
 
 • **Account Information**: Name, email address, phone number
 • **Financial Data**: Loan details, salary, employer, banking information

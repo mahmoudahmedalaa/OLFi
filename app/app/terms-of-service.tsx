@@ -10,12 +10,12 @@ const SECTIONS = [
     {
         title: '1. Acceptance of Terms',
         icon: 'checkmark-circle-outline',
-        content: `By accessing or using the BuyOut application ("OLFi"), you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.`,
+        content: `By accessing or using the OLFi application, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you may not use our services.`,
     },
     {
         title: '2. Description of Service',
         icon: 'information-circle-outline',
-        content: `BuyOut is a financial technology platform that allows users to track their debts and submit consolidation or refinancing applications to partner banks. BuyOut is not a bank or a licensed financial institution. The approval of any loan consolidation application rests entirely with the partner banks.`,
+        content: `OLFi is a financial technology platform that allows users to track their debts and submit consolidation or refinancing applications to partner banks. OLFi is not a bank or a licensed financial institution. The approval of any loan consolidation application rests entirely with the partner banks.`,
     },
     {
         title: '3. User Responsibilities',
@@ -28,12 +28,12 @@ const SECTIONS = [
     {
         title: '4. Data & Privacy',
         icon: 'lock-closed-outline',
-        content: `Your privacy is important to us. By using BuyOut, you consent to the collection and use of your data as described in our Privacy Policy. We comply strictly with the UAE Personal Data Protection Law (Federal Decree-Law No. 45/2021).`,
+        content: `Your privacy is important to us. By using OLFi, you consent to the collection and use of your data as described in our Privacy Policy. We comply strictly with the UAE Personal Data Protection Law (Federal Decree-Law No. 45/2021).`,
     },
     {
         title: '5. Application Processing',
         icon: 'send-outline',
-        content: `When you submit an application through BuyOut:
+        content: `When you submit an application through OLFi:
 • We transmit your application data securely to the selected partner bank(s).
 • We act only as a facilitator and make no guarantees regarding application approval.
 • Processing times are subject to the individual partner bank's procedures.`,
@@ -51,7 +51,7 @@ const SECTIONS = [
     {
         title: '8. Governing Law',
         icon: 'business-outline',
-        content: `These terms and your use of BuyOut are governed by the federal laws of the United Arab Emirates and the local laws of the Emirate of Dubai. Any disputes shall be subject to the exclusive jurisdiction of the courts in Dubai.`,
+        content: `These terms and your use of OLFi are governed by the federal laws of the United Arab Emirates and the local laws of the Emirate of Dubai. Any disputes shall be subject to the exclusive jurisdiction of the courts in Dubai.`,
     },
 ];
 

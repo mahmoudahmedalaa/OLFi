@@ -1,6 +1,6 @@
 /**
  * Refinance Calculator - Pure functions for loan comparison and savings calculation
- * BuyOut Phase 4.1
+ * OLFi refinance calculation helpers.
  */
 
 export interface LoanDetails {

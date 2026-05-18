@@ -1,7 +1,7 @@
 'use client';
 import { vars } from 'nativewind';
 
-// BuyOut Fintech Brand Theme
+// OLFi fintech brand theme
 // Primary = Emerald (brand action color)
 // Secondary = Slate (neutral surfaces)
 // Tertiary = Teal (secondary accent)
