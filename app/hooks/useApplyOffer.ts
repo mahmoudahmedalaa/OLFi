@@ -22,6 +22,19 @@ export const CALLBACK_TIMES = [
     { key: 'evening' as const, label: 'Evening', sublabel: '5PM - 9PM', icon: 'moon-outline' },
 ];
 
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(`${label} timed out`)), timeoutMs);
+    });
+
+    try {
+        return await Promise.race([promise, timeout]);
+    } finally {
+        if (timeoutId) clearTimeout(timeoutId);
+    }
+}
+
 export function useApplyOffer() {
     const { user } = useAuth();
     const router = useRouter();
@@ -97,7 +110,10 @@ export function useApplyOffer() {
     useEffect(() => {
         let isMounted = true;
         const initData = async () => {
-            if (!user) return;
+            if (!user || !params.productId || !params.loanId) {
+                if (isMounted) setVerifyingOffer(false);
+                return;
+            }
             try {
                 const { data: profile } = await supabase
                     .from('profiles')
@@ -116,14 +132,18 @@ export function useApplyOffer() {
 
                 const salaryVal = profile?.salary || 0;
                 if (params.loanId && params.loanRemainingAmount && salaryVal > 0) {
-                    const { data: edgeData, error: edgeErr } = await supabase.functions.invoke('fetch-bank-offers', {
-                        body: {
-                            user_id: user.id,
-                            user_loan_id: params.loanId,
-                            salary: salaryVal,
-                            requested_amount: parseFloat(params.loanRemainingAmount)
-                        }
-                    });
+                    const { data: edgeData, error: edgeErr } = await withTimeout(
+                        supabase.functions.invoke('fetch-bank-offers', {
+                            body: {
+                                user_id: user.id,
+                                user_loan_id: params.loanId,
+                                salary: salaryVal,
+                                requested_amount: parseFloat(params.loanRemainingAmount)
+                            }
+                        }),
+                        8000,
+                        'Offer verification'
+                    );
 
                     if (edgeErr) {
                         console.error('Edge Function Error:', edgeErr);
@@ -145,7 +165,7 @@ export function useApplyOffer() {
             initData();
         }
         return () => { isMounted = false; };
-    }, [user, params, verifyingOffer]);
+    }, [user, params.productId, params.loanId, params.loanRemainingAmount, verifyingOffer]);
 
     const animateToStep = (nextStep: number) => {
         hapticMedium();

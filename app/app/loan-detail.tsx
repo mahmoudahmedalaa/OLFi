@@ -16,6 +16,7 @@ import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { formatAED, estimateRemainingMonths } from '@/lib/refinance-calculator';
+import { debtLockedMessage, getActiveDebtApplication } from '@/lib/debt-lifecycle';
 import CircularProgress from '@/components/ui/CircularProgress';
 import Skeleton from '@/components/ui/Skeleton';
 import { TermTooltip } from '@/components/ui/TermTooltip';
@@ -76,10 +77,23 @@ export default function LoanDetailScreen() {
         }, [fetchLoan])
     );
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
+        if (!user || !params.loanId) return;
+        try {
+            const activeApplication = await getActiveDebtApplication(params.loanId, user.id);
+            if (activeApplication) {
+                Alert.alert('Debt used in application', debtLockedMessage(activeApplication.status));
+                return;
+            }
+        } catch (e) {
+            console.error('Failed to check debt application status:', e);
+            Alert.alert('Could not verify debt status', 'Please try again before deleting this debt.');
+            return;
+        }
+
         Alert.alert(
-            'Delete Financing',
-            'Are you sure you want to delete this financing? This action cannot be undone.',
+            'Delete Debt',
+            'Are you sure you want to delete this debt? This action cannot be undone.',
             [
                 { text: 'Cancel', style: 'cancel' },
                 {
@@ -91,11 +105,11 @@ export default function LoanDetailScreen() {
                                 .from('user_loans')
                                 .delete()
                                 .eq('id', params.loanId)
-                                .eq('user_id', user?.id);
+                                .eq('user_id', user.id);
                             if (error) throw error;
                             router.back();
                         } catch (e: any) {
-                            Alert.alert('Error', e.message || 'Failed to delete financing.');
+                            Alert.alert('Error', e.message || 'Failed to delete debt.');
                         }
                     },
                 },

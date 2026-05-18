@@ -16,6 +16,7 @@ import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { useLanguage } from '@/lib/language-context';
 import { supabase } from '@/lib/supabase';
+import { debtLockedMessage, getActiveDebtApplication } from '@/lib/debt-lifecycle';
 import CircularProgress from '@/components/ui/CircularProgress';
 import Skeleton from '@/components/ui/Skeleton';
 import GlassHeader from '@/components/ui/GlassHeader';
@@ -71,7 +72,20 @@ export default function LoansScreen() {
         }, [fetchLoans])
     );
 
-    const handleDelete = (loan: UserLoan) => {
+    const handleDelete = async (loan: UserLoan) => {
+        if (!user) return;
+        try {
+            const activeApplication = await getActiveDebtApplication(loan.id, user.id);
+            if (activeApplication) {
+                Alert.alert('Debt used in application', debtLockedMessage(activeApplication.status));
+                return;
+            }
+        } catch (e) {
+            console.error('Failed to check debt application status:', e);
+            Alert.alert('Could not verify debt status', 'Please try again before deleting this debt.');
+            return;
+        }
+
         Alert.alert(
             t('debts.deleteTitle'),
             `${t('debts.deleteMessage')} "${loan.bank_name || 'Unknown'} - ${formatType(loan.loan_type)}"?`,
@@ -85,7 +99,8 @@ export default function LoansScreen() {
                             const { error } = await supabase
                                 .from('user_loans')
                                 .delete()
-                                .eq('id', loan.id);
+                                .eq('id', loan.id)
+                                .eq('user_id', user.id);
                             if (error) throw error;
                             setLoans((prev) => prev.filter((l) => l.id !== loan.id));
                         } catch (e: any) {

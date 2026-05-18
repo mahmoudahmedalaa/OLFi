@@ -19,6 +19,7 @@ import { useTheme } from '@/lib/theme-context';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/lib/supabase';
 import { calculateEMI } from '@/lib/refinance-calculator';
+import { debtLockedMessage, getActiveDebtApplication } from '@/lib/debt-lifecycle';
 
 const LOAN_TYPES = [
     { key: 'personal', label: 'Personal', icon: 'person-outline' },
@@ -91,22 +92,60 @@ export default function EditLoanScreen() {
             return;
         }
 
+        const original = Number(originalAmount.replace(/,/g, ''));
+        const remaining = Number(remainingAmount.replace(/,/g, ''));
+        const rate = Number(interestRate);
+        const emi = Number(monthlyEmi.replace(/,/g, ''));
+        const tenure = Number(tenureMonths);
+
+        if (!Number.isFinite(original) || original <= 0) {
+            Alert.alert('Validation Error', 'Please enter the original loan amount.');
+            return;
+        }
+        if (!Number.isFinite(remaining) || remaining <= 0) {
+            Alert.alert('Validation Error', 'Please enter the remaining amount.');
+            return;
+        }
+        if (remaining > original) {
+            Alert.alert('Validation Error', 'Remaining amount cannot be higher than the original amount.');
+            return;
+        }
+        if (!Number.isFinite(rate) || rate <= 0 || rate > 99) {
+            Alert.alert('Validation Error', 'Please enter a valid interest rate.');
+            return;
+        }
+        if (!Number.isFinite(emi) || emi <= 0) {
+            Alert.alert('Validation Error', 'Please enter the monthly EMI.');
+            return;
+        }
+        if (!Number.isFinite(tenure) || tenure <= 0 || tenure > 360) {
+            Alert.alert('Validation Error', 'Please enter a realistic loan tenure.');
+            return;
+        }
+        if (!user || !params.loanId) return;
+
         setSaving(true);
         try {
+            const activeApplication = await getActiveDebtApplication(params.loanId, user.id);
+            if (activeApplication) {
+                Alert.alert('Debt used in application', debtLockedMessage(activeApplication.status));
+                return;
+            }
+
             const { error } = await supabase
                 .from('user_loans')
                 .update({
                     loan_type: loanType,
                     bank_name: bankName || null,
-                    original_amount: parseFloat(originalAmount),
-                    remaining_amount: parseFloat(remainingAmount),
-                    interest_rate: parseFloat(interestRate),
-                    monthly_emi: parseFloat(monthlyEmi),
-                    tenure_months: parseInt(tenureMonths),
+                    original_amount: original,
+                    remaining_amount: remaining,
+                    interest_rate: rate,
+                    monthly_emi: emi,
+                    tenure_months: tenure,
                     updated_at: new Date().toISOString(),
                 })
                 .eq('id', params.loanId)
-                .eq('user_id', user?.id);
+                .eq('user_id', user.id);
 
             if (error) throw error;
             router.back();

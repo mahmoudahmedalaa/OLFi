@@ -95,11 +95,20 @@ export function useAddLoan() {
         const origRaw = stripCommas(originalAmount);
         const remRaw = stripCommas(remainingAmount);
         const emiRaw = stripCommas(monthlyEmi);
-        if (!origRaw || Number(origRaw) <= 0) return 'Please enter the original loan amount';
-        if (!remRaw || Number(remRaw) < 0) return 'Please enter the remaining amount';
-        if (!interestRate || Number(interestRate) <= 0) return 'Please enter the interest rate';
-        if (!emiRaw || Number(emiRaw) <= 0) return 'Please enter the monthly EMI';
-        if (!tenureMonths || Number(tenureMonths) <= 0) return 'Please enter the loan tenure';
+        const origAmount = Number(origRaw);
+        const remAmount = Number(remRaw);
+        const rate = Number(interestRate);
+        const emi = Number(emiRaw);
+        const tenure = Number(tenureMonths);
+
+        if (!origRaw || !Number.isFinite(origAmount) || origAmount <= 0) return 'Please enter the original loan amount';
+        if (!remRaw || !Number.isFinite(remAmount) || remAmount <= 0) return 'Please enter the remaining amount';
+        if (remAmount > origAmount) return 'Remaining amount cannot be higher than the original amount';
+        if (!interestRate || !Number.isFinite(rate) || rate <= 0) return 'Please enter the interest rate';
+        if (rate > 99) return 'Please enter a valid interest rate';
+        if (!emiRaw || !Number.isFinite(emi) || emi <= 0) return 'Please enter the monthly EMI';
+        if (!tenureMonths || !Number.isFinite(tenure) || tenure <= 0) return 'Please enter the loan tenure';
+        if (tenure > 360) return 'Please enter a realistic loan tenure';
         return null;
     };
 
