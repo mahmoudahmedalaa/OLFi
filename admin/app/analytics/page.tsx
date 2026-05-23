@@ -3,6 +3,19 @@ import { fetchAnalyticsSummary, fetchTopEvents, fetchFunnel, fetchRecentEvents, 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+const currencyFormatter = new Intl.NumberFormat('en-AE', {
+    style: 'currency',
+    currency: 'AED',
+    maximumFractionDigits: 0,
+});
+
+const compactCurrencyFormatter = new Intl.NumberFormat('en-AE', {
+    style: 'currency',
+    currency: 'AED',
+    notation: 'compact',
+    maximumFractionDigits: 2,
+});
+
 export default async function AnalyticsPage() {
     const [summary, topEvents, funnel, recentEvents, appStats] = await Promise.all([
         fetchAnalyticsSummary(),
@@ -27,36 +40,39 @@ export default async function AnalyticsPage() {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-10">
-                <div className="bg-blue-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-blue-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Platform Activity (24h)</p>
                     <p className="text-3xl font-bold text-blue-400">{summary.events24h}</p>
                 </div>
-                <div className="bg-purple-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-purple-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Platform Activity (7d)</p>
                     <p className="text-3xl font-bold text-purple-400">{summary.events7d}</p>
                 </div>
-                <div className="bg-cyan-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-cyan-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Platform Activity (30d)</p>
                     <p className="text-3xl font-bold text-cyan-400">{summary.events30d}</p>
                 </div>
-                <div className="bg-emerald-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-emerald-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Active Users (24h)</p>
                     <p className="text-3xl font-bold text-emerald-400">{summary.activeUsers24h}</p>
                 </div>
-                <div className="bg-amber-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-amber-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Active Users (7d)</p>
                     <p className="text-3xl font-bold text-amber-400">{summary.activeUsers7d}</p>
                 </div>
-                <div className="bg-indigo-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-indigo-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Total Tracked Debt</p>
-                    <p className="text-xl lg:text-3xl font-bold text-indigo-400">
-                        {new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED', maximumFractionDigits: 0 }).format(summary.totalDebtTracked)}
+                    <p
+                        className="whitespace-nowrap text-2xl font-bold tracking-tight text-indigo-400"
+                        title={currencyFormatter.format(summary.totalDebtTracked)}
+                    >
+                        {compactCurrencyFormatter.format(summary.totalDebtTracked)}
                     </p>
                 </div>
-                <div className="bg-rose-500/10 border border-gray-800 rounded-xl p-5">
+                <div className="min-w-0 overflow-hidden bg-rose-500/10 border border-gray-800 rounded-xl p-5">
                     <p className="text-sm text-gray-400 mb-1">Avg Savings Generated</p>
-                    <p className="text-xl lg:text-3xl font-bold text-rose-400">
-                        {new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED', maximumFractionDigits: 0 }).format(summary.averageSavings)}
+                    <p className="whitespace-nowrap text-2xl font-bold tracking-tight text-rose-400">
+                        {currencyFormatter.format(summary.averageSavings)}
                     </p>
                 </div>
             </div>
