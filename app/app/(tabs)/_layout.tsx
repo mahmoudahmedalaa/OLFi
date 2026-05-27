@@ -10,6 +10,8 @@ import { trackScreen } from '@/lib/analytics';
 export default function TabLayout() {
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const isWeb = Platform.OS === 'web';
+  const isIos = Platform.OS === 'ios';
 
   return (
     <Tabs
@@ -19,16 +21,19 @@ export default function TabLayout() {
         tabBarInactiveTintColor: theme.colors.textTertiary,
         tabBarStyle: {
           position: 'absolute',
-          backgroundColor: Platform.OS === 'ios' ? 'transparent' : theme.colors.card,
+          backgroundColor: isIos ? 'transparent' : theme.colors.card,
           borderTopColor: theme.colors.border,
           borderTopWidth: 0.5,
-          height: Platform.OS === 'ios' ? 88 : 64,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 8,
+          height: isWeb ? 112 : isIos ? 88 : 64,
+          paddingBottom: isWeb ? 44 : isIos ? 28 : 8,
           paddingTop: 8,
           elevation: 0,
           shadowOpacity: 0,
         },
-        tabBarBackground: Platform.OS === 'ios' ? () => (
+        tabBarItemStyle: {
+          paddingBottom: isWeb ? 4 : 0,
+        },
+        tabBarBackground: isIos ? () => (
           <BlurView
             tint={theme.isDark ? "dark" : "light"}
             intensity={80}

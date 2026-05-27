@@ -25,6 +25,10 @@ node_modules/
 # Agent / AI artifacts (session-specific, not source code)
 .gemini/
 .antigravityignore
+.playwright-cli/
+outputs/
+YC Application/
+.local-artifacts/
 
 # Secrets & credentials
 *.p12

@@ -12,24 +12,39 @@ const supabaseSessionStorage = {
   getItem: async (key: string) => {
     if (Platform.OS === 'web') return AsyncStorage.getItem(key);
 
-    const secureValue = await SecureStore.getItemAsync(key);
+    let secureValue: string | null = null;
+    try {
+      secureValue = await SecureStore.getItemAsync(key);
+    } catch (error) {
+      console.warn('SecureStore get failed, falling back to AsyncStorage:', error);
+    }
     if (secureValue) return secureValue;
 
     const legacyValue = await AsyncStorage.getItem(key);
     if (legacyValue) {
-      await SecureStore.setItemAsync(key, legacyValue);
-      await AsyncStorage.removeItem(key);
+      try {
+        await SecureStore.setItemAsync(key, legacyValue);
+        await AsyncStorage.removeItem(key);
+      } catch (error) {
+        console.warn('SecureStore migration failed, keeping AsyncStorage session:', error);
+      }
     }
 
     return legacyValue;
   },
   setItem: (key: string, value: string) => {
     if (Platform.OS === 'web') return AsyncStorage.setItem(key, value);
-    return SecureStore.setItemAsync(key, value);
+    return SecureStore.setItemAsync(key, value).catch((error) => {
+      console.warn('SecureStore set failed, falling back to AsyncStorage:', error);
+      return AsyncStorage.setItem(key, value);
+    });
   },
   removeItem: (key: string) => {
     if (Platform.OS === 'web') return AsyncStorage.removeItem(key);
-    return SecureStore.deleteItemAsync(key);
+    return SecureStore.deleteItemAsync(key).catch((error) => {
+      console.warn('SecureStore remove failed, falling back to AsyncStorage:', error);
+      return AsyncStorage.removeItem(key);
+    });
   },
 };
 
