@@ -21,19 +21,23 @@ export function Hero() {
     const t = useTranslations('hero');
     const reduceMotion = useReducedMotion();
     return (
-        <section className="relative isolate min-h-screen flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
+        <section className="relative isolate min-h-[100svh] flex items-center pt-32 pb-20 overflow-hidden bg-base-dark">
             {/* Animated Ambient Orbs */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden [contain:paint]">
                 <motion.div
-                    animate={reduceMotion ? { opacity: 0.18 } : { scale: [1, 1.1, 1], opacity: [0.15, 0.25, 0.15] }}
-                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-brand-teal blur-[120px] transform-gpu will-change-transform [backface-visibility:hidden]"
-                />
+                    animate={reduceMotion ? { x: 0, y: 0 } : { x: [0, 28, -16, 0], y: [0, -20, 18, 0] }}
+                    transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] transform-gpu will-change-transform [backface-visibility:hidden]"
+                >
+                    <div className="h-full w-full rounded-full bg-brand-teal/20 blur-[120px]" />
+                </motion.div>
                 <motion.div
-                    animate={reduceMotion ? { opacity: 0.08 } : { scale: [1, 1.2, 1], opacity: [0.05, 0.15, 0.05] }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                    className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-[#00ffd1] blur-[150px] transform-gpu will-change-transform [backface-visibility:hidden]"
-                />
+                    animate={reduceMotion ? { x: 0, y: 0 } : { x: [0, -24, 20, 0], y: [0, 22, -12, 0] }}
+                    transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                    className="absolute top-[20%] -right-[10%] w-[50vw] h-[50vw] transform-gpu will-change-transform [backface-visibility:hidden]"
+                >
+                    <div className="h-full w-full rounded-full bg-[#00ffd1]/10 blur-[150px]" />
+                </motion.div>
             </div>
 
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
